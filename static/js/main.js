@@ -207,8 +207,17 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function isValidPhone(phone) {
-        // Allow various phone formats
-        return /^[\d\s\-\(\)\+\.]{7,20}$/.test(phone);
+        // Must contain exactly 10 digits
+        var digits = phone.replace(/\D/g, '');
+        return digits.length === 10;
+    }
+
+    // Restrict phone input to only allow digits and max length of 10
+    var phoneInput = document.getElementById('phone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').substring(0, 10);
+        });
     }
 
     function isFutureDate(dateStr) {

@@ -94,8 +94,11 @@ def submit_booking():
         errors.append('Name is required.')
     if not data['email'] or '@' not in data['email']:
         errors.append('A valid email address is required.')
+    phone_digits = ''.join(c for c in data['phone'] if c.isdigit())
     if not data['phone']:
         errors.append('Phone number is required.')
+    elif len(phone_digits) != 10:
+        errors.append('Phone number must contain exactly 10 digits.')
     if not data['preferred_date']:
         errors.append('Preferred date is required.')
     if not data['preferred_time']:
