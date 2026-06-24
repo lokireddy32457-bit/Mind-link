@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block title %}Book an Appointment — Mind Link Psychiatry{% endblock %}
+{% block description %}Schedule your appointment at Mind Link Psychiatry. Contact us for psychotherapy, medication management, telehealth sessions, and more. We're here to help.{% endblock %}
+
+{% block extra_head %}
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+{% endblock %}
+
+{% block extra_scripts %}
+    <!-- EmailJS Configuration & Sender -->
+    <script src="{{ url_for('static', filename='js/emailjs-config.js') }}"></script>
+    <script>
+        // Initialize EmailJS with your public key
+        if (typeof emailjs !== 'undefined' && EMAILJS_CONFIG.PUBLIC_KEY !== 'YOUR_PUBLIC_KEY_HERE') {
+            emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+        }
+    </script>
+{% endblock %}
+
+{% block content %}
+
+<!-- Booking Hero -->
+<section class="section booking-hero" id="bookingHero">
+    <div class="container">
+        <div class="reveal">
+            <h1>Book an Appointment</h1>
+            <p>Take the first step toward better mental health. Fill out the form below, and our team will contact you to confirm your preferred date and time.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Booking Layout -->
+<section class="section" id="bookingSection" style="padding-top: 0;">
+    <div class="container">
+        <div class="booking-layout">
+            <!-- Forms Column -->
+            <div class="reveal">
+                <!-- Appointment Request Form -->
+                <div class="form-card" style="margin-bottom: var(--space-xl);">
+                    <h3>📅 Request an Appointment</h3>
+                    <p>All fields marked with <span style="color: var(--color-error);">*</span> are required. We'll reach out within 24 hours to confirm.</p>
+
+                    <form id="bookingForm" method="POST" action="{{ url_for('submit_booking') }}" novalidate>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Full Name <span class="required">*</span></label>
+                                <input type="text" id="name" name="name" placeholder="John Doe" value="{{ form_data.name if form_data else '' }}" required>
+                                <p class="error-message">Please enter your full name.</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address <span class="required">*</span></label>
+                                <input type="email" id="email" name="email" placeholder="john@example.com" value="{{ form_data.email if form_data else '' }}" required>
+                                <p class="error-message">Please enter a valid email address.</p>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="phone">Phone Number <span class="required">*</span></label>
+                                <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" value="{{ form_data.phone if form_data else '' }}" required>
+                                <p class="error-message">Please enter a valid phone number.</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="service_type">Service Type <span class="required">*</span></label>
+                                <select id="service_type" name="service_type" required>
+                                    <option value="">Select a service...</option>
+                                    <option value="initial_consultation" {{ 'selected' if form_data and form_data.service_type == 'initial_consultation' else '' }}>Initial Consultation</option>
+                                    <option value="psychotherapy" {{ 'selected' if form_data and form_data.service_type == 'psychotherapy' else '' }}>Individual Psychotherapy</option>
+                                    <option value="medication_management" {{ 'selected' if form_data and form_data.service_type == 'medication_management' else '' }}>Medication Management</option>
+                                    <option value="telehealth" {{ 'selected' if form_data and form_data.service_type == 'telehealth' else '' }}>Telehealth Session</option>
+                                    <option value="anxiety_depression" {{ 'selected' if form_data and form_data.service_type == 'anxiety_depression' else '' }}>Anxiety & Depression Treatment</option>
+                                    <option value="ptsd_trauma" {{ 'selected' if form_data and form_data.service_type == 'ptsd_trauma' else '' }}>PTSD & Trauma Therapy</option>
+                                    <option value="child_adolescent" {{ 'selected' if form_data and form_data.service_type == 'child_adolescent' else '' }}>Child & Adolescent Psychiatry</option>
+                                    <option value="other" {{ 'selected' if form_data and form_data.service_type == 'other' else '' }}>Other</option>
+                                </select>
+                                <p class="error-message">Please select a service.</p>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="preferred_date">Preferred Date <span class="required">*</span></label>
+                                <input type="date" id="preferred_date" name="preferred_date" value="{{ form_data.preferred_date if form_data else '' }}" required>
+                                <p class="error-message">Please select a future date.</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="preferred_time">Preferred Time <span class="required">*</span></label>
+                                <select id="preferred_time" name="preferred_time" required>
+                                    <option value="">Select a time...</option>
+                                    <!-- Weekday slots: 9:00 AM – 5:30 PM -->
+                                    <option value="09:00" data-day="weekday">9:00 AM</option>
+                                    <option value="09:30" data-day="weekday">9:30 AM</option>
+                                    <option value="10:00" data-day="all">10:00 AM</option>
+                                    <option value="10:30" data-day="all">10:30 AM</option>
+                                    <option value="11:00" data-day="all">11:00 AM</option>
+                                    <option value="11:30" data-day="all">11:30 AM</option>
+                                    <option value="12:00" data-day="all">12:00 PM</option>
+                                    <option value="12:30" data-day="all">12:30 PM</option>
+                                    <option value="13:00" data-day="all">1:00 PM</option>
+                                    <option value="13:30" data-day="saturday">1:30 PM</option>
+                                    <option value="14:00" data-day="weekday">2:00 PM</option>
+                                    <option value="14:30" data-day="weekday">2:30 PM</option>
+                                    <option value="15:00" data-day="weekday">3:00 PM</option>
+                                    <option value="15:30" data-day="weekday">3:30 PM</option>
+                                    <option value="16:00" data-day="weekday">4:00 PM</option>
+                                    <option value="16:30" data-day="weekday">4:30 PM</option>
+                                    <option value="17:00" data-day="weekday">5:00 PM</option>
+                                    <option value="17:30" data-day="weekday">5:30 PM</option>
+                                </select>
+                                <p class="error-message">Please select a preferred time.</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Additional Notes</label>
+                            <textarea id="message" name="message" placeholder="Tell us a little about what brings you in, any preferences, or anything else we should know...">{{ form_data.message if form_data else '' }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">Submit Appointment Request</button>
+                    </form>
+
+                    <script>
+                    (function() {
+                        const dateInput = document.getElementById('preferred_date');
+                        const timeSelect = document.getElementById('preferred_time');
+                        const allOptions = Array.from(timeSelect.querySelectorAll('option[data-day]'));
+
+                        // Store original labels so we can restore them after removing "Booked" tags
+                        const originalLabels = {};
+                        allOptions.forEach(opt => {
+                            originalLabels[opt.value] = opt.textContent;
+                        });
+
+                        // Set min date to today
+                        const today = new Date();
+                        const yyyy = today.getFullYear();
+                        const mm = String(today.getMonth() + 1).padStart(2, '0');
+                        const dd = String(today.getDate()).padStart(2, '0');
+                        dateInput.setAttribute('min', `${yyyy}-${mm}-${dd}`);
+
+                        async function updateTimeSlots() {
+                            const dateVal = dateInput.value;
+
+                            // Reset all options to original labels first
+                            allOptions.forEach(opt => {
+                                opt.textContent = originalLabels[opt.value];
+                                opt.style.display = '';
+                                opt.disabled = false;
+                                opt.classList.remove('slot-booked');
+                            });
+
+                            if (!dateVal) {
+                                // No date selected — show all slots
+                                return;
+                            }
+
+                            const selected = new Date(dateVal + 'T00:00:00');
+                            const dayOfWeek = selected.getDay(); // 0=Sun, 6=Sat
+
+                            if (dayOfWeek === 0) {
+                                // Sunday — clinic closed, hide all slots
+                                allOptions.forEach(opt => { opt.style.display = 'none'; opt.disabled = true; });
+                                timeSelect.value = '';
+                                timeSelect.querySelector('option[value=""]').textContent = 'Clinic closed on Sundays';
+                                return;
+                            }
+
+                            timeSelect.querySelector('option[value=""]').textContent = 'Select a time...';
+
+                            if (dayOfWeek === 6) {
+                                // Saturday — 10:00 AM to 1:30 PM
+                                allOptions.forEach(opt => {
+                                    const tag = opt.getAttribute('data-day');
+                                    if (tag === 'all' || tag === 'saturday') {
+                                        opt.style.display = '';
+                                        opt.disabled = false;
+                                    } else {
+                                        opt.style.display = 'none';
+                                        opt.disabled = true;
+                                    }
+                                });
+                            } else {
+                                // Weekday — 9:00 AM to 5:30 PM
+                                allOptions.forEach(opt => {
+                                    opt.style.display = '';
+                                    opt.disabled = false;
+                                });
+                            }
+
+                            // Fetch booked slots from server and disable them
+                            try {
+                                const response = await fetch(`/api/booked-slots?date=${encodeURIComponent(dateVal)}`);
+                                const data = await response.json();
+                                const bookedSlots = data.booked || [];
+
+                                bookedSlots.forEach(timeVal => {
+                                    const opt = timeSelect.querySelector(`option[value="${timeVal}"]`);
+                                    if (opt && !opt.disabled) {
+                                        opt.disabled = true;
+                                        opt.textContent = originalLabels[timeVal] + ' — ⛔ Booked';
+                                        opt.classList.add('slot-booked');
+                                    }
+                                });
+
+                                // If every visible slot is booked, show a message
+                                const visibleOpts = allOptions.filter(o => o.style.display !== 'none');
+                                const allBooked = visibleOpts.length > 0 && visibleOpts.every(o => o.disabled);
+                                if (allBooked) {
+                                    timeSelect.querySelector('option[value=""]').textContent = 'All slots booked for this date';
+                                }
+                            } catch (err) {
+                                console.error('Failed to fetch booked slots:', err);
+                            }
+
+                            // Reset time if current selection is now disabled
+                            const currentOpt = timeSelect.querySelector(`option[value="${timeSelect.value}"]`);
+                            if (currentOpt && currentOpt.disabled) {
+                                timeSelect.value = '';
+                            }
+                        }
+
+                        dateInput.addEventListener('change', updateTimeSlots);
+
+                        // Pre-select time if form_data exists
+                        const savedTime = '{{ form_data.preferred_time if form_data else "" }}';
+                        if (savedTime) {
+                            timeSelect.value = savedTime;
+                        }
+
+                        // Run on load in case date is pre-filled
+                        updateTimeSlots();
+                    })();
+                    </script>
+                </div>
+            </div>
+
+            <!-- Sidebar Column -->
+            <div class="booking-sidebar reveal">
+                <!-- Clinic Hours -->
+                <div class="info-card">
+                    <h4>🕐 Office Hours</h4>
+                    <div class="info-item">
+                        <span class="info-item-icon">📅</span>
+                        <div>
+                            <p><strong>Monday – Friday</strong><br>9:00 AM – 6:00 PM</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-item-icon">📅</span>
+                        <div>
+                            <p><strong>Saturday</strong><br>10:00 AM – 2:00 PM</p>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-item-icon">📅</span>
+                        <div>
+                            <p><strong>Sunday</strong><br>Closed</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Crisis Resources -->
+                <div class="crisis-banner">
+                    <h4>🚨 Crisis Resources</h4>
+                    <p>If you or someone you know is in immediate danger, please call 911 or go to the nearest emergency room.</p>
+                    <div class="crisis-number">📞 988</div>
+                    <p><strong>Suicide & Crisis Lifeline</strong><br>Available 24/7 — Call or Text</p>
+                    <p style="margin-top: var(--space-md); font-size: 0.85rem;">Crisis Text Line: Text <strong>HOME</strong> to <strong>741741</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Our Services — Mind Link Psychiatry{% endblock %}
+{% block description %}Explore the comprehensive psychiatric services offered at Mind Link Psychiatry, including psychotherapy, medication management, telehealth, anxiety treatment, PTSD therapy, and more.{% endblock %}
+
+{% block content %}
+
+<!-- Services Hero -->
+<section class="section services-hero" id="servicesHero">
+    <div class="container">
+        <div class="reveal">
+            <h1>Our Services</h1>
+            <p>Comprehensive, evidence-based psychiatric care tailored to your unique needs. Every treatment plan is personalized to help you achieve lasting wellness.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Services Full Grid -->
+<section class="section" id="servicesFull" style="padding-top: 0;">
+    <div class="container">
+        <div class="services-full-grid stagger-children reveal">
+            <div class="service-full-card">
+                <div class="card-icon">🗣️</div>
+                <h3>Individual Psychotherapy</h3>
+                <p>One-on-one therapy sessions using proven modalities to help you understand patterns, process emotions, and build resilience.</p>
+                <ul>
+                    <li>Cognitive Behavioral Therapy (CBT)</li>
+                    <li>Dialectical Behavior Therapy (DBT)</li>
+                    <li>Psychodynamic Therapy</li>
+                    <li>Mindfulness-Based Techniques</li>
+                    <li>45–60 minute sessions</li>
+                </ul>
+            </div>
+            <div class="service-full-card">
+                <div class="card-icon">💊</div>
+                <h3>Medication Management</h3>
+                <p>Expert evaluation, prescribing, and monitoring of psychiatric medications to find the right balance for your wellbeing.</p>
+                <ul>
+                    <li>Comprehensive Psychiatric Evaluation</li>
+                    <li>Antidepressant & Anti-Anxiety Medications</li>
+                    <li>Mood Stabilizers & ADHD Medications</li>
+                    <li>Ongoing Monitoring & Adjustments</li>
+                    <li>Side-Effect Management</li>
+                </ul>
+            </div>
+            <div class="service-full-card">
+                <div class="card-icon">🖥️</div>
+                <h3>Telehealth / Virtual Sessions</h3>
+                <p>Receive the same quality of care from the comfort and convenience of your own home via secure video sessions.</p>
+                <ul>
+                    <li>HIPAA-Compliant Video Platform</li>
+                    <li>Available Across All States Licensed</li>
+                    <li>Flexible Scheduling</li>
+                    <li>Same-Day Appointments Available</li>
+                    <li>Ideal for Follow-Up Visits</li>
+                </ul>
+            </div>
+            <div class="service-full-card">
+                <div class="card-icon">😰</div>
+                <h3>Anxiety & Depression Treatment</h3>
+                <p>Specialized care for anxiety disorders and depression using a combination of therapy and medication when appropriate.</p>
+                <ul>
+                    <li>Generalized Anxiety Disorder</li>
+                    <li>Social Anxiety & Phobias</li>
+                    <li>Major Depressive Disorder</li>
+                    <li>Panic Disorder</li>
+                    <li>Treatment-Resistant Depression</li>
+                </ul>
+            </div>
+            <div class="service-full-card">
+                <div class="card-icon">💔</div>
+                <h3>PTSD & Trauma Therapy</h3>
+                <p>Specialized trauma-informed care to help you process, heal, and move forward after traumatic experiences.</p>
+                <ul>
+                    <li>Trauma-Focused CBT</li>
+                    <li>EMDR (Eye Movement Desensitization)</li>
+                    <li>Complex PTSD Treatment</li>
+                    <li>Grief & Loss Counseling</li>
+                    <li>Veterans & First Responders</li>
+                </ul>
+            </div>
+            <div class="service-full-card">
+                <div class="card-icon">👨‍👩‍👧</div>
+                <h3>Child & Adolescent Psychiatry</h3>
+                <p>Age-appropriate psychiatric care for young people navigating behavioral, emotional, and developmental challenges.</p>
+                <ul>
+                    <li>ADHD Evaluation & Treatment</li>
+                    <li>Behavioral & Conduct Issues</li>
+                    <li>Childhood Anxiety & Depression</li>
+                    <li>School-Related Challenges</li>
+                    <li>Family Psychoeducation</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Insurance -->
+<section class="section section--alt" id="insurance">
+    <div class="container">
+        <div class="section-header reveal">
+            <h2>Insurance & Payment</h2>
+            <p>We work with most major insurance providers to make quality mental health care accessible and affordable.</p>
+        </div>
+        <div class="insurance-grid reveal">
+            <span class="insurance-badge">Blue Cross Blue Shield</span>
+            <span class="insurance-badge">Aetna</span>
+            <span class="insurance-badge">Cigna</span>
+            <span class="insurance-badge">UnitedHealthcare</span>
+            <span class="insurance-badge">Medicare</span>
+            <span class="insurance-badge">Humana</span>
+            <span class="insurance-badge">Tricare</span>
+            <span class="insurance-badge">Self-Pay / Sliding Scale</span>
+        </div>
+        <p style="text-align: center; margin-top: var(--space-xl); font-size: 0.93rem;" class="reveal">
+            Don't see your provider? <a href="{{ url_for('booking') }}"><strong>Contact us</strong></a> — we'll work with you to explore coverage options.
+        </p>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+    <div class="container">
+        <div class="section-header reveal">
+            <h2>Frequently Asked Questions</h2>
+            <p>Find answers to common questions about our practice and what to expect.</p>
+        </div>
+        <div class="faq-list reveal">
+            <div class="faq-item">
+                <button class="faq-question" id="faq-1">What should I expect during my first appointment?</button>
+                <div class="faq-answer">
+                    <p>Your first appointment is a comprehensive evaluation lasting 60–90 minutes. Dr. Mitchell will review your medical history, discuss your current concerns, and collaboratively develop a personalized treatment plan. This is a safe, confidential space — there are no wrong answers.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" id="faq-2">Do you prescribe medication on the first visit?</button>
+                <div class="faq-answer">
+                    <p>In some cases, medication may be discussed or started during the initial evaluation if clinically appropriate. However, Dr. Mitchell always takes a thorough approach, ensuring you fully understand the benefits, risks, and alternatives before starting any medication.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" id="faq-3">How do telehealth appointments work?</button>
+                <div class="faq-answer">
+                    <p>Telehealth appointments are conducted via a secure, HIPAA-compliant video platform. You'll receive a link before your appointment — simply click it from any device with a camera and internet connection. It's the same quality of care, just from wherever you're most comfortable.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" id="faq-4">What is your cancellation policy?</button>
+                <div class="faq-answer">
+                    <p>We ask for at least 24 hours' notice for cancellations or rescheduling. Late cancellations or no-shows may incur a fee. We understand emergencies happen and handle each situation with compassion.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" id="faq-5">Is everything I share confidential?</button>
+                <div class="faq-answer">
+                    <p>Absolutely. All information shared during sessions is strictly confidential and protected by HIPAA regulations and doctor-patient privilege. The only exceptions are situations involving imminent danger to yourself or others, as required by law.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" id="faq-6">Do you treat children and teenagers?</button>
+                <div class="faq-answer">
+                    <p>Yes, Dr. Mitchell provides psychiatric care for children and adolescents. Evaluations for younger patients often include collaboration with parents, teachers, and other caregivers to ensure a comprehensive understanding and effective treatment plan.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-banner" id="servicesCta">
+    <div class="container reveal">
+        <h2>Start Your Healing Journey</h2>
+        <p>Whether you're seeking therapy, medication management, or simply need someone to listen — we're here for you.</p>
+        <a href="{{ url_for('booking') }}" class="btn btn-primary btn-lg">📅 Book Your Appointment</a>
+    </div>
+</section>
+
+{% endblock %}

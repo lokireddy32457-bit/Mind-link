@@ -1,0 +1,36 @@
+# =========================================
+# Mind Link — Git Ignore
+# =========================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment variables
+.env
+
+# SQLite database (created at runtime on Render)
+*.db
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini

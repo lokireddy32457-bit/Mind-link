@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Mind Link Psychiatry</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Dashboard Navigation -->
+        <nav class="dashboard-nav">
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-logo">
+                <span class="nav-logo-icon">🧠</span>
+                Mind Link
+            </a>
+            <div class="dashboard-nav-right">
+                <a href="{{ url_for('home') }}">🌐 View Website</a>
+                <span style="color: rgba(255,255,255,0.5);">|</span>
+                <span style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">👤 Dr. {{ session.get('admin_username', 'Admin') }}</span>
+                <a href="{{ url_for('admin_logout') }}" class="btn btn-sm">Logout</a>
+            </div>
+        </nav>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages" id="flashMessages">
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}" onclick="this.remove()">
+                            {% if category == 'success' %}✓{% elif category == 'error' %}✕{% elif category == 'warning' %}⚠{% else %}ℹ{% endif %}
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Dashboard Body -->
+        <div class="dashboard-body">
+            <!-- Header -->
+            <div class="dashboard-header">
+                <h1>Appointment Dashboard</h1>
+                <p>Manage and review patient appointment requests.</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon total">📊</div>
+                    <div class="stat-info">
+                        <h3 class="stat-counter" data-target="{{ stats.total }}">0</h3>
+                        <p>Total Appointments</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon pending">⏳</div>
+                    <div class="stat-info">
+                        <h3 class="stat-counter" data-target="{{ stats.pending }}">0</h3>
+                        <p>Pending Review</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon approved">✅</div>
+                    <div class="stat-info">
+                        <h3 class="stat-counter" data-target="{{ stats.approved }}">0</h3>
+                        <p>Approved</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon cancelled">❌</div>
+                    <div class="stat-info">
+                        <h3 class="stat-counter" data-target="{{ stats.cancelled }}">0</h3>
+                        <p>Cancelled</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <form class="filters-bar" method="GET" action="{{ url_for('admin_dashboard') }}" id="filtersForm">
+                <div class="filter-group">
+                    <label for="filterStatus">Status</label>
+                    <select id="filterStatus" name="status">
+                        <option value="all" {{ 'selected' if filters.status == 'all' }}>All Statuses</option>
+                        <option value="pending" {{ 'selected' if filters.status == 'pending' }}>Pending</option>
+                        <option value="approved" {{ 'selected' if filters.status == 'approved' }}>Approved</option>
+                        <option value="cancelled" {{ 'selected' if filters.status == 'cancelled' }}>Cancelled</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filterService">Service Type</label>
+                    <select id="filterService" name="service_type">
+                        <option value="all" {{ 'selected' if filters.service_type == 'all' }}>All Services</option>
+                        <option value="initial_consultation" {{ 'selected' if filters.service_type == 'initial_consultation' }}>Initial Consultation</option>
+                        <option value="psychotherapy" {{ 'selected' if filters.service_type == 'psychotherapy' }}>Psychotherapy</option>
+                        <option value="medication_management" {{ 'selected' if filters.service_type == 'medication_management' }}>Medication Management</option>
+                        <option value="telehealth" {{ 'selected' if filters.service_type == 'telehealth' }}>Telehealth</option>
+                        <option value="anxiety_depression" {{ 'selected' if filters.service_type == 'anxiety_depression' }}>Anxiety & Depression</option>
+                        <option value="ptsd_trauma" {{ 'selected' if filters.service_type == 'ptsd_trauma' }}>PTSD & Trauma</option>
+                        <option value="child_adolescent" {{ 'selected' if filters.service_type == 'child_adolescent' }}>Child & Adolescent</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filterDateFrom">From Date</label>
+                    <input type="date" id="filterDateFrom" name="date_from" value="{{ filters.date_from }}">
+                </div>
+                <div class="filter-group">
+                    <label for="filterDateTo">To Date</label>
+                    <input type="date" id="filterDateTo" name="date_to" value="{{ filters.date_to }}">
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">Apply Filters</button>
+            </form>
+
+            <!-- Desktop Table -->
+            {% if appointments %}
+            <div class="table-container">
+                <table class="appointments-table" id="appointmentsTable">
+                    <thead>
+                        <tr>
+                            <th>Patient</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Service</th>
+                            <th>Date & Time</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for apt in appointments %}
+                        <tr id="row-{{ apt.id }}" data-id="{{ apt.id }}">
+                            <td><strong>{{ apt.name }}</strong></td>
+                            <td>{{ apt.email }}</td>
+                            <td>{{ apt.phone }}</td>
+                            <td>{{ apt.service_type | replace('_', ' ') | title }}</td>
+                            <td>{{ apt.preferred_date }}<br><small style="color: var(--color-text-muted);">{{ apt.preferred_time }}</small></td>
+                            <td>
+                                <span class="status-badge {{ apt.status }}" id="badge-{{ apt.id }}">
+                                    {% if apt.status == 'pending' %}⏳{% elif apt.status == 'approved' %}✅{% else %}❌{% endif %}
+                                    {{ apt.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons" id="actions-{{ apt.id }}">
+                                    {% if apt.status == 'pending' %}
+                                        <button class="btn-approve" onclick="approveAppointment({{ apt.id }})" title="Approve">✓ Approve</button>
+                                        <button class="btn-cancel-action" onclick="showCancelModal({{ apt.id }}, '{{ apt.name }}')" title="Cancel">✕ Cancel</button>
+                                    {% elif apt.status == 'approved' %}
+                                        <button class="btn-cancel-action" onclick="showCancelModal({{ apt.id }}, '{{ apt.name }}')" title="Cancel">✕ Cancel</button>
+                                    {% else %}
+                                        <span style="color: var(--color-text-light); font-size: 0.85rem;">No actions</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Cards -->
+            <div class="appointment-cards-mobile">
+                {% for apt in appointments %}
+                <div class="appointment-card-mobile" id="card-{{ apt.id }}">
+                    <div class="card-header-row">
+                        <strong>{{ apt.name }}</strong>
+                        <span class="status-badge {{ apt.status }}" id="mobile-badge-{{ apt.id }}">
+                            {% if apt.status == 'pending' %}⏳{% elif apt.status == 'approved' %}✅{% else %}❌{% endif %}
+                            {{ apt.status }}
+                        </span>
+                    </div>
+                    <div class="card-detail">
+                        <span>Email</span>
+                        <span>{{ apt.email }}</span>
+                    </div>
+                    <div class="card-detail">
+                        <span>Phone</span>
+                        <span>{{ apt.phone }}</span>
+                    </div>
+                    <div class="card-detail">
+                        <span>Service</span>
+                        <span>{{ apt.service_type | replace('_', ' ') | title }}</span>
+                    </div>
+                    <div class="card-detail">
+                        <span>Date</span>
+                        <span>{{ apt.preferred_date }} at {{ apt.preferred_time }}</span>
+                    </div>
+                    <div class="action-buttons" id="mobile-actions-{{ apt.id }}">
+                        {% if apt.status == 'pending' %}
+                            <button class="btn-approve" onclick="approveAppointment({{ apt.id }})" title="Approve">✓ Approve</button>
+                            <button class="btn-cancel-action" onclick="showCancelModal({{ apt.id }}, '{{ apt.name }}')" title="Cancel">✕ Cancel</button>
+                        {% elif apt.status == 'approved' %}
+                            <button class="btn-cancel-action" onclick="showCancelModal({{ apt.id }}, '{{ apt.name }}')" title="Cancel">✕ Cancel</button>
+                        {% else %}
+                            <span style="color: var(--color-text-light); font-size: 0.85rem;">No actions</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% else %}
+            <div class="table-container">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📋</div>
+                    <h3>No Appointments Found</h3>
+                    <p>There are no appointment requests matching your current filters. New requests will appear here automatically.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="cancelModal">
+        <div class="modal">
+            <div class="modal-icon">⚠️</div>
+            <h3>Cancel Appointment?</h3>
+            <p>Are you sure you want to cancel the appointment for <strong id="cancelPatientName"></strong>? This action can be undone by re-approving.</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeCancelModal()">Keep It</button>
+                <button class="btn btn-primary" id="confirmCancelBtn" style="background: var(--color-error); box-shadow: none;">Yes, Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

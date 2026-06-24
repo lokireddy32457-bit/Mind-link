@@ -1,0 +1,454 @@
+{% extends "base.html" %}
+
+{% block title %}Mind Link Psychiatry — Compassionate Mental Health Care{% endblock %}
+{% block description %}Mind Link Psychiatry offers compassionate, evidence-based mental health care by Dr. Sarah Mitchell, MD. Book your appointment today for psychotherapy, medication management, and telehealth services.{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero" id="hero">
+    <div class="hero-bg">
+        <img src="{{ url_for('static', filename='images/hero-bg.png') }}" alt="Calming abstract background" loading="eager">
+    </div>
+    <div class="container">
+        <div class="hero-grid">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    ✨ Now Accepting New Patients
+                </div>
+                <h1>Expert Psychiatric Care for a <span>Healthier Mind</span></h1>
+                <p>Compassionate, confidential and expert care for depression, anxiety, stress, addiction, ADHD and other mental health concerns.</p>
+                <div class="hero-actions">
+                    <a href="{{ url_for('booking') }}" class="btn btn-accent btn-lg" id="heroCta">
+                        📅 Book Appointment
+                    </a>
+                    <a href="#" class="btn btn-lg whatsapp-hero-btn" id="heroWhatsapp">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        WhatsApp Now
+                    </a>
+                </div>
+                <!-- Hero Stats Bar -->
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">17+</span>
+                        <p class="hero-stat-label">Years Experience</p>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">1000+</span>
+                        <p class="hero-stat-label">Patients Helped</p>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">Online &amp; In‑Clinic</span>
+                        <p class="hero-stat-label">Consultations</p>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">Personalized</span>
+                        <p class="hero-stat-label">Care for Every Patient</p>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="hero-image-wrapper">
+                    <img src="{{ url_for('static', filename='images/doctor-hero.png') }}" alt="Dr. Sarah Mitchell — Board-Certified Psychiatrist" loading="eager">
+                    <div class="hero-image-glow"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Conditions We Treat -->
+<section class="section" id="conditionsSection">
+    <div class="container">
+        <div class="section-header reveal">
+            <h2>Conditions We Treat</h2>
+            <p>Our practice provides expert care for a wide range of mental health conditions.</p>
+        </div>
+        <div class="conditions-grid stagger-children reveal">
+            <div class="condition-card">
+                <div class="condition-icon">😞</div>
+                <h4>Depression</h4>
+            </div>
+            <div class="condition-card">
+                <div class="condition-icon">😰</div>
+                <h4>Anxiety</h4>
+            </div>
+            <div class="condition-card">
+                <div class="condition-icon">🔄</div>
+                <h4>OCD</h4>
+            </div>
+            <div class="condition-card">
+                <div class="condition-icon">🧩</div>
+                <h4>ADHD</h4>
+            </div>
+            <div class="condition-card">
+                <div class="condition-icon">🎭</div>
+                <h4>Bipolar Disorder</h4>
+            </div>
+            <div class="condition-card">
+                <div class="condition-icon">🚫</div>
+                <h4>Addiction</h4>
+            </div>
+            <div class="condition-card">
+                <div class="condition-icon">🌙</div>
+                <h4>Insomnia</h4>
+            </div>
+            <div class="condition-card">
+                <div class="condition-icon">🧠</div>
+                <h4>Schizophrenia</h4>
+            </div>
+            <div class="condition-card">
+                <div class="condition-icon">🔥</div>
+                <h4>Stress &amp; Burnout</h4>
+            </div>
+            <div class="condition-card">
+                <div class="condition-icon">💔</div>
+                <h4>PTSD &amp; Trauma</h4>
+            </div>
+        </div>
+        <div class="conditions-cta reveal">
+            <a href="{{ url_for('services') }}" class="btn btn-primary">View All Conditions</a>
+        </div>
+    </div>
+</section>
+
+<!-- About the Doctor -->
+<section class="section doctor-intro" id="doctorIntro">
+    <div class="container">
+        <div class="section-header reveal">
+            <p class="section-label">ABOUT OUR DOCTOR</p>
+            <h2>Dr. Sarah Mitchell</h2>
+            <p>MBBS, DPM (Psychiatry) — Neuro Psychiatrist</p>
+        </div>
+        <div class="doctor-intro-content reveal">
+            <div class="doctor-intro-image">
+                <img src="{{ url_for('static', filename='images/doctor-portrait.png') }}" alt="Dr. Sarah Mitchell, MD — Board-Certified Psychiatrist">
+                <div class="doctor-intro-badge">🩺 Board Certified</div>
+            </div>
+            <div class="doctor-intro-text">
+                <h3>Dr. Sarah Mitchell, <span>MD</span></h3>
+                <p class="doctor-credential">Board-Certified Psychiatrist &bull; 17+ Years of Experience</p>
+                <div class="doctor-summary">
+                    <p>With over 17+ years of experience, Dr. Sarah Mitchell provides comprehensive and individualized psychiatric care for patients across all age groups.</p>
+                </div>
+                <div class="doctor-specialties-grid">
+                    <div class="doctor-specialty-item">
+                        <span class="specialty-dot"></span>
+                        Adult Psychiatry
+                    </div>
+                    <div class="doctor-specialty-item">
+                        <span class="specialty-dot"></span>
+                        Mood Disorders
+                    </div>
+                    <div class="doctor-specialty-item">
+                        <span class="specialty-dot"></span>
+                        Child &amp; Adolescent Psychiatry
+                    </div>
+                    <div class="doctor-specialty-item">
+                        <span class="specialty-dot"></span>
+                        Anxiety Disorders
+                    </div>
+                    <div class="doctor-specialty-item">
+                        <span class="specialty-dot"></span>
+                        Addiction Psychiatry
+                    </div>
+                    <div class="doctor-specialty-item">
+                        <span class="specialty-dot"></span>
+                        Psychotherapy
+                    </div>
+                </div>
+                <div class="doctor-intro-actions">
+                    <a href="{{ url_for('about') }}" class="btn btn-primary">Know More About Dr. Mitchell</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Mind Link -->
+<section class="section" id="whyChoose">
+    <div class="container">
+        <div class="section-header reveal">
+            <h2>Why Choose Mind Link Psychiatry?</h2>
+            <p>We go beyond treatment — we build lasting relationships centered on your well-being.</p>
+        </div>
+        <div class="why-choose-grid stagger-children reveal">
+            <div class="why-card">
+                <div class="why-icon">💚</div>
+                <h4>Compassionate Care</h4>
+                <p>Every patient is treated with empathy, respect, and individualized attention in a safe environment.</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon">🎯</div>
+                <h4>Personalized Treatment</h4>
+                <p>Tailored treatment plans designed to fit your unique needs, history, and recovery goals.</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon">🔒</div>
+                <h4>Confidential &amp; Safe</h4>
+                <p>Your privacy is our top priority. All sessions and records are fully HIPAA-compliant.</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon">🌿</div>
+                <h4>Holistic Approach</h4>
+                <p>We address mind, body, and lifestyle factors to guide you toward lasting mental wellness.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Google Reviews -->
+<section class="section google-reviews" id="googleReviews">
+    <div class="container">
+        <div class="section-header reveal">
+            <h2>What Our Patients Say</h2>
+            <p>Real reviews from verified patients on Google.</p>
+        </div>
+
+        <!-- Google Rating Badge -->
+        <div class="google-rating-badge reveal">
+            <div class="google-rating-left">
+                <svg class="google-logo" viewBox="0 0 24 24" width="32" height="32">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                <div>
+                    <span class="google-rating-label">Google Reviews</span>
+                    <div class="google-rating-score">
+                        <span class="google-rating-number">4.9</span>
+                        <div class="google-stars">
+                            <span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span>
+                        </div>
+                        <span class="google-rating-count">523 reviews</span>
+                    </div>
+                </div>
+            </div>
+            <a href="https://www.google.com/search?q=dr+vikram+akavaram#lrd=0x3bcb9296ca043e3d:0x536e258a590591bf,3,,,," target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm google-write-review">
+                Write a Review
+            </a>
+        </div>
+
+        <!-- Reviews Carousel -->
+        <div class="reviews-carousel reveal" id="reviewsCarousel">
+            <button class="reviews-nav reviews-nav-prev" id="reviewsPrev" aria-label="Previous reviews">‹</button>
+            <div class="reviews-track-wrapper">
+                <div class="reviews-track" id="reviewsTrack">
+
+                    <!-- Review 1 -->
+                    <div class="review-card">
+                        <div class="review-card-header">
+                            <div class="review-avatar" style="background: #1a73e8;">J</div>
+                            <div>
+                                <p class="review-name">Jhangir Jhangir</p>
+                                <p class="review-meta">1 review</p>
+                            </div>
+                            <svg class="review-google-icon" viewBox="0 0 24 24" width="20" height="20"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                        </div>
+                        <div class="review-stars">
+                            <span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span>
+                            <span class="review-time">4 months ago</span>
+                        </div>
+                        <p class="review-text">I came here for my wife behaviour issue I felt dr. Vikram sir explained my treatment plan clearly. Now her behaviour became good after treatment. For professionalism 4.5/5, empathy 4.5/5 and communication style 5/5. Thank you so much for bringing her to normal state.</p>
+                    </div>
+
+                    <!-- Review 2 -->
+                    <div class="review-card">
+                        <div class="review-card-header">
+                            <div class="review-avatar" style="background: #e8710a;">A</div>
+                            <div>
+                                <p class="review-name">Ajit Kumar</p>
+                                <p class="review-meta">2 reviews · 2 photos</p>
+                            </div>
+                            <svg class="review-google-icon" viewBox="0 0 24 24" width="20" height="20"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                        </div>
+                        <div class="review-stars">
+                            <span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span>
+                            <span class="review-time">2 months ago</span>
+                        </div>
+                        <p class="review-text">Words are not enough to express how thankful I am to Dr. Vikram sir. We are going through a very stressful and confusing time, but his calm approach and genuine care gave us strength and hope.</p>
+                    </div>
+
+                    <!-- Review 3 -->
+                    <div class="review-card">
+                        <div class="review-card-header">
+                            <div class="review-avatar" style="background: #0d652d;">R</div>
+                            <div>
+                                <p class="review-name">Rakim Sekh</p>
+                                <p class="review-meta">2 reviews</p>
+                            </div>
+                            <svg class="review-google-icon" viewBox="0 0 24 24" width="20" height="20"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                        </div>
+                        <div class="review-stars">
+                            <span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span>
+                            <span class="review-time">3 months ago</span>
+                        </div>
+                        <p class="review-text">I recently had treatment with dr. Vikram sir which was very very good and effective, from starting of my treatment to ending of the treatment dr Vikram sir was very patiently treated. I felt very comfortable and I will highly recommend dr. Vikram sir for anyone in need of psychiatry treatment.</p>
+                    </div>
+
+                    <!-- Review 4 -->
+                    <div class="review-card">
+                        <div class="review-card-header">
+                            <div class="review-avatar" style="background: #c5221f;">S</div>
+                            <div>
+                                <p class="review-name">Sabinl St</p>
+                                <p class="review-meta">1 review</p>
+                            </div>
+                            <svg class="review-google-icon" viewBox="0 0 24 24" width="20" height="20"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                        </div>
+                        <div class="review-stars">
+                            <span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span>
+                            <span class="review-time">1 month ago</span>
+                        </div>
+                        <p class="review-text">Good treatment. I know dr Vikram sir very well he treated my brother too he became good. I am also taking treatments with dr Vikram sir. I got cured and doing great.</p>
+                    </div>
+
+                    <!-- Review 5 -->
+                    <div class="review-card">
+                        <div class="review-card-header">
+                            <div class="review-avatar" style="background: #7b1fa2;">K</div>
+                            <div>
+                                <p class="review-name">KT Attitude Boy</p>
+                                <p class="review-meta">3 reviews</p>
+                            </div>
+                            <svg class="review-google-icon" viewBox="0 0 24 24" width="20" height="20"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                        </div>
+                        <div class="review-stars">
+                            <span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span>
+                            <span class="review-time">3 months ago</span>
+                        </div>
+                        <p class="review-text">Absolutely amazing doctor. I have been with him for over 5 years, he has helped me through come out from my toughest times. Dr. Vikram sir was my incredible support, he was such a best doctor who made me to feel more confident and clear mindset.</p>
+                    </div>
+
+                    <!-- Review 6 -->
+                    <div class="review-card">
+                        <div class="review-card-header">
+                            <div class="review-avatar" style="background: #e65100;">S</div>
+                            <div>
+                                <p class="review-name">Srirath Ghosh</p>
+                                <p class="review-meta">1 review</p>
+                            </div>
+                            <svg class="review-google-icon" viewBox="0 0 24 24" width="20" height="20"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                        </div>
+                        <div class="review-stars">
+                            <span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span>
+                            <span class="review-time">2 months ago</span>
+                        </div>
+                        <p class="review-text">My name is Srikarsh, we came with so much fear and confusions in our hearts. But the way he spoke to us, with so much patience and kindness, gave us new hope again. He didn't just treat the patient, he supported our whole family emotionally.</p>
+                    </div>
+
+                    <!-- Review 7 -->
+                    <div class="review-card">
+                        <div class="review-card-header">
+                            <div class="review-avatar" style="background: #00897b;">Y</div>
+                            <div>
+                                <p class="review-name">Yadia Cdikondelu</p>
+                                <p class="review-meta">1 review</p>
+                            </div>
+                            <svg class="review-google-icon" viewBox="0 0 24 24" width="20" height="20"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                        </div>
+                        <div class="review-stars">
+                            <span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span><span class="star filled">★</span>
+                            <span class="review-time">4 months ago</span>
+                        </div>
+                        <p class="review-text">I visited dr Vikram sir for my husband. He is failing to self, not getting proper sleep and not working for long time. Vikram sir was simple and calm in his behavior. We can freely interact with him.</p>
+                    </div>
+
+                </div>
+            </div>
+            <button class="reviews-nav reviews-nav-next" id="reviewsNext" aria-label="Next reviews">›</button>
+        </div>
+
+    </div>
+</section>
+
+<!-- Online Consultation Section -->
+<section class="section online-consult-section" id="onlineConsult">
+    <div class="container">
+        <div class="online-consult-grid reveal">
+            <div class="online-consult-text">
+                <p class="section-label">ONLINE CONSULTATION</p>
+                <h2>Consult From Anywhere, Anytime</h2>
+                <ul class="consult-features">
+                    <li>
+                        <span class="consult-check">✓</span>
+                        Secure &amp; private video consultations
+                    </li>
+                    <li>
+                        <span class="consult-check">✓</span>
+                        Follow-up sessions
+                    </li>
+                    <li>
+                        <span class="consult-check">✓</span>
+                        Convenient &amp; easy to access
+                    </li>
+                    <li>
+                        <span class="consult-check">✓</span>
+                        Same-day appointments available
+                    </li>
+                </ul>
+                <a href="{{ url_for('booking') }}" class="btn btn-accent btn-lg">Book Online Consultation</a>
+            </div>
+            <div class="online-consult-image">
+                <img src="{{ url_for('static', filename='images/online-consultation.png') }}" alt="Online video consultation with a psychiatrist" loading="lazy">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mental Health Articles -->
+<section class="section section--alt" id="articlesSection">
+    <div class="container">
+        <div class="section-header reveal">
+            <h2>Latest Mental Health Articles</h2>
+            <p>Stay informed with expert insights on mental health and wellness.</p>
+        </div>
+        <div class="articles-grid stagger-children reveal">
+            <article class="article-card">
+                <div class="article-image">
+                    <img src="{{ url_for('static', filename='images/article-depression.png') }}" alt="Understanding depression signs and symptoms" loading="lazy">
+                </div>
+                <div class="article-content">
+                    <h4>Early Signs of Depression You Shouldn't Ignore</h4>
+                    <p>Learn to recognize the warning signs of depression and when to seek professional help for yourself or a loved one.</p>
+                    <a href="{{ url_for('services') }}" class="learn-more">Read More</a>
+                </div>
+            </article>
+            <article class="article-card">
+                <div class="article-image">
+                    <img src="{{ url_for('static', filename='images/article-adhd.png') }}" alt="ADHD in adults symptoms and treatment" loading="lazy">
+                </div>
+                <div class="article-content">
+                    <h4>ADHD in Adults: Symptoms, Causes &amp; Treatment</h4>
+                    <p>ADHD isn't just a childhood condition. Discover how it manifests in adults and the treatment options available.</p>
+                    <a href="{{ url_for('services') }}" class="learn-more">Read More</a>
+                </div>
+            </article>
+            <article class="article-card">
+                <div class="article-image">
+                    <img src="{{ url_for('static', filename='images/article-anxiety.png') }}" alt="Managing anxiety naturally through mindfulness" loading="lazy">
+                </div>
+                <div class="article-content">
+                    <h4>How to Manage Anxiety Naturally</h4>
+                    <p>Practical strategies for managing anxiety day-to-day, from mindfulness to lifestyle changes that make a real difference.</p>
+                    <a href="{{ url_for('services') }}" class="learn-more">Read More</a>
+                </div>
+            </article>
+        </div>
+        <div class="articles-cta reveal">
+            <a href="{{ url_for('services') }}" class="btn btn-secondary">View All Articles</a>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Banner -->
+<section class="cta-banner" id="ctaBanner">
+    <div class="container reveal">
+        <h2>Ready to Take the First Step?</h2>
+        <p>Reaching out is the hardest part — and you've already shown incredible strength by considering it. Let us walk with you on this journey.</p>
+        <a href="{{ url_for('booking') }}" class="btn btn-primary btn-lg">📅 Schedule Your Consultation</a>
+    </div>
+</section>
+
+{% endblock %}

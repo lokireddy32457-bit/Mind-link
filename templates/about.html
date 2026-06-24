@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}About Dr. Sarah Mitchell — Mind Link Psychiatry{% endblock %}
+{% block description %}Learn about Dr. Sarah Mitchell, MD — a board-certified psychiatrist with over 15 years of experience in compassionate, evidence-based mental health care.{% endblock %}
+
+{% block content %}
+
+<!-- About Hero -->
+<section class="section" id="aboutHero">
+    <div class="container">
+        <div class="about-hero">
+            <div class="about-image reveal">
+                <img src="{{ url_for('static', filename='images/doctor-portrait.png') }}" alt="Dr. Sarah Mitchell, MD — Board-Certified Psychiatrist">
+            </div>
+            <div class="about-text reveal">
+                <h1>Dr. Sarah Mitchell, MD</h1>
+                <p class="credential">Board-Certified Psychiatrist &bull; 15+ Years of Experience</p>
+                <p>Dr. Sarah Mitchell is a compassionate and experienced psychiatrist dedicated to helping individuals achieve lasting mental wellness. With a patient-centered approach, she combines the latest advancements in psychiatric medicine with genuine empathy to provide care that truly makes a difference.</p>
+                <p>After completing her medical degree at Johns Hopkins University School of Medicine and her psychiatry residency at Massachusetts General Hospital, Dr. Mitchell went on to specialize in mood disorders, anxiety, and trauma-related conditions.</p>
+                <a href="{{ url_for('booking') }}" class="btn btn-primary">📅 Book a Consultation</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Specialties -->
+<section class="section section--alt" id="specialties">
+    <div class="container">
+        <div class="section-header reveal">
+            <h2>Areas of Expertise</h2>
+            <p>Dr. Mitchell specializes in a wide range of psychiatric conditions, providing tailored treatment plans for each patient.</p>
+        </div>
+        <div class="specialties-grid reveal" style="justify-content: center;">
+            <span class="specialty-tag">🧠 Depression & Mood Disorders</span>
+            <span class="specialty-tag">😰 Anxiety & Panic Disorders</span>
+            <span class="specialty-tag">💔 PTSD & Trauma Recovery</span>
+            <span class="specialty-tag">🔄 OCD & Related Disorders</span>
+            <span class="specialty-tag">🎯 ADHD & Focus Issues</span>
+            <span class="specialty-tag">😴 Insomnia & Sleep Disorders</span>
+            <span class="specialty-tag">💊 Medication Management</span>
+            <span class="specialty-tag">🗣️ Cognitive Behavioral Therapy</span>
+            <span class="specialty-tag">👨‍👩‍👧 Child & Adolescent Psychiatry</span>
+            <span class="specialty-tag">🏠 Telehealth Services</span>
+        </div>
+    </div>
+</section>
+
+<!-- Philosophy -->
+<section class="section" id="philosophy">
+    <div class="container">
+        <div class="section-header reveal">
+            <h2>Our Philosophy</h2>
+            <p>At Mind Link, we believe that mental health care should be accessible, compassionate, and rooted in science.</p>
+        </div>
+        <div class="philosophy stagger-children reveal">
+            <div class="card philosophy-card">
+                <div class="card-icon">🤝</div>
+                <h3>Patient-First Approach</h3>
+                <p>Every treatment plan is built around you — your story, your goals, and your comfort. We listen first and treat collaboratively.</p>
+            </div>
+            <div class="card philosophy-card">
+                <div class="card-icon">🔬</div>
+                <h3>Science-Driven Care</h3>
+                <p>We integrate the latest psychiatric research and proven therapeutic modalities to deliver treatments that truly work.</p>
+            </div>
+            <div class="card philosophy-card">
+                <div class="card-icon">🌱</div>
+                <h3>Holistic Wellness</h3>
+                <p>Mental health is more than symptoms. We address the whole person — mind, body, and lifestyle — for sustained recovery.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Credentials & Education -->
+<section class="section section--alt" id="credentials">
+    <div class="container">
+        <div class="section-header reveal">
+            <h2>Education & Credentials</h2>
+            <p>Dr. Mitchell's extensive training and affiliations ensure the highest standard of psychiatric care.</p>
+        </div>
+        <div class="credentials-grid stagger-children reveal">
+            <div class="credential-item">
+                <div class="credential-icon">🎓</div>
+                <div>
+                    <h4>Johns Hopkins University</h4>
+                    <p>Doctor of Medicine (MD)</p>
+                </div>
+            </div>
+            <div class="credential-item">
+                <div class="credential-icon">🏥</div>
+                <div>
+                    <h4>Massachusetts General Hospital</h4>
+                    <p>Psychiatry Residency</p>
+                </div>
+            </div>
+            <div class="credential-item">
+                <div class="credential-icon">📋</div>
+                <div>
+                    <h4>American Board of Psychiatry</h4>
+                    <p>Board Certified — Psychiatry</p>
+                </div>
+            </div>
+            <div class="credential-item">
+                <div class="credential-icon">🏛️</div>
+                <div>
+                    <h4>American Psychiatric Association</h4>
+                    <p>Distinguished Fellow</p>
+                </div>
+            </div>
+            <div class="credential-item">
+                <div class="credential-icon">📖</div>
+                <div>
+                    <h4>Continuing Medical Education</h4>
+                    <p>200+ CME Hours Annually</p>
+                </div>
+            </div>
+            <div class="credential-item">
+                <div class="credential-icon">🔒</div>
+                <div>
+                    <h4>HIPAA Compliant Practice</h4>
+                    <p>Secure, Private, Confidential</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-banner" id="aboutCta">
+    <div class="container reveal">
+        <h2>Meet Dr. Mitchell in Person</h2>
+        <p>Schedule your initial consultation and discover a partner in your journey to mental wellness.</p>
+        <a href="{{ url_for('booking') }}" class="btn btn-primary btn-lg">📅 Book Your First Visit</a>
+    </div>
+</section>
+
+{% endblock %}
