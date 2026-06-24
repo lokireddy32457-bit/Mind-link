@@ -9,26 +9,20 @@ services:
   - type: web
     name: mind-link
     runtime: python
-    region: oregon               # Change to your preferred region
+    region: oregon
+    plan: free
 
     # Build & Start commands
     buildCommand: |
       pip install --upgrade pip &&
-      pip install -r requirements.txt &&
-      python -c "from database import init_db; from auth import create_default_admin; init_db(); create_default_admin()"
+      pip install -r requirements.txt
     startCommand: gunicorn --config gunicorn.conf.py wsgi:app
 
     # Environment variables
     envVars:
       - key: SECRET_KEY
-        generateValue: true      # Render generates a secure random value
+        generateValue: true
       - key: PYTHON_VERSION
         value: "3.11.9"
       - key: FLASK_ENV
         value: production
-
-    # Persistent disk for SQLite database
-    disk:
-      name: mind-link-data
-      mountPath: /opt/render/project/src/data
-      sizeGB: 1                  # 1 GB is plenty for SQLite

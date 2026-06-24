@@ -7,11 +7,7 @@ import sqlite3
 import os
 from datetime import datetime
 
-# Use persistent disk on Render, local directory for development
-if os.environ.get('RENDER'):
-    DATABASE = '/opt/render/project/src/data/mind_link.db'
-else:
-    DATABASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mind_link.db')
+DATABASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mind_link.db')
 
 
 def get_db():
