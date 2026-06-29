@@ -323,18 +323,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 submitBtn.textContent = '📧 Sending notification...';
                 submitBtn.style.opacity = '0.7';
 
+                // Safety net: always submit within 5 seconds even if EmailJS hangs
+                var submitted = false;
+                function doSubmit() {
+                    if (!submitted) {
+                        submitted = true;
+                        bookingForm.submit();
+                    }
+                }
+                var safetyTimer = setTimeout(doSubmit, 5000);
+
                 sendAppointmentEmail(bookingForm)
                     .then(function () {
-                        // Restore button and submit form normally to the server
+                        clearTimeout(safetyTimer);
                         submitBtn.textContent = '✅ Submitting...';
-                        bookingForm.submit();
+                        doSubmit();
                     })
                     .catch(function () {
-                        // Even if email fails, still submit the form to the server
-                        submitBtn.textContent = originalText;
-                        submitBtn.disabled = false;
-                        submitBtn.style.opacity = '1';
-                        bookingForm.submit();
+                        clearTimeout(safetyTimer);
+                        doSubmit();
                     });
             }
         });
