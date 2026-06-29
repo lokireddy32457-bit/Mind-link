@@ -6,6 +6,10 @@ Serves public pages and admin dashboard with appointment management.
 
 import os
 import secrets
+from dotenv import load_dotenv
+
+load_dotenv()  # Load .env file into environment variables
+
 from flask import (
     Flask, render_template, request, redirect,
     url_for, flash, session, jsonify
@@ -19,6 +23,7 @@ from database import (
 from auth import (
     login_required, authenticate_admin, create_default_admin
 )
+from email_utils import send_appointment_email
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', secrets.token_hex(32))
@@ -232,25 +237,39 @@ def admin_dashboard():
 @app.route('/admin/appointments/<int:appointment_id>/approve', methods=['POST'])
 @login_required
 def approve_appointment(appointment_id):
-    """Approve an appointment."""
+    """Approve an appointment and notify the patient via email."""
     appointment = get_appointment_by_id(appointment_id)
     if not appointment:
         return jsonify({'success': False, 'message': 'Appointment not found.'}), 404
 
     update_appointment_status(appointment_id, 'approved')
-    return jsonify({'success': True, 'message': 'Appointment approved successfully.', 'new_status': 'approved'})
+
+    # Send confirmation email to patient
+    email_sent = send_appointment_email(appointment, 'approved')
+    message = 'Appointment approved successfully.'
+    if email_sent:
+        message += ' A confirmation email has been sent to the patient.'
+
+    return jsonify({'success': True, 'message': message, 'new_status': 'approved', 'email_sent': email_sent})
 
 
 @app.route('/admin/appointments/<int:appointment_id>/cancel', methods=['POST'])
 @login_required
 def cancel_appointment(appointment_id):
-    """Cancel an appointment."""
+    """Cancel an appointment and notify the patient via email."""
     appointment = get_appointment_by_id(appointment_id)
     if not appointment:
         return jsonify({'success': False, 'message': 'Appointment not found.'}), 404
 
     update_appointment_status(appointment_id, 'cancelled')
-    return jsonify({'success': True, 'message': 'Appointment cancelled.', 'new_status': 'cancelled'})
+
+    # Send cancellation email to patient
+    email_sent = send_appointment_email(appointment, 'cancelled')
+    message = 'Appointment cancelled.'
+    if email_sent:
+        message += ' A cancellation email has been sent to the patient.'
+
+    return jsonify({'success': True, 'message': message, 'new_status': 'cancelled', 'email_sent': email_sent})
 
 
 @app.route('/admin/api/stats')
