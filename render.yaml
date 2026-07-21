@@ -1,28 +1,63 @@
 # =========================================
 # Mind Link — Render Blueprint (IaC)
 # =========================================
-# This file lets Render auto-configure your
-# service when you connect your repo.
+# This file lets Render auto-configure your service when you connect your repo.
 # Docs: https://docs.render.com/blueprint-spec
+#
+# IMPORTANT: Do NOT put real secret values (passwords, keys) in this file.
+# This file is committed to git. Set secrets in the Render dashboard instead.
+# Only keys with `generateValue: true` or `sync: false` are safe here.
 
 services:
   - type: web
     name: mind-link
     runtime: python
     region: oregon
-    plan: free
+    plan: free             # Supabase handles the database — no paid disk needed
 
     # Build & Start commands
-    buildCommand: |
-      pip install --upgrade pip &&
-      pip install -r requirements.txt
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
     startCommand: gunicorn --config gunicorn.conf.py wsgi:app
 
     # Environment variables
     envVars:
       - key: SECRET_KEY
-        generateValue: true
-      - key: PYTHON_VERSION
-        value: "3.11.9"
+        generateValue: true          # Render auto-generates a secure random value
+
       - key: FLASK_ENV
         value: production
+
+      - key: FLASK_DEBUG
+        value: "0"
+
+      - key: SITE_URL
+        value: https://your-domain.onrender.com   # ← Replace with your actual Render URL
+
+      # ── Supabase PostgreSQL ───────────────────────────────────────────────────
+      # Set the full connection string in the Render dashboard (Environment tab).
+      # Format: postgresql://postgres:[PASSWORD]@db.xxxx.supabase.co:5432/postgres
+      - key: DATABASE_URL
+        sync: false
+
+      # ── Email / SMTP ─────────────────────────────────────────────────────────
+      # Set the values below in the Render dashboard (Environment tab) — NOT here.
+      - key: SMTP_HOST
+        sync: false
+
+      - key: SMTP_PORT
+        sync: false
+
+      - key: SMTP_USER
+        sync: false
+
+      - key: SMTP_PASSWORD
+        sync: false
+
+      - key: FROM_NAME
+        sync: false
+
+      - key: FROM_EMAIL
+        sync: false
+
+      - key: PYTHON_VERSION
+        value: "3.11.9"

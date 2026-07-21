@@ -24,13 +24,16 @@ env/
 *.swo
 *~
 
-# Environment variables
+# Environment variables (contains real secrets — never commit)
 .env
 
-# SQLite database (created at runtime on Render)
+# SQLite database (created at runtime — use Render Disk for persistence)
 *.db
 
 # OS files
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Dev utilities (not needed in production)
+check_db.py

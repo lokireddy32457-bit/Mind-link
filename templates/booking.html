@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}Book an Appointment — Mind Link Psychiatry{% endblock %}
-{% block description %}Schedule your appointment at Mind Link Psychiatry. Contact us for psychotherapy, medication management, telehealth sessions, and more. We're here to help.{% endblock %}
+{% block title %}Book an Appointment — HELIUM MIND CENTRE{% endblock %}
+{% block description %}Schedule your appointment at HELIUM MIND CENTRE. Contact us for psychotherapy, medication management, telehealth sessions, and more. We're here to help.{% endblock %}
 
 {% block extra_head %}
     <!-- EmailJS SDK -->
@@ -65,14 +65,16 @@
                                 <label for="service_type">Service Type <span class="required">*</span></label>
                                 <select id="service_type" name="service_type" required>
                                     <option value="">Select a service...</option>
-                                    <option value="initial_consultation" {{ 'selected' if form_data and form_data.service_type == 'initial_consultation' else '' }}>Initial Consultation</option>
-                                    <option value="psychotherapy" {{ 'selected' if form_data and form_data.service_type == 'psychotherapy' else '' }}>Individual Psychotherapy</option>
-                                    <option value="medication_management" {{ 'selected' if form_data and form_data.service_type == 'medication_management' else '' }}>Medication Management</option>
-                                    <option value="telehealth" {{ 'selected' if form_data and form_data.service_type == 'telehealth' else '' }}>Telehealth Session</option>
-                                    <option value="anxiety_depression" {{ 'selected' if form_data and form_data.service_type == 'anxiety_depression' else '' }}>Anxiety & Depression Treatment</option>
-                                    <option value="ptsd_trauma" {{ 'selected' if form_data and form_data.service_type == 'ptsd_trauma' else '' }}>PTSD & Trauma Therapy</option>
-                                    <option value="child_adolescent" {{ 'selected' if form_data and form_data.service_type == 'child_adolescent' else '' }}>Child & Adolescent Psychiatry</option>
-                                    <option value="other" {{ 'selected' if form_data and form_data.service_type == 'other' else '' }}>Other</option>
+                                    <option value="initial_consultation" {{ 'selected' if (form_data and form_data.service_type == 'initial_consultation') or preselect_service == 'initial_consultation' else '' }}>Initial Consultation</option>
+                                    <option value="psychotherapy" {{ 'selected' if (form_data and form_data.service_type == 'psychotherapy') or preselect_service == 'psychotherapy' else '' }}>Individual Psychotherapy</option>
+                                    <option value="medication_management" {{ 'selected' if (form_data and form_data.service_type == 'medication_management') or preselect_service == 'medication_management' else '' }}>Medication Management</option>
+                                    <option value="telehealth" {{ 'selected' if (form_data and form_data.service_type == 'telehealth') or preselect_service == 'telehealth' else '' }}>Telehealth Session</option>
+                                    <option value="anxiety_depression" {{ 'selected' if (form_data and form_data.service_type == 'anxiety_depression') or preselect_service == 'anxiety_depression' else '' }}>Anxiety &amp; Depression Treatment</option>
+                                    <option value="ptsd_trauma" {{ 'selected' if (form_data and form_data.service_type == 'ptsd_trauma') or preselect_service == 'ptsd_trauma' else '' }}>PTSD &amp; Trauma Therapy</option>
+                                    <option value="child_adolescent" {{ 'selected' if (form_data and form_data.service_type == 'child_adolescent') or preselect_service == 'child_adolescent' else '' }}>Child &amp; Adolescent Psychiatry</option>
+                                    <option value="insomnia" {{ 'selected' if (form_data and form_data.service_type == 'insomnia') or preselect_service == 'insomnia' else '' }}>Insomnia Treatment</option>
+                                    <option value="adhd" {{ 'selected' if (form_data and form_data.service_type == 'adhd') or preselect_service == 'adhd' else '' }}>ADHD Behavioural</option>
+                                    <option value="other" {{ 'selected' if (form_data and form_data.service_type == 'other') or preselect_service == 'other' else '' }}>Other</option>
                                 </select>
                                 <p class="error-message">Please select a service.</p>
                             </div>

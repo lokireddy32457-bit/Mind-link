@@ -3,12 +3,15 @@ Mind Link — Authentication Module
 Handles admin login/logout, session management, and password hashing.
 """
 
+import os
+import sys
 from functools import wraps
 from flask import session, redirect, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from database import get_admin_user, create_admin_user, admin_user_exists
 
-# Default admin credentials (printed to console on first run)
+# Default admin credentials — used only on first boot if no admin exists.
+# Change these immediately after first login via the admin dashboard.
 DEFAULT_ADMIN_USERNAME = 'admin'
 DEFAULT_ADMIN_PASSWORD = 'mindlink2026'
 
@@ -48,16 +51,18 @@ def authenticate_admin(username, password):
 def create_default_admin():
     """
     Create the default admin account if no admin users exist.
-    Prints credentials to console for the doctor to note and change.
+    Credentials are printed to stderr on first boot only.
     """
     if not admin_user_exists():
         password_hash = hash_password(DEFAULT_ADMIN_PASSWORD)
         create_admin_user(DEFAULT_ADMIN_USERNAME, password_hash)
-        print('\n' + '=' * 60)
-        print('  MIND LINK — Default Admin Account Created')
-        print('=' * 60)
-        print(f'  Username: {DEFAULT_ADMIN_USERNAME}')
-        print(f'  Password: {DEFAULT_ADMIN_PASSWORD}')
-        print('  !!  Please change these credentials after first login!')
-        print('  Dashboard: http://localhost:5000/admin/login')
-        print('=' * 60 + '\n')
+
+        site_url = os.environ.get('SITE_URL', 'http://localhost:5000')
+        print('\n' + '=' * 60, file=sys.stderr)
+        print('  MIND LINK — Default Admin Account Created', file=sys.stderr)
+        print('=' * 60, file=sys.stderr)
+        print(f'  Username : {DEFAULT_ADMIN_USERNAME}', file=sys.stderr)
+        print(f'  Password : {DEFAULT_ADMIN_PASSWORD}', file=sys.stderr)
+        print('  !! Change these credentials after first login!', file=sys.stderr)
+        print(f'  Dashboard: {site_url}/admin/login', file=sys.stderr)
+        print('=' * 60 + '\n', file=sys.stderr)

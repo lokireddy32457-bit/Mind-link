@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>{% block title %}Mind Link Psychiatry — Compassionate Mental Health Care{% endblock %}</title>
-    <meta name="description" content="{% block description %}Mind Link Psychiatry offers compassionate, evidence-based mental health care. Book your appointment for psychotherapy, medication management, and telehealth services.{% endblock %}">
+    <title>{% block title %}HELIUM MIND CENTRE — Compassionate Mental Health Care{% endblock %}</title>
+    <meta name="description" content="{% block description %}HELIUM MIND CENTRE offers compassionate, evidence-based mental health care. Book your appointment for psychotherapy, medication management, and telehealth services.{% endblock %}">
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
@@ -57,13 +57,28 @@
         <div class="container">
             <a href="{{ url_for('home') }}" class="nav-logo">
                 <span class="nav-logo-icon">🧠</span>
-                Mind Link
+                HELIUM MIND CENTRE
             </a>
 
             <ul class="nav-links" id="navLinks">
                 <li><a href="{{ url_for('home') }}" class="{{ 'active' if request.endpoint == 'home' }}">Home</a></li>
                 <li><a href="{{ url_for('about') }}" class="{{ 'active' if request.endpoint == 'about' }}">About</a></li>
-                <li><a href="{{ url_for('services') }}" class="{{ 'active' if request.endpoint == 'services' }}">Services</a></li>
+                <li class="nav-dropdown-wrapper">
+                    <a href="{{ url_for('services') }}" class="nav-dropdown-trigger {{ 'active' if request.endpoint == 'services' }}">
+                        Services
+                        <svg class="nav-dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </a>
+                    <ul class="nav-dropdown" id="servicesDropdown">
+                        <li><a href="{{ url_for('service_detail', slug='psychotherapy') }}">🗣️ Individual Psychotherapy</a></li>
+                        <li><a href="{{ url_for('service_detail', slug='medication') }}">💊 Medication Management</a></li>
+                        <li><a href="{{ url_for('service_detail', slug='telehealth') }}">🖥️ Telehealth / Virtual Sessions</a></li>
+                        <li><a href="{{ url_for('service_detail', slug='anxiety') }}">😰 Anxiety &amp; Depression</a></li>
+                        <li><a href="{{ url_for('service_detail', slug='ptsd') }}">💔 PTSD &amp; Trauma Therapy</a></li>
+                        <li><a href="{{ url_for('service_detail', slug='child') }}">👨‍👩‍👧 Child &amp; Adolescent Psychiatry</a></li>
+                        <li><a href="{{ url_for('service_detail', slug='insomnia') }}">🌙 Insomnia &amp; Sleep Disorders</a></li>
+                        <li><a href="{{ url_for('service_detail', slug='adhd') }}">🧩 ADHD Behavioural</a></li>
+                    </ul>
+                </li>
                 <li><a href="{{ url_for('contact') }}" class="{{ 'active' if request.endpoint == 'contact' }}">Contact</a></li>
                 <li><a href="{{ url_for('booking') }}" class="nav-cta">Book Appointment</a></li>
             </ul>
@@ -113,7 +128,7 @@
                 <div class="footer-brand">
                     <a href="{{ url_for('home') }}" class="nav-logo">
                         <span class="nav-logo-icon">🧠</span>
-                        Mind Link
+                        HELIUM MIND CENTRE
                     </a>
                     <p>Compassionate, evidence-based mental health care. Helping you find clarity, resilience, and peace of mind.</p>
                 </div>
@@ -149,7 +164,7 @@
             </div>
 
             <div class="footer-bottom">
-                <span>&copy; {{ now().year if now is defined else '2026' }} Mind Link Psychiatry. All rights reserved.</span>
+                <span>&copy; {{ now().year if now is defined else '2026' }} HELIUM MIND CENTRE. All rights reserved.</span>
                 <span>Designed with 💙 for better mental health</span>
             </div>
         </div>

@@ -49,6 +49,30 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ========================================
+    // Services Dropdown — Mobile Touch Support
+    // ========================================
+    const dropdownWrapper = document.querySelector('.nav-dropdown-wrapper');
+    if (dropdownWrapper) {
+        const trigger = dropdownWrapper.querySelector('.nav-dropdown-trigger');
+        // On touch / click of the trigger, toggle the open class (for mobile)
+        trigger.addEventListener('click', function (e) {
+            // Only intercept on mobile (hover handles desktop)
+            if (window.innerWidth <= 900) {
+                e.preventDefault();
+                dropdownWrapper.classList.toggle('open');
+            }
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function (e) {
+            if (!dropdownWrapper.contains(e.target)) {
+                dropdownWrapper.classList.remove('open');
+            }
+        });
+    }
+
+
+    // ========================================
     // Scroll Reveal Animations
     // ========================================
     const revealElements = document.querySelectorAll('.reveal');

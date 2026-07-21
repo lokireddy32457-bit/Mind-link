@@ -475,6 +475,131 @@ p {
 }
 
 /* ========================================
+   Services Dropdown Navigation
+   ======================================== */
+.nav-dropdown-wrapper {
+    position: relative;
+}
+
+.nav-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.nav-dropdown-arrow {
+    transition: transform var(--transition-base);
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.nav-dropdown-wrapper:hover .nav-dropdown-arrow,
+.nav-dropdown-wrapper.open .nav-dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.nav-dropdown {
+    position: absolute;
+    top: calc(100% + 18px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    background: var(--color-primary-dark);
+    list-style: none;
+    min-width: 240px;
+    border-radius: var(--radius-md);
+    box-shadow: 0 12px 40px hsla(207, 44%, 10%, 0.35);
+    padding: var(--space-sm) 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    /* Slightly slow open — 180ms delay before appearing, 350ms fade */
+    transition:
+        opacity 350ms ease,
+        transform 350ms ease,
+        visibility 0ms linear 180ms;
+    z-index: 1100;
+}
+
+
+/* Arrow pointer on top of dropdown */
+.nav-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 7px solid transparent;
+    border-top: none;
+    border-bottom-color: var(--color-primary-dark);
+}
+
+.nav-dropdown-wrapper:hover .nav-dropdown,
+.nav-dropdown-wrapper.open .nav-dropdown {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+    /* No delay on open — fade in immediately after the 180ms hover delay */
+    transition:
+        opacity 300ms ease,
+        transform 300ms ease,
+        visibility 0ms linear 0ms;
+}
+
+.nav-dropdown li {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.nav-dropdown li:last-child {
+    border-bottom: none;
+}
+
+.nav-dropdown li a {
+    display: block;
+    padding: 11px 20px;
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-size: 0.88rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background var(--transition-fast), color var(--transition-fast), padding-left var(--transition-fast);
+    white-space: nowrap;
+}
+
+.nav-dropdown li a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white !important;
+    padding-left: 26px;
+}
+
+/* Remove the underline animation from the trigger's ::after pseudo element */
+.nav-dropdown-trigger::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--color-accent);
+    border-radius: var(--radius-md);
+    transition: width var(--transition-base);
+}
+
+.nav-dropdown-trigger:hover::after,
+.nav-dropdown-trigger.active::after {
+    width: 100%;
+}
+
+/* Override so the arrow svg doesn't get the underline */
+.nav-dropdown li a::after {
+    display: none !important;
+}
+
+
+
+/* ========================================
    Buttons
    ======================================== */
 .btn {
@@ -2790,6 +2915,62 @@ textarea {
     .whatsapp-btn {
         display: none;
     }
+
+    /* Mobile dropdown — inline within the open nav */
+    .nav-dropdown-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    .nav-dropdown-trigger {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .nav-dropdown {
+        position: static;
+        transform: none !important;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        background: rgba(255,255,255,0.06);
+        border-radius: var(--radius-sm);
+        min-width: 100%;
+        width: 100%;
+        padding: 0;
+        box-shadow: none;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height var(--transition-slow);
+        display: block;
+    }
+
+    .nav-dropdown::before {
+        display: none;
+    }
+
+    .nav-dropdown-wrapper.open .nav-dropdown {
+        max-height: 500px;
+    }
+
+    .nav-dropdown li a {
+        padding: 10px 16px;
+        font-size: 0.85rem;
+        color: var(--color-text-muted) !important;
+    }
+
+    .nav-dropdown li a:hover {
+        color: var(--color-primary) !important;
+        background: var(--color-primary-ghost);
+        padding-left: 22px;
+    }
+
+    .nav-dropdown li {
+        border-bottom: 1px solid var(--color-border);
+    }
+
+
 
     /* Show WhatsApp inside mobile nav */
     .nav-links .whatsapp-btn-mobile {

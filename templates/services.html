@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}Our Services — Mind Link Psychiatry{% endblock %}
-{% block description %}Explore the comprehensive psychiatric services offered at Mind Link Psychiatry, including psychotherapy, medication management, telehealth, anxiety treatment, PTSD therapy, and more.{% endblock %}
+{% block title %}Our Services — HELIUM MIND CENTRE{% endblock %}
+{% block description %}Explore the comprehensive psychiatric services offered at HELIUM MIND CENTRE, including psychotherapy, medication management, telehealth, anxiety treatment, PTSD therapy, and more.{% endblock %}
 
 {% block content %}
 
@@ -30,6 +30,7 @@
                     <li>Mindfulness-Based Techniques</li>
                     <li>45–60 minute sessions</li>
                 </ul>
+                <a href="{{ url_for('booking', service='psychotherapy') }}" class="btn btn-primary btn-sm" style="margin-top: var(--space-md); display: inline-block;">📅 Book Now</a>
             </div>
             <div class="service-full-card">
                 <div class="card-icon">💊</div>
@@ -42,6 +43,7 @@
                     <li>Ongoing Monitoring & Adjustments</li>
                     <li>Side-Effect Management</li>
                 </ul>
+                <a href="{{ url_for('booking', service='medication') }}" class="btn btn-primary btn-sm" style="margin-top: var(--space-md); display: inline-block;">📅 Book Now</a>
             </div>
             <div class="service-full-card">
                 <div class="card-icon">🖥️</div>
@@ -54,6 +56,7 @@
                     <li>Same-Day Appointments Available</li>
                     <li>Ideal for Follow-Up Visits</li>
                 </ul>
+                <a href="{{ url_for('booking', service='telehealth') }}" class="btn btn-primary btn-sm" style="margin-top: var(--space-md); display: inline-block;">📅 Book Now</a>
             </div>
             <div class="service-full-card">
                 <div class="card-icon">😰</div>
@@ -66,6 +69,7 @@
                     <li>Panic Disorder</li>
                     <li>Treatment-Resistant Depression</li>
                 </ul>
+                <a href="{{ url_for('booking', service='anxiety') }}" class="btn btn-primary btn-sm" style="margin-top: var(--space-md); display: inline-block;">📅 Book Now</a>
             </div>
             <div class="service-full-card">
                 <div class="card-icon">💔</div>
@@ -78,6 +82,7 @@
                     <li>Grief & Loss Counseling</li>
                     <li>Veterans & First Responders</li>
                 </ul>
+                <a href="{{ url_for('booking', service='ptsd') }}" class="btn btn-primary btn-sm" style="margin-top: var(--space-md); display: inline-block;">📅 Book Now</a>
             </div>
             <div class="service-full-card">
                 <div class="card-icon">👨‍👩‍👧</div>
@@ -90,6 +95,7 @@
                     <li>School-Related Challenges</li>
                     <li>Family Psychoeducation</li>
                 </ul>
+                <a href="{{ url_for('booking', service='child') }}" class="btn btn-primary btn-sm" style="margin-top: var(--space-md); display: inline-block;">📅 Book Now</a>
             </div>
         </div>
     </div>

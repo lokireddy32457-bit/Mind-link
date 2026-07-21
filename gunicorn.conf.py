@@ -9,12 +9,13 @@ import os
 bind = f"0.0.0.0:{os.environ.get('PORT', '10000')}"
 
 # Worker configuration
-workers = 2          # Keep low for SQLite (avoids write contention)
-threads = 4          # Handle concurrent requests per worker
+# PostgreSQL handles concurrent writes safely, so we can use multiple workers.
+workers = 2
+threads = 4          # Handle concurrent requests within each worker
 worker_class = "gthread"
 
 # Timeouts
-timeout = 120        # Allow longer requests
+timeout = 120        # Allow longer requests (e.g. email sending)
 graceful_timeout = 30
 
 # Logging
@@ -30,3 +31,6 @@ secure_scheme_headers = {
 
 # Preload app for faster worker startup
 preload_app = True
+
+# Use /dev/shm for worker heartbeat files on Linux (better performance)
+worker_tmp_dir = "/dev/shm"

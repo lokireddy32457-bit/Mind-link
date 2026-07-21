@@ -6,6 +6,7 @@ Serves public pages and admin dashboard with appointment management.
 
 import os
 import secrets
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 load_dotenv()  # Load .env file into environment variables
@@ -26,7 +27,28 @@ from auth import (
 from email_utils import send_appointment_email
 
 app = Flask(__name__)
+
+# =====================
+# Security Configuration
+# =====================
 app.secret_key = os.environ.get('SECRET_KEY', secrets.token_hex(32))
+
+# Secure session cookies (HTTPS-only in production)
+is_production = os.environ.get('FLASK_ENV', 'development') == 'production'
+app.config['SESSION_COOKIE_SECURE'] = is_production
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=8)
+
+
+# =====================
+# Template Context
+# =====================
+
+@app.context_processor
+def inject_globals():
+    """Inject commonly needed globals into all templates."""
+    return {'now': datetime.utcnow}
 
 
 # =====================
@@ -59,10 +81,299 @@ def services():
     return render_template('services.html')
 
 
+# Service detail data
+SERVICE_DATA = {
+    'psychotherapy': {
+        'slug': 'psychotherapy',
+        'title': 'Individual Psychotherapy',
+        'icon': '🗣️',
+        'tagline': 'Personalized one-on-one therapy to help you understand patterns, heal, and thrive.',
+        'image': 'service-psychotherapy.png',
+        'overview': (
+            'Individual psychotherapy at HELIUM MIND CENTRE is a deeply personal journey tailored '
+            'to your unique needs, history, and goals. Our psychiatrist uses a collaborative approach, '
+            'working alongside you to uncover root causes of distress, develop coping strategies, and '
+            'build long-lasting emotional resilience.'
+        ),
+        'what_we_treat': [
+            'Depression & persistent sadness',
+            'Anxiety & excessive worry',
+            'Low self-esteem & self-doubt',
+            'Life transitions & adjustment issues',
+            'Grief & loss',
+            'Relationship and interpersonal difficulties',
+        ],
+        'approaches': [
+            ('Cognitive Behavioral Therapy (CBT)', 'Identify and reshape unhelpful thought patterns that drive negative emotions and behaviors.'),
+            ('Dialectical Behavior Therapy (DBT)', 'Develop emotional regulation, distress tolerance, and interpersonal effectiveness skills.'),
+            ('Psychodynamic Therapy', 'Explore unconscious patterns and past experiences that shape your present behavior.'),
+            ('Mindfulness-Based Techniques', 'Cultivate present-moment awareness to reduce stress and improve mental clarity.'),
+        ],
+        'session_info': '45–60 minute sessions | In-person & Telehealth available',
+        'faq': [
+            ('How often do I need to attend?', 'Typically once a week, though frequency is adjusted based on your needs and progress.'),
+            ('Is everything confidential?', 'Yes, all sessions are strictly confidential and protected under HIPAA regulations.'),
+            ('How soon will I see results?', 'Most patients notice meaningful improvements within 6–8 sessions, though this varies individually.'),
+        ],
+    },
+    'medication': {
+        'slug': 'medication',
+        'title': 'Medication Management',
+        'icon': '💊',
+        'tagline': 'Expert psychiatric evaluation and ongoing medication monitoring for optimal wellbeing.',
+        'image': 'service-medication.png',
+        'overview': (
+            'Psychiatric medications, when properly managed, can be life-changing. At HELIUM MIND CENTRE '
+            'we conduct thorough evaluations before recommending any medication, ensuring the right treatment '
+            'is matched to the right person. Our ongoing monitoring and open communication mean you are never '
+            'navigating this journey alone.'
+        ),
+        'what_we_treat': [
+            'Major Depressive Disorder',
+            'Bipolar Disorder & Mania',
+            'Schizophrenia & Psychosis',
+            'Generalized Anxiety Disorder',
+            'ADHD & Attention Difficulties',
+            'OCD & related disorders',
+        ],
+        'approaches': [
+            ('Comprehensive Evaluation', 'A thorough psychiatric assessment to understand your history, symptoms, and lifestyle before prescribing.'),
+            ('Personalized Prescribing', 'Medications chosen specifically for you — not a one-size-fits-all approach.'),
+            ('Ongoing Monitoring', 'Regular follow-ups to track effectiveness, adjust dosages, and manage side effects.'),
+            ('Integrated Care', 'Medication management often paired with therapy for the best long-term outcomes.'),
+        ],
+        'session_info': '30–45 minute follow-up appointments | In-person & Telehealth',
+        'faq': [
+            ('Will I need medication forever?', 'Not necessarily. Many patients use medication short-term while developing coping skills through therapy.'),
+            ('What if I experience side effects?', 'You should contact us immediately. We work closely with you to adjust or switch medications as needed.'),
+            ('How long before the medication works?', 'Most psychiatric medications take 2–6 weeks to reach full effect, though some symptoms improve sooner.'),
+        ],
+    },
+    'telehealth': {
+        'slug': 'telehealth',
+        'title': 'Telehealth / Virtual Sessions',
+        'icon': '🖥️',
+        'tagline': 'The same expert care — from the comfort, privacy, and convenience of your own home.',
+        'image': 'service-telehealth.png',
+        'overview': (
+            'Our telehealth service brings world-class psychiatric care directly to you, wherever you are. '
+            'Using a secure, HIPAA-compliant video platform, you can meet with our psychiatrist without the '
+            'stress of commuting or waiting rooms. Telehealth sessions are equally effective for therapy, '
+            'medication management, and initial evaluations.'
+        ),
+        'what_we_treat': [
+            'All conditions treated in-person',
+            'Remote follow-up appointments',
+            'Initial psychiatric evaluations',
+            'Medication reviews & renewals',
+            'Crisis support & urgent consultations',
+            'Ongoing psychotherapy sessions',
+        ],
+        'approaches': [
+            ('Secure Video Platform', 'HIPAA-compliant, encrypted video calls accessible from any device.'),
+            ('Flexible Scheduling', 'Early morning, evening, and weekend slots to fit your busy life.'),
+            ('Same-Day Availability', 'Urgent and same-day slots often available for telehealth appointments.'),
+            ('Multi-State Coverage', 'Available across all states where we hold licensure.'),
+        ],
+        'session_info': '45–60 minute sessions | Video, Phone, or Chat options',
+        'faq': [
+            ('What do I need for a telehealth session?', 'A device with a camera and microphone (smartphone, tablet, or computer) and a stable internet connection.'),
+            ('Is telehealth as effective as in-person?', 'Research shows telehealth is equally effective for most psychiatric conditions.'),
+            ('How do I join my session?', "You'll receive a secure link by email before your appointment — simply click to join."),
+        ],
+    },
+    'anxiety': {
+        'slug': 'anxiety',
+        'title': 'Anxiety & Depression Treatment',
+        'icon': '😰',
+        'tagline': 'Evidence-based, compassionate care to help you reclaim joy, calm, and confidence.',
+        'image': 'article-anxiety.png',
+        'overview': (
+            'Anxiety and depression are among the most common yet misunderstood conditions. At HELIUM MIND CENTRE, '
+            'we combine the latest evidence-based therapies with personalized medication management to help you '
+            'break free from the cycle of fear, sadness, and hopelessness. Recovery is possible — and we are with '
+            'you every step of the way.'
+        ),
+        'what_we_treat': [
+            'Generalized Anxiety Disorder (GAD)',
+            'Social Anxiety & Phobias',
+            'Major Depressive Disorder',
+            'Panic Disorder & Panic Attacks',
+            'Treatment-Resistant Depression',
+            'Mixed Anxiety-Depression',
+        ],
+        'approaches': [
+            ('Cognitive Behavioral Therapy', 'Challenge distorted thoughts and break cycles of avoidance that fuel anxiety and depression.'),
+            ('Exposure Therapy', 'Gradually and safely face feared situations to reduce their power over you.'),
+            ('Medication Evaluation', 'Antidepressants and anti-anxiety medications prescribed thoughtfully when clinically appropriate.'),
+            ('Lifestyle & Wellness Coaching', 'Sleep hygiene, exercise, and nutrition guidance to support your mental health journey.'),
+        ],
+        'session_info': 'Weekly sessions recommended | In-person & Telehealth',
+        'faq': [
+            ('Can anxiety and depression be cured?', 'Most people achieve significant symptom relief and long-term remission with the right treatment.'),
+            ('Do I need medication for depression?', 'Not always. Many patients respond well to therapy alone; medication is discussed case-by-case.'),
+            ('How long does treatment take?', 'Many people see improvement in 8–16 sessions; some continue longer for lasting results.'),
+        ],
+    },
+    'ptsd': {
+        'slug': 'ptsd',
+        'title': 'PTSD & Trauma Therapy',
+        'icon': '💔',
+        'tagline': 'Trauma-informed, evidence-based care to help you process the past and reclaim your life.',
+        'image': 'service-ptsd.png',
+        'overview': (
+            'Trauma can leave invisible wounds that affect every aspect of your life. Our trauma-informed approach '
+            'at HELIUM MIND CENTRE creates a safe, non-judgmental space where healing becomes possible. We use '
+            'internationally recognized, evidence-based therapies to help you process traumatic memories, reduce '
+            'distressing symptoms, and rebuild a sense of safety and control.'
+        ),
+        'what_we_treat': [
+            'Post-Traumatic Stress Disorder (PTSD)',
+            'Complex PTSD (C-PTSD)',
+            'Childhood trauma & abuse',
+            'Grief & complicated bereavement',
+            'Trauma from accidents or disaster',
+            'Veterans & first responder trauma',
+        ],
+        'approaches': [
+            ('Trauma-Focused CBT (TF-CBT)', 'Process traumatic memories and develop coping skills in a structured, evidence-based framework.'),
+            ('EMDR Therapy', 'Eye Movement Desensitization and Reprocessing to reduce the emotional charge of traumatic memories.'),
+            ('Somatic Techniques', 'Body-centered approaches to release trauma stored in the nervous system.'),
+            ('Prolonged Exposure Therapy', 'Gradually process trauma-related memories and situations to reduce avoidance and distress.'),
+        ],
+        'session_info': '60–90 minute sessions | In-person strongly recommended',
+        'faq': [
+            ('Will I have to relive my trauma?', 'Therapy is always at your pace. We never push you to discuss anything before you feel ready.'),
+            ('What is EMDR?', 'EMDR uses guided eye movements to help the brain reprocess traumatic memories, reducing their emotional impact.'),
+            ('Can trauma therapy make things worse first?', 'Temporarily, some discomfort is normal as you begin processing. Your therapist will support you throughout.'),
+        ],
+    },
+    'child': {
+        'slug': 'child',
+        'title': 'Child & Adolescent Psychiatry',
+        'icon': '👨‍👩‍👧',
+        'tagline': 'Age-appropriate, family-inclusive care for young minds navigating emotional and behavioral challenges.',
+        'image': 'service-child-psychiatry.png',
+        'overview': (
+            'Children and adolescents face unique mental health challenges that require a specialized, compassionate '
+            'approach. HELIUM MIND CENTRE provides comprehensive psychiatric care for young people aged 5–17, working '
+            'closely with families, schools, and other caregivers to create a holistic support system around every child.'
+        ),
+        'what_we_treat': [
+            'ADHD & Attention Difficulties',
+            'Childhood Anxiety & OCD',
+            'Depression in children & teens',
+            'Behavioral & Conduct Disorders',
+            'Autism Spectrum Disorder support',
+            'School refusal & social difficulties',
+        ],
+        'approaches': [
+            ('Child-Friendly Therapy', 'Play therapy and age-appropriate techniques that engage children in meaningful ways.'),
+            ('Family Therapy & Psychoeducation', 'Empowering parents with tools and understanding to support their child at home.'),
+            ('School Collaboration', 'Communication with educators to create supportive academic environments.'),
+            ('Adolescent-Focused CBT', 'Evidence-based therapy adapted specifically for teenagers navigating identity and emotion.'),
+        ],
+        'session_info': '45–60 minute sessions | Family involvement encouraged',
+        'faq': [
+            ('At what age can my child start therapy?', 'We typically work with children from age 5 and adolescents up to age 17.'),
+            ('Will parents be involved in sessions?', 'Yes — parental involvement is a core part of our child and adolescent approach.'),
+            ('Is medication safe for children?', 'Pediatric medication is prescribed conservatively, only when clearly beneficial, and carefully monitored.'),
+        ],
+    },
+    'insomnia': {
+        'slug': 'insomnia',
+        'title': 'Insomnia & Sleep Disorders',
+        'icon': '🌙',
+        'tagline': 'Reclaim restful nights and energized days with targeted, evidence-based sleep treatment.',
+        'image': 'service-insomnia.png',
+        'overview': (
+            'Poor sleep affects every aspect of mental and physical health. At HELIUM MIND CENTRE, we treat '
+            'insomnia and sleep disorders using both behavioral and pharmacological approaches, always starting '
+            'with the least invasive, most sustainable option. Our goal is to help you achieve deep, restorative '
+            'sleep naturally and consistently.'
+        ),
+        'what_we_treat': [
+            'Chronic Insomnia',
+            'Sleep Maintenance Issues',
+            'Sleep Anxiety & Hyperarousal',
+            'Nightmare Disorder',
+            'Sleep Disruption from Depression/Anxiety',
+            'Medication-related sleep issues',
+        ],
+        'approaches': [
+            ('CBT for Insomnia (CBT-I)', 'The gold-standard, non-medication treatment that addresses the root causes of chronic insomnia.'),
+            ('Sleep Hygiene Optimization', 'Personalized behavioral changes to strengthen your body\'s natural sleep drive.'),
+            ('Relaxation Techniques', 'Progressive muscle relaxation, guided imagery, and breathing exercises for bedtime.'),
+            ('Short-Term Medication', 'Safe, carefully managed sleep medications for acute cases when behavioral approaches need support.'),
+        ],
+        'session_info': '45–60 minute sessions | Telehealth very suitable',
+        'faq': [
+            ('What is CBT-I?', 'Cognitive Behavioral Therapy for Insomnia — the most effective long-term treatment for chronic insomnia, without medications.'),
+            ('How many sessions will I need?', 'CBT-I typically requires 6–8 sessions for most patients to achieve lasting improvement.'),
+            ('Are sleep medications addictive?', 'Some can be habit-forming; we prescribe cautiously and always aim to minimize or eliminate medication use.'),
+        ],
+    },
+    'adhd': {
+        'slug': 'adhd',
+        'title': 'ADHD Behavioural',
+        'icon': '🧩',
+        'tagline': 'Comprehensive ADHD evaluation and tailored strategies to help you focus, organize, and excel.',
+        'image': 'article-adhd.png',
+        'overview': (
+            'ADHD is a neurodevelopmental condition that affects attention, impulse control, and executive functioning. '
+            'Far from a simple focus issue, ADHD can impact academic performance, relationships, career, and self-esteem. '
+            'HELIUM MIND CENTRE offers thorough ADHD evaluation and a comprehensive treatment plan that may include '
+            'behavioral strategies, therapy, coaching, and medication when appropriate.'
+        ),
+        'what_we_treat': [
+            'ADHD — Inattentive type',
+            'ADHD — Hyperactive-Impulsive type',
+            'Combined presentation ADHD',
+            'Adult ADHD (late diagnosis)',
+            'ADHD with co-occurring anxiety or depression',
+            'Academic & occupational impairment',
+        ],
+        'approaches': [
+            ('Comprehensive ADHD Evaluation', 'Detailed diagnostic assessment using rating scales, clinical interview, and history to confirm diagnosis.'),
+            ('Behavioral Coaching', 'Practical strategies for organization, time management, task initiation, and emotional regulation.'),
+            ('Medication Management', 'Stimulant and non-stimulant medications carefully prescribed and monitored.'),
+            ('CBT for ADHD', 'Cognitive-behavioral techniques to address the thinking patterns and habits that ADHD creates.'),
+        ],
+        'session_info': 'Evaluation + ongoing sessions | In-person & Telehealth',
+        'faq': [
+            ('Can adults have ADHD?', 'Absolutely. Many adults are diagnosed later in life; treatment is highly effective at any age.'),
+            ('Does ADHD always need medication?', 'No. Behavioral therapy and coaching can be very effective, especially for milder presentations.'),
+            ('How is ADHD diagnosed?', 'Through a comprehensive clinical evaluation — there is no single test; it requires thorough history-taking and assessment.'),
+        ],
+    },
+}
+
+
+@app.route('/services/<slug>')
+def service_detail(slug):
+    """Individual service detail page."""
+    service = SERVICE_DATA.get(slug)
+    if not service:
+        return redirect(url_for('services'))
+    return render_template('service_detail.html', service=service)
+
+
 @app.route('/booking')
 def booking():
     """Booking and contact page."""
-    return render_template('booking.html')
+    # Slug-to-service_type mapping for autofill from service pages
+    SERVICE_SLUG_MAP = {
+        'psychotherapy': 'psychotherapy',
+        'medication': 'medication_management',
+        'telehealth': 'telehealth',
+        'anxiety': 'anxiety_depression',
+        'ptsd': 'ptsd_trauma',
+        'child': 'child_adolescent',
+        'insomnia': 'insomnia',
+        'adhd': 'adhd',
+    }
+    preselect_service = SERVICE_SLUG_MAP.get(request.args.get('service', '').strip(), '')
+    return render_template('booking.html', preselect_service=preselect_service)
 
 
 @app.route('/api/booked-slots')
@@ -285,4 +596,5 @@ def api_stats():
 # =====================
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    debug = os.environ.get('FLASK_DEBUG', '0') == '1'
+    app.run(debug=debug, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
