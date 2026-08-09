@@ -8,6 +8,8 @@ Locally, set it in your .env file.
 """
 
 import os
+import sys
+import time
 import psycopg2
 import psycopg2.extras
 import psycopg2.errorcodes
@@ -16,61 +18,114 @@ from datetime import datetime
 
 DATABASE_URL = os.environ.get('DATABASE_URL', '')
 
+# Track whether the database is reachable (set after successful init)
+_db_available = False
+
 
 def get_db():
     """Get a PostgreSQL connection. SSL is required for Supabase."""
     url = DATABASE_URL
+    if not url:
+        raise RuntimeError(
+            'DATABASE_URL is not set. '
+            'Set it in your .env file or in the Render dashboard.'
+        )
     # Supabase requires SSL — append sslmode if not already present
-    if url and 'sslmode' not in url:
+    if 'sslmode' not in url:
         sep = '&' if '?' in url else '?'
         url += sep + 'sslmode=require'
-    return psycopg2.connect(url)
+    try:
+        return psycopg2.connect(url, connect_timeout=10)
+    except psycopg2.OperationalError as exc:
+        error_msg = str(exc)
+        print('\n' + '=' * 60, file=sys.stderr)
+        print('  DATABASE CONNECTION ERROR', file=sys.stderr)
+        print('=' * 60, file=sys.stderr)
+        if 'ENOTFOUND' in error_msg or 'tenant' in error_msg:
+            print('  The Supabase project could not be found.', file=sys.stderr)
+            print('  Possible causes:', file=sys.stderr)
+            print('    1. Your Supabase project is PAUSED (free-tier auto-pause).', file=sys.stderr)
+            print('       → Go to https://supabase.com/dashboard and click "Restore".', file=sys.stderr)
+            print('    2. The project reference in DATABASE_URL is incorrect.', file=sys.stderr)
+            print('       → Go to Supabase → Settings → Database → Connection string', file=sys.stderr)
+            print('         and copy the correct URI.', file=sys.stderr)
+        elif 'password authentication' in error_msg.lower():
+            print('  Authentication failed — the database password is incorrect.', file=sys.stderr)
+            print('  → Update DATABASE_URL in your .env file with the correct password.', file=sys.stderr)
+        else:
+            print(f'  {error_msg}', file=sys.stderr)
+        print('=' * 60 + '\n', file=sys.stderr)
+        raise
 
 
 def init_db():
-    """Initialize database tables if they don't exist."""
-    conn = get_db()
-    cursor = conn.cursor()
+    """Initialize database tables if they don't exist.
 
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS appointments (
-            id        BIGSERIAL PRIMARY KEY,
-            name      TEXT NOT NULL,
-            email     TEXT NOT NULL,
-            phone     TEXT NOT NULL,
-            preferred_date TEXT NOT NULL,
-            preferred_time TEXT NOT NULL,
-            service_type   TEXT NOT NULL,
-            message   TEXT,
-            status    TEXT NOT NULL DEFAULT 'pending',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
+    Retries once after a short delay, then allows the app to start
+    without a database so that public (non-DB) pages still work.
+    """
+    global _db_available
 
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS inquiries (
-            id         BIGSERIAL PRIMARY KEY,
-            name       TEXT NOT NULL,
-            email      TEXT NOT NULL,
-            subject    TEXT NOT NULL,
-            message    TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
+    for attempt in range(1, 3):  # two attempts
+        try:
+            conn = get_db()
+            cursor = conn.cursor()
 
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS admin_users (
-            id            BIGSERIAL PRIMARY KEY,
-            username      TEXT NOT NULL UNIQUE,
-            password_hash TEXT NOT NULL,
-            created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS appointments (
+                    id        BIGSERIAL PRIMARY KEY,
+                    name      TEXT NOT NULL,
+                    email     TEXT NOT NULL,
+                    phone     TEXT NOT NULL,
+                    preferred_date TEXT NOT NULL,
+                    preferred_time TEXT NOT NULL,
+                    service_type   TEXT NOT NULL,
+                    message   TEXT,
+                    status    TEXT NOT NULL DEFAULT 'pending',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
 
-    conn.commit()
-    cursor.close()
-    conn.close()
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS inquiries (
+                    id         BIGSERIAL PRIMARY KEY,
+                    name       TEXT NOT NULL,
+                    email      TEXT NOT NULL,
+                    subject    TEXT NOT NULL,
+                    message    TEXT NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS admin_users (
+                    id            BIGSERIAL PRIMARY KEY,
+                    username      TEXT NOT NULL UNIQUE,
+                    password_hash TEXT NOT NULL,
+                    created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+
+            conn.commit()
+            cursor.close()
+            conn.close()
+            _db_available = True
+            print('[Database] Connected to Supabase PostgreSQL successfully.', file=sys.stderr)
+            return  # success
+        except Exception as exc:
+            if attempt < 2:
+                print(f'[Database] Connection attempt {attempt} failed, retrying in 3s…',
+                      file=sys.stderr)
+                time.sleep(3)
+            else:
+                print(
+                    '\n⚠️  Could not connect to the database after 2 attempts.\n'
+                    '   The app will start, but features requiring the database\n'
+                    '   (booking, admin, contact form) will not work until the\n'
+                    '   database is reachable.\n',
+                    file=sys.stderr,
+                )
 
 
 # ---------------------
