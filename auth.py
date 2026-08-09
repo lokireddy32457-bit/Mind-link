@@ -52,17 +52,27 @@ def create_default_admin():
     """
     Create the default admin account if no admin users exist.
     Credentials are printed to stderr on first boot only.
-    """
-    if not admin_user_exists():
-        password_hash = hash_password(DEFAULT_ADMIN_PASSWORD)
-        create_admin_user(DEFAULT_ADMIN_USERNAME, password_hash)
 
-        site_url = os.environ.get('SITE_URL', 'http://localhost:5000')
-        print('\n' + '=' * 60, file=sys.stderr)
-        print('  MIND LINK — Default Admin Account Created', file=sys.stderr)
-        print('=' * 60, file=sys.stderr)
-        print(f'  Username : {DEFAULT_ADMIN_USERNAME}', file=sys.stderr)
-        print(f'  Password : {DEFAULT_ADMIN_PASSWORD}', file=sys.stderr)
-        print('  !! Change these credentials after first login!', file=sys.stderr)
-        print(f'  Dashboard: {site_url}/admin/login', file=sys.stderr)
-        print('=' * 60 + '\n', file=sys.stderr)
+    If the database is unreachable, a warning is logged and the app
+    continues to start (public pages will still work).
+    """
+    try:
+        if not admin_user_exists():
+            password_hash = hash_password(DEFAULT_ADMIN_PASSWORD)
+            create_admin_user(DEFAULT_ADMIN_USERNAME, password_hash)
+
+            site_url = os.environ.get('SITE_URL', 'http://localhost:5000')
+            print('\n' + '=' * 60, file=sys.stderr)
+            print('  MIND LINK — Default Admin Account Created', file=sys.stderr)
+            print('=' * 60, file=sys.stderr)
+            print(f'  Username : {DEFAULT_ADMIN_USERNAME}', file=sys.stderr)
+            print(f'  Password : {DEFAULT_ADMIN_PASSWORD}', file=sys.stderr)
+            print('  !! Change these credentials after first login!', file=sys.stderr)
+            print(f'  Dashboard: {site_url}/admin/login', file=sys.stderr)
+            print('=' * 60 + '\n', file=sys.stderr)
+    except Exception:
+        print(
+            '\n⚠️  Could not create default admin — database is unavailable.\n'
+            '   Admin login will not work until the database is reachable.\n',
+            file=sys.stderr,
+        )
