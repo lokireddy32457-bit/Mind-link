@@ -28,7 +28,7 @@
                 <div class="top-bar-left">
                     <span class="top-bar-item">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-                        Chanda Nagar, Hyderabad
+                        {{ site_location }}
                     </span>
                     <span class="top-bar-item">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
@@ -57,7 +57,7 @@
         <div class="container">
             <a href="{{ url_for('home') }}" class="nav-logo">
                 <span class="nav-logo-icon">🧠</span>
-                HELIUM MIND CENTRE
+                {{ site_name }}
             </a>
 
             <ul class="nav-links" id="navLinks">
@@ -128,7 +128,7 @@
                 <div class="footer-brand">
                     <a href="{{ url_for('home') }}" class="nav-logo">
                         <span class="nav-logo-icon">🧠</span>
-                        HELIUM MIND CENTRE
+                        {{ site_name }}
                     </a>
                     <p>Compassionate, evidence-based mental health care. Helping you find clarity, resilience, and peace of mind.</p>
                 </div>
@@ -156,7 +156,7 @@
 
                 <div>
                     <h4>Contact</h4>
-                    <div class="footer-contact-item">📍 123 Wellness Avenue, Suite 200</div>
+                    <div class="footer-contact-item">📍 {{ site_location }}</div>
                     <div class="footer-contact-item">📞 (555) 234-5678</div>
                     <div class="footer-contact-item">✉️ care@mindlinkpsych.com</div>
                     <div class="footer-contact-item">🕐 Mon–Fri: 9 AM – 6 PM</div>
@@ -164,7 +164,7 @@
             </div>
 
             <div class="footer-bottom">
-                <span>&copy; {{ now().year if now is defined else '2026' }} HELIUM MIND CENTRE. All rights reserved.</span>
+                <span>&copy; {{ now().year if now is defined else '2026' }} {{ site_name }}. All rights reserved.</span>
                 <span>Designed with 💙 for better mental health</span>
             </div>
         </div>

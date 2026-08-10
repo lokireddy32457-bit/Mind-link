@@ -146,6 +146,7 @@ document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
         closeCancelModal();
         closeBulkCancelModal();
+        closeSettingsModal();
     }
 });
 
@@ -220,6 +221,9 @@ function executeBulkCancel(date) {
 document.addEventListener('click', function (e) {
     if (e.target.id === 'bulkCancelModal') {
         closeBulkCancelModal();
+    }
+    if (e.target.id === 'settingsModal') {
+        closeSettingsModal();
     }
 });
 
@@ -318,4 +322,71 @@ function showToast(message, type) {
         toast.style.transform = 'translateX(40px)';
         setTimeout(function () { toast.remove(); }, 300);
     }, 4000);
+}
+
+
+// ========================================
+// Clinic Settings Modal
+// ========================================
+function openSettingsModal() {
+    document.getElementById('settingsModal').classList.add('active');
+    document.getElementById('settingsSiteName').focus();
+}
+
+function closeSettingsModal() {
+    var modal = document.getElementById('settingsModal');
+    if (modal) modal.classList.remove('active');
+}
+
+function saveSettings() {
+    var nameInput = document.getElementById('settingsSiteName');
+    var locationInput = document.getElementById('settingsSiteLocation');
+    var saveBtn = document.getElementById('saveSettingsBtn');
+
+    var siteName = nameInput ? nameInput.value.trim() : '';
+    var siteLocation = locationInput ? locationInput.value.trim() : '';
+
+    if (!siteName) {
+        showToast('⚠️ Clinic name cannot be empty.', 'error');
+        if (nameInput) nameInput.focus();
+        return;
+    }
+    if (!siteLocation) {
+        showToast('⚠️ Location cannot be empty.', 'error');
+        if (locationInput) locationInput.focus();
+        return;
+    }
+
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.textContent = '⏳ Saving...';
+    }
+
+    fetch('/admin/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            site_name: siteName,
+            site_location: siteLocation
+        })
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+        if (data.success) {
+            showToast('✅ ' + data.message, 'success');
+            closeSettingsModal();
+        } else {
+            showToast('❌ ' + data.message, 'error');
+        }
+    })
+    .catch(function (err) {
+        console.error('Settings save error:', err);
+        showToast('❌ An error occurred. Please try again.', 'error');
+    })
+    .finally(function () {
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.textContent = '💾 Save Changes';
+        }
+    });
 }

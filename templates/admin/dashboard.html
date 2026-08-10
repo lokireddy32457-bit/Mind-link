@@ -44,8 +44,13 @@
         <div class="dashboard-body">
             <!-- Header -->
             <div class="dashboard-header">
-                <h1>Appointment Dashboard</h1>
-                <p>Manage and review patient appointment requests.</p>
+                <div>
+                    <h1>Appointment Dashboard</h1>
+                    <p>Manage and review patient appointment requests.</p>
+                </div>
+                <button class="btn-settings" id="openSettingsBtn" onclick="openSettingsModal()" title="Edit clinic settings">
+                    ⚙️ Clinic Settings
+                </button>
             </div>
 
             <!-- Stats Cards -->
@@ -254,6 +259,52 @@
             <div class="modal-actions">
                 <button class="btn btn-secondary" onclick="closeBulkCancelModal()">Go Back</button>
                 <button class="btn btn-primary" id="confirmBulkCancelBtn" style="background: var(--color-error); box-shadow: none;">Yes, Cancel All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clinic Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal settings-modal">
+            <div class="settings-modal-header">
+                <div class="modal-icon" style="margin: 0;">⚙️</div>
+                <h3 style="margin: 0;">Clinic Settings</h3>
+                <button class="settings-close-btn" onclick="closeSettingsModal()" title="Close">✕</button>
+            </div>
+            <p style="color: var(--color-text-muted); font-size: 0.9rem; margin: 0 0 var(--space-md);">Changes are applied site-wide immediately after saving.</p>
+
+            <div class="settings-field">
+                <label for="settingsSiteName" class="settings-label">
+                    🏥 Hospital / Clinic Name
+                </label>
+                <input
+                    type="text"
+                    id="settingsSiteName"
+                    class="settings-input"
+                    placeholder="e.g. HELIUM MIND CENTRE"
+                    value="{{ site_name }}"
+                    maxlength="120"
+                >
+            </div>
+
+            <div class="settings-field">
+                <label for="settingsSiteLocation" class="settings-label">
+                    📍 Clinic Address / Location
+                </label>
+                <textarea
+                    id="settingsSiteLocation"
+                    class="settings-input settings-textarea"
+                    placeholder="e.g. 123 Wellness Avenue, Suite 200, Springfield, IL 62701"
+                    maxlength="300"
+                    rows="3"
+                >{{ site_location }}</textarea>
+            </div>
+
+            <div class="modal-actions" style="margin-top: var(--space-md);">
+                <button class="btn btn-secondary" onclick="closeSettingsModal()">Cancel</button>
+                <button class="btn btn-primary" id="saveSettingsBtn" onclick="saveSettings()">
+                    💾 Save Changes
+                </button>
             </div>
         </div>
     </div>

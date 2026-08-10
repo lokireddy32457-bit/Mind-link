@@ -107,6 +107,23 @@ def init_db():
                 )
             ''')
 
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS site_settings (
+                    key        TEXT PRIMARY KEY,
+                    value      TEXT NOT NULL,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+
+            # Seed default settings on first boot
+            cursor.execute('''
+                INSERT INTO site_settings (key, value)
+                VALUES
+                    ('site_name',     'HELIUM MIND CENTRE'),
+                    ('site_location', '123 Wellness Avenue, Suite 200, Springfield, IL 62701')
+                ON CONFLICT (key) DO NOTHING
+            ''')
+
             conn.commit()
             cursor.close()
             conn.close()
@@ -340,3 +357,53 @@ def admin_user_exists():
     cursor.close()
     conn.close()
     return count > 0
+
+
+# ---------------------
+# Site Settings Helpers
+# ---------------------
+
+_SETTING_DEFAULTS = {
+    'site_name':     'HELIUM MIND CENTRE',
+    'site_location': '123 Wellness Avenue, Suite 200, Springfield, IL 62701',
+}
+
+
+def get_site_settings():
+    """Return all site settings as a dict.  Falls back to hardcoded defaults
+    if the database is unavailable so templates never break."""
+    try:
+        conn = get_db()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cursor.execute('SELECT key, value FROM site_settings')
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        settings = dict(_SETTING_DEFAULTS)  # start with defaults
+        for row in rows:
+            settings[row['key']] = row['value']
+        return settings
+    except Exception:
+        return dict(_SETTING_DEFAULTS)
+
+
+def update_site_setting(key, value):
+    """Upsert a single site setting. Returns True on success."""
+    if key not in _SETTING_DEFAULTS:
+        raise ValueError(f'Unknown setting key: {key!r}')
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute(
+        '''
+        INSERT INTO site_settings (key, value, updated_at)
+        VALUES (%s, %s, %s)
+        ON CONFLICT (key) DO UPDATE
+            SET value = EXCLUDED.value,
+                updated_at = EXCLUDED.updated_at
+        ''',
+        (key, value, datetime.now().isoformat())
+    )
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return True

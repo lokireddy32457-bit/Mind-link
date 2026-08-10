@@ -19,7 +19,8 @@ from database import (
     init_db, save_appointment, save_inquiry,
     get_appointments, get_appointment_by_id,
     update_appointment_status, get_dashboard_stats,
-    get_booked_slots, cancel_appointments_by_date
+    get_booked_slots, cancel_appointments_by_date,
+    get_site_settings, update_site_setting
 )
 from auth import (
     login_required, authenticate_admin, create_default_admin
@@ -48,7 +49,12 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=8)
 @app.context_processor
 def inject_globals():
     """Inject commonly needed globals into all templates."""
-    return {'now': datetime.utcnow}
+    site = get_site_settings()
+    return {
+        'now': datetime.utcnow,
+        'site_name': site.get('site_name', 'HELIUM MIND CENTRE'),
+        'site_location': site.get('site_location', ''),
+    }
 
 
 # =====================
@@ -623,6 +629,33 @@ def api_stats():
     """JSON endpoint for dashboard statistics."""
     stats = get_dashboard_stats()
     return jsonify(stats)
+
+
+@app.route('/admin/api/settings', methods=['POST'])
+@login_required
+def api_update_settings():
+    """Update site settings (hospital name and location) via AJAX."""
+    data = request.get_json() or {}
+    allowed_keys = {'site_name', 'site_location'}
+    errors = []
+    updated = []
+
+    for key in allowed_keys:
+        if key in data:
+            value = str(data[key]).strip()
+            if not value:
+                errors.append(f'{key} cannot be empty.')
+                continue
+            try:
+                update_site_setting(key, value)
+                updated.append(key)
+            except Exception as e:
+                errors.append(str(e))
+
+    if errors:
+        return jsonify({'success': False, 'message': ' '.join(errors)}), 400
+
+    return jsonify({'success': True, 'message': f'Settings saved successfully ({len(updated)} updated).'})
 
 
 # =====================
