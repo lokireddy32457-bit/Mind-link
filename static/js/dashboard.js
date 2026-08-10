@@ -54,8 +54,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // ========================================
     let autoRefreshInterval = setInterval(function () {
         // Only refresh if no modal is open
-        const modal = document.getElementById('cancelModal');
-        if (modal && !modal.classList.contains('active')) {
+        const cancelModal = document.getElementById('cancelModal');
+        const bulkModal = document.getElementById('bulkCancelModal');
+        const anyOpen = (cancelModal && cancelModal.classList.contains('active'))
+                     || (bulkModal && bulkModal.classList.contains('active'));
+        if (!anyOpen) {
             location.reload();
         }
     }, 60000);
@@ -142,6 +145,81 @@ document.addEventListener('click', function (e) {
 document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
         closeCancelModal();
+        closeBulkCancelModal();
+    }
+});
+
+
+// ========================================
+// Bulk Cancel by Date
+// ========================================
+function showBulkCancelModal() {
+    var dateInput = document.getElementById('bulkCancelDate');
+    var date = dateInput ? dateInput.value : '';
+
+    if (!date) {
+        showToast('⚠️ Please select a date first.', 'error');
+        if (dateInput) dateInput.focus();
+        return;
+    }
+
+    // Format date nicely for the modal
+    var parts = date.split('-');
+    var friendly = parts[2] + '/' + parts[1] + '/' + parts[0]; // DD/MM/YYYY
+    var display = document.getElementById('bulkCancelDateDisplay');
+    if (display) display.textContent = friendly;
+
+    document.getElementById('bulkCancelModal').classList.add('active');
+
+    document.getElementById('confirmBulkCancelBtn').onclick = function () {
+        closeBulkCancelModal();
+        executeBulkCancel(date);
+    };
+}
+
+function closeBulkCancelModal() {
+    var modal = document.getElementById('bulkCancelModal');
+    if (modal) modal.classList.remove('active');
+}
+
+function executeBulkCancel(date) {
+    var btn = document.getElementById('bulkCancelBtn');
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = '⏳ Cancelling...';
+    }
+
+    fetch('/admin/appointments/cancel-by-date', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date: date })
+    })
+    .then(function (response) { return response.json(); })
+    .then(function (data) {
+        if (data.success) {
+            showToast('🗑️ ' + data.message, data.count > 0 ? 'success' : 'info');
+            // Reload after a short delay so the user can read the toast
+            setTimeout(function () { location.reload(); }, 1800);
+        } else {
+            showToast('❌ ' + data.message, 'error');
+        }
+    })
+    .catch(function (err) {
+        console.error('Bulk cancel error:', err);
+        showToast('❌ An error occurred. Please try again.', 'error');
+    })
+    .finally(function () {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = '🗑️ Cancel Day';
+        }
+    });
+}
+
+// Close bulk modal on overlay click
+document.addEventListener('click', function (e) {
+    if (e.target.id === 'bulkCancelModal') {
+        closeBulkCancelModal();
     }
 });
 

@@ -80,6 +80,23 @@
                 </div>
             </div>
 
+            <!-- Bulk Cancel by Date Panel -->
+            <div class="bulk-cancel-panel">
+                <div class="bulk-cancel-panel-inner">
+                    <div class="bulk-cancel-icon">🗑️</div>
+                    <div class="bulk-cancel-content">
+                        <h3>Cancel All Appointments for a Day</h3>
+                        <p>Select a date to cancel every pending &amp; approved appointment on that day.</p>
+                    </div>
+                    <div class="bulk-cancel-controls">
+                        <input type="date" id="bulkCancelDate" class="bulk-cancel-date-input">
+                        <button id="bulkCancelBtn" class="btn-bulk-cancel" onclick="showBulkCancelModal()">
+                            🗑️ Cancel Day
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Filters -->
             <form class="filters-bar" method="GET" action="{{ url_for('admin_dashboard') }}" id="filtersForm">
                 <div class="filter-group">
@@ -215,7 +232,7 @@
         </div>
     </div>
 
-    <!-- Confirmation Modal -->
+    <!-- Confirmation Modal (single cancel) -->
     <div class="modal-overlay" id="cancelModal">
         <div class="modal">
             <div class="modal-icon">⚠️</div>
@@ -228,6 +245,20 @@
         </div>
     </div>
 
+    <!-- Bulk Cancel by Date Modal -->
+    <div class="modal-overlay" id="bulkCancelModal">
+        <div class="modal">
+            <div class="modal-icon">🗑️</div>
+            <h3>Cancel Entire Day?</h3>
+            <p>This will cancel <strong>all pending and approved</strong> appointments on <strong id="bulkCancelDateDisplay"></strong>.<br>Patients will be notified by email. This cannot be undone automatically.</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeBulkCancelModal()">Go Back</button>
+                <button class="btn btn-primary" id="confirmBulkCancelBtn" style="background: var(--color-error); box-shadow: none;">Yes, Cancel All</button>
+            </div>
+        </div>
+    </div>
+
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 </body>
 </html>
+

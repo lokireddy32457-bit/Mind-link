@@ -3502,3 +3502,134 @@ textarea {
         padding: 6px 12px;
     }
 }
+
+/* ========================================
+   Bulk Cancel by Date Panel
+   ======================================== */
+.bulk-cancel-panel {
+    margin: 0 var(--space-xl) var(--space-md);
+    background: linear-gradient(135deg, hsl(0, 65%, 98%), hsl(0, 50%, 96%));
+    border: 1.5px solid hsl(0, 65%, 88%);
+    border-radius: var(--radius-lg);
+    padding: var(--space-md) var(--space-lg);
+    box-shadow: 0 2px 12px hsla(0, 65%, 55%, 0.08);
+}
+
+.bulk-cancel-panel-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}
+
+.bulk-cancel-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.bulk-cancel-content {
+    flex: 1;
+    min-width: 180px;
+}
+
+.bulk-cancel-content h3 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 600;
+    color: hsl(0, 55%, 35%);
+    margin: 0 0 2px;
+}
+
+.bulk-cancel-content p {
+    font-size: 0.85rem;
+    color: hsl(0, 20%, 50%);
+    margin: 0;
+}
+
+.bulk-cancel-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+.bulk-cancel-date-input {
+    padding: 9px 14px;
+    border: 1.5px solid hsl(0, 40%, 80%);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--color-text);
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.bulk-cancel-date-input:focus {
+    outline: none;
+    border-color: var(--color-error);
+    box-shadow: 0 0 0 3px hsla(0, 65%, 55%, 0.15);
+}
+
+.btn-bulk-cancel {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 20px;
+    background: var(--color-error);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 3px 10px hsla(0, 65%, 55%, 0.3);
+    white-space: nowrap;
+}
+
+.btn-bulk-cancel:hover {
+    background: hsl(0, 65%, 45%);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 16px hsla(0, 65%, 55%, 0.4);
+}
+
+.btn-bulk-cancel:active {
+    transform: translateY(0);
+}
+
+.btn-bulk-cancel:disabled {
+    background: var(--color-text-light);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+@media (max-width: 640px) {
+    .bulk-cancel-panel {
+        margin: 0 var(--space-md) var(--space-sm);
+        padding: var(--space-md);
+    }
+
+    .bulk-cancel-panel-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-sm);
+    }
+
+    .bulk-cancel-controls {
+        width: 100%;
+    }
+
+    .bulk-cancel-date-input {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .btn-bulk-cancel {
+        width: 100%;
+        justify-content: center;
+    }
+}
+

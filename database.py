@@ -233,6 +233,31 @@ def get_dashboard_stats():
     }
 
 
+def cancel_appointments_by_date(date):
+    """Cancel all pending and approved appointments on a given date.
+
+    Returns a list of dicts with {id, name, email} for each cancelled appointment
+    so the caller can optionally send notification emails.
+    """
+    conn = get_db()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute(
+        """
+        UPDATE appointments
+        SET status = 'cancelled', updated_at = %s
+        WHERE preferred_date = %s
+          AND status IN ('pending', 'approved')
+        RETURNING id, name, email
+        """,
+        (datetime.now().isoformat(), date)
+    )
+    affected = [dict(row) for row in cursor.fetchall()]
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return affected
+
+
 def get_booked_slots(date):
     """Return a list of time strings that are already approved for a given date."""
     conn = get_db()

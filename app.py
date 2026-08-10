@@ -19,7 +19,7 @@ from database import (
     init_db, save_appointment, save_inquiry,
     get_appointments, get_appointment_by_id,
     update_appointment_status, get_dashboard_stats,
-    get_booked_slots
+    get_booked_slots, cancel_appointments_by_date
 )
 from auth import (
     login_required, authenticate_admin, create_default_admin
@@ -581,6 +581,40 @@ def cancel_appointment(appointment_id):
         message += ' A cancellation email has been sent to the patient.'
 
     return jsonify({'success': True, 'message': message, 'new_status': 'cancelled', 'email_sent': email_sent})
+
+
+@app.route('/admin/appointments/cancel-by-date', methods=['POST'])
+@login_required
+def cancel_appointments_by_date_route():
+    """Cancel all pending/approved appointments on a selected date."""
+    data = request.get_json() or {}
+    date = data.get('date', '').strip()
+
+    if not date:
+        return jsonify({'success': False, 'message': 'Date is required.'}), 400
+
+    # Validate date format
+    try:
+        datetime.strptime(date, '%Y-%m-%d')
+    except ValueError:
+        return jsonify({'success': False, 'message': 'Invalid date format.'}), 400
+
+    cancelled = cancel_appointments_by_date(date)
+    count = len(cancelled)
+
+    # Send cancellation emails for each affected appointment
+    email_failures = 0
+    for apt in cancelled:
+        try:
+            send_appointment_email(apt, 'cancelled')
+        except Exception:
+            email_failures += 1
+
+    message = f'{count} appointment(s) cancelled for {date}.'
+    if email_failures:
+        message += f' ({email_failures} notification email(s) failed.)'
+
+    return jsonify({'success': True, 'message': message, 'count': count})
 
 
 @app.route('/admin/api/stats')
