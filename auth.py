@@ -10,10 +10,11 @@ from flask import session, redirect, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from database import get_admin_user, create_admin_user, admin_user_exists
 
-# Default admin credentials — used only on first boot if no admin exists.
-# Change these immediately after first login via the admin dashboard.
-DEFAULT_ADMIN_USERNAME = 'admin'
-DEFAULT_ADMIN_PASSWORD = 'mindlink2026'
+# Default admin credentials — used only on first boot if no admin user exists.
+# Override via the ADMIN_DEFAULT_PASSWORD environment variable.
+# IMPORTANT: Change the admin password immediately after first login.
+DEFAULT_ADMIN_USERNAME = os.environ.get('ADMIN_DEFAULT_USERNAME', 'admin')
+DEFAULT_ADMIN_PASSWORD = os.environ.get('ADMIN_DEFAULT_PASSWORD', 'mindlink2026')
 
 
 def hash_password(password):

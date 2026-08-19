@@ -1,6 +1,6 @@
 """
 Mind Link — WSGI Entry Point
-Used by Gunicorn in production (Render deployment).
+Used by Gunicorn in production.
 """
 
 from app import app

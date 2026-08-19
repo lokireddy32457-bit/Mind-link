@@ -1,10 +1,16 @@
 """
 Mind Link — Database Module
-PostgreSQL (Supabase) database setup and helper functions for appointments, inquiries, and admin users.
+PostgreSQL database setup and helper functions for appointments, inquiries, and admin users.
 
 Connection is configured via the DATABASE_URL environment variable.
-On Render, set DATABASE_URL in the Environment tab of the dashboard.
 Locally, set it in your .env file.
+On the production VPS, set it in /etc/mindlink/mindlink.env (loaded by systemd).
+
+SSL behaviour is controlled by DATABASE_SSL_MODE (default: 'prefer').
+  - Set DATABASE_SSL_MODE=require  when connecting to Supabase (cloud PostgreSQL).
+  - Set DATABASE_SSL_MODE=disable  when connecting to a local PostgreSQL instance.
+  - Set DATABASE_SSL_MODE=prefer   (default) to attempt SSL but fall back gracefully.
+If the DATABASE_URL already contains 'sslmode=', DATABASE_SSL_MODE is ignored.
 """
 
 import os
@@ -18,22 +24,36 @@ from datetime import datetime
 
 DATABASE_URL = os.environ.get('DATABASE_URL', '')
 
+# Controls whether SSL is required for the database connection.
+# 'prefer'  — attempt SSL, fall back to non-SSL (safe default for local Postgres)
+# 'require' — always use SSL (use this for Supabase / cloud databases)
+# 'disable' — never use SSL
+DATABASE_SSL_MODE = os.environ.get('DATABASE_SSL_MODE', 'prefer')
+
 # Track whether the database is reachable (set after successful init)
 _db_available = False
 
 
 def get_db():
-    """Get a PostgreSQL connection. SSL is required for Supabase."""
+    """Get a PostgreSQL connection.
+
+    SSL mode is controlled by the DATABASE_SSL_MODE environment variable:
+      - 'prefer'  (default) — attempts SSL, falls back gracefully (works for local Postgres)
+      - 'require' — always SSL (set this for Supabase / cloud databases)
+      - 'disable' — no SSL
+
+    If the DATABASE_URL already contains 'sslmode=', DATABASE_SSL_MODE is ignored.
+    """
     url = DATABASE_URL
     if not url:
         raise RuntimeError(
             'DATABASE_URL is not set. '
-            'Set it in your .env file or in the Render dashboard.'
+            'Set it in your .env file (local) or /etc/mindlink/mindlink.env (VPS production).'
         )
-    # Supabase requires SSL — append sslmode if not already present
+    # Only append sslmode if the URL does not already specify one
     if 'sslmode' not in url:
         sep = '&' if '?' in url else '?'
-        url += sep + 'sslmode=require'
+        url += sep + f'sslmode={DATABASE_SSL_MODE}'
     try:
         return psycopg2.connect(url, connect_timeout=10)
     except psycopg2.OperationalError as exc:
@@ -42,16 +62,19 @@ def get_db():
         print('  DATABASE CONNECTION ERROR', file=sys.stderr)
         print('=' * 60, file=sys.stderr)
         if 'ENOTFOUND' in error_msg or 'tenant' in error_msg:
-            print('  The Supabase project could not be found.', file=sys.stderr)
+            print('  The database host could not be found.', file=sys.stderr)
             print('  Possible causes:', file=sys.stderr)
-            print('    1. Your Supabase project is PAUSED (free-tier auto-pause).', file=sys.stderr)
+            print('    1. If using Supabase: the project may be PAUSED (free-tier auto-pause).', file=sys.stderr)
             print('       → Go to https://supabase.com/dashboard and click "Restore".', file=sys.stderr)
-            print('    2. The project reference in DATABASE_URL is incorrect.', file=sys.stderr)
-            print('       → Go to Supabase → Settings → Database → Connection string', file=sys.stderr)
-            print('         and copy the correct URI.', file=sys.stderr)
+            print('    2. The host in DATABASE_URL is incorrect.', file=sys.stderr)
+            print('       → Check DATABASE_URL in your .env or environment config.', file=sys.stderr)
         elif 'password authentication' in error_msg.lower():
             print('  Authentication failed — the database password is incorrect.', file=sys.stderr)
             print('  → Update DATABASE_URL in your .env file with the correct password.', file=sys.stderr)
+        elif 'ssl' in error_msg.lower():
+            print('  SSL connection error.', file=sys.stderr)
+            print('  → For local PostgreSQL, set DATABASE_SSL_MODE=disable in your .env.', file=sys.stderr)
+            print('  → For Supabase / cloud databases, set DATABASE_SSL_MODE=require.', file=sys.stderr)
         else:
             print(f'  {error_msg}', file=sys.stderr)
         print('=' * 60 + '\n', file=sys.stderr)
@@ -128,7 +151,7 @@ def init_db():
             cursor.close()
             conn.close()
             _db_available = True
-            print('[Database] Connected to Supabase PostgreSQL successfully.', file=sys.stderr)
+            print('[Database] Connected to PostgreSQL successfully.', file=sys.stderr)
             return  # success
         except Exception as exc:
             if attempt < 2:

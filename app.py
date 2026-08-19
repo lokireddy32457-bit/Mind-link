@@ -392,6 +392,16 @@ def api_booked_slots():
     return jsonify({'booked': booked})
 
 
+@app.route('/health')
+def health_check():
+    """Liveness endpoint for Nginx, load balancers, and monitoring tools.
+
+    Returns HTTP 200 when the application process is running.
+    Does NOT query the database or expose internal infrastructure details.
+    """
+    return jsonify({'status': 'ok', 'service': 'mindlink'}), 200
+
+
 # =====================
 # Form Submission Routes
 # =====================

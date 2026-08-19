@@ -1,0 +1,55 @@
+[Unit]
+Description=Mind Link — Gunicorn Application Server
+Documentation=https://github.com/lokireddy32457-bit/Mind-link
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+# ─── User / Group ─────────────────────────────────────────────────────────────
+# The application runs as the 'deploy' user for security isolation.
+# Nginx must be in the 'deploy' group (or vice versa) to read the Unix socket.
+User=deploy
+Group=www-data
+
+# ─── Working Directory ────────────────────────────────────────────────────────
+WorkingDirectory=/var/www/mindlink
+
+# ─── Environment ──────────────────────────────────────────────────────────────
+# All secrets (DATABASE_URL, SECRET_KEY, SMTP_PASSWORD, etc.) live here.
+# This file must NOT be in the Git repository.
+# Create it on the VPS: sudo nano /etc/mindlink/mindlink.env
+# Set permissions:       sudo chmod 640 /etc/mindlink/mindlink.env
+#                        sudo chown root:deploy /etc/mindlink/mindlink.env
+EnvironmentFile=/etc/mindlink/mindlink.env
+
+# ─── Socket Directory ─────────────────────────────────────────────────────────
+# Create the socket directory before starting Gunicorn.
+# ExecStartPre ensures it exists with correct ownership on every start.
+ExecStartPre=/bin/bash -c 'mkdir -p /run/gunicorn && chown deploy:www-data /run/gunicorn && chmod 750 /run/gunicorn'
+
+# ─── Start Command ────────────────────────────────────────────────────────────
+ExecStart=/var/www/mindlink/venv/bin/gunicorn \
+    --config /var/www/mindlink/deploy/gunicorn.conf.py \
+    wsgi:app
+
+# ─── Restart Policy ───────────────────────────────────────────────────────────
+Restart=on-failure
+RestartSec=5s
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+# ─── Security Hardening ───────────────────────────────────────────────────────
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectSystem=full
+
+# ─── Logging ──────────────────────────────────────────────────────────────────
+# Gunicorn logs to stdout/stderr — systemd captures both to the journal.
+# View logs: journalctl -u mindlink -f
+# Last 100 lines: journalctl -u mindlink -n 100 --no-pager
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=mindlink
+
+[Install]
+WantedBy=multi-user.target

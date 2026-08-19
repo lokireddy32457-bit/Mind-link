@@ -1,0 +1,111 @@
+# =========================================
+# Mind Link — Nginx Configuration Example
+# =========================================
+# Replace ALL placeholder values before using:
+#   YOUR_DOMAIN      → e.g. mindlinkpsychiatry.com
+#   YOUR_SERVER_IP   → e.g. 192.168.1.100  (used in redirect if needed)
+#
+# Architecture:
+#   Internet → Nginx (443 HTTPS / 80 HTTP redirect) → Unix Socket → Gunicorn → Flask
+#
+# Installation:
+#   sudo cp nginx.conf.example /etc/nginx/sites-available/mindlink
+#   sudo ln -s /etc/nginx/sites-available/mindlink /etc/nginx/sites-enabled/mindlink
+#   sudo nginx -t
+#   sudo systemctl reload nginx
+# =========================================
+
+# ─── HTTP → HTTPS redirect ────────────────────────────────────────────────────
+server {
+    listen 80;
+    listen [::]:80;
+    server_name YOUR_DOMAIN www.YOUR_DOMAIN;
+
+    # Let's Encrypt ACME challenge (certbot uses this path during certificate issuance)
+    location /.well-known/acme-challenge/ {
+        root /var/www/html;
+    }
+
+    # Redirect all other HTTP traffic to HTTPS
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+# ─── HTTPS — Main application server ─────────────────────────────────────────
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name YOUR_DOMAIN www.YOUR_DOMAIN;
+
+    # ── SSL Certificate (issued by Let's Encrypt / Certbot) ─────────────────
+    # Run: sudo certbot --nginx -d YOUR_DOMAIN -d www.YOUR_DOMAIN
+    # Certbot will populate these paths automatically.
+    ssl_certificate     /etc/letsencrypt/live/YOUR_DOMAIN/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/YOUR_DOMAIN/privkey.pem;
+
+    # ── SSL Hardening ─────────────────────────────────────────────────────────
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers off;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 1d;
+    ssl_session_tickets off;
+
+    # ── Security Headers ──────────────────────────────────────────────────────
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;
+    add_header X-Frame-Options           "SAMEORIGIN"                                   always;
+    add_header X-Content-Type-Options    "nosniff"                                      always;
+    add_header X-XSS-Protection          "1; mode=block"                                always;
+    add_header Referrer-Policy           "strict-origin-when-cross-origin"              always;
+
+    # ── Logging ───────────────────────────────────────────────────────────────
+    access_log /var/log/nginx/mindlink_access.log;
+    error_log  /var/log/nginx/mindlink_error.log;
+
+    # ── Static Files — served directly by Nginx (fast, no Gunicorn overhead) ─
+    location /static/ {
+        alias /var/www/mindlink/static/;
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+        access_log off;
+    }
+
+    # ── Health check — low-overhead liveness probe ────────────────────────────
+    location = /health {
+        proxy_pass         http://unix:/run/gunicorn/mindlink.sock;
+        proxy_set_header   Host $host;
+        access_log         off;
+    }
+
+    # ── Proxy everything else to Gunicorn via Unix socket ─────────────────────
+    location / {
+        proxy_pass         http://unix:/run/gunicorn/mindlink.sock;
+
+        # Pass original request information to Flask
+        proxy_set_header   Host              $host;
+        proxy_set_header   X-Real-IP         $remote_addr;
+        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+
+        # Timeouts — must be >= Gunicorn timeout (120s)
+        proxy_connect_timeout 75s;
+        proxy_read_timeout    120s;
+        proxy_send_timeout    120s;
+
+        # Buffer settings
+        proxy_buffering    on;
+        proxy_buffer_size  16k;
+        proxy_buffers      8 16k;
+    }
+
+    # ── Block access to hidden files (e.g. .env, .git) ───────────────────────
+    location ~ /\. {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+
+    # ── Limit request body size (adjust as needed) ────────────────────────────
+    client_max_body_size 10M;
+}

@@ -2,7 +2,7 @@
 # Mind Link — Git Ignore
 # =========================================
 
-# Python
+# ─── Python ───────────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *$py.class
@@ -11,29 +11,46 @@ __pycache__/
 dist/
 build/
 *.egg
+*.pyo
+*.pyd
 
-# Virtual environment
+# ─── Virtual environments ─────────────────────────────────────────────────────
 venv/
 .venv/
 env/
 
-# IDE / Editor
+# ─── Environment variables (NEVER commit secrets) ─────────────────────────────
+.env
+.env.local
+.env.*.local
+# Also exclude any accidentally-created real env files under deploy/
+deploy/*.env
+deploy/mindlink.env
+
+# ─── Flask instance folder ────────────────────────────────────────────────────
+instance/
+
+# ─── SQLite database (development remnant) ────────────────────────────────────
+*.db
+
+# ─── Testing & Coverage ───────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# ─── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ─── IDE / Editor ─────────────────────────────────────────────────────────────
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# Environment variables (contains real secrets — never commit)
-.env
-
-# SQLite database (created at runtime — use Render Disk for persistence)
-*.db
-
-# OS files
+# ─── OS files ─────────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
 desktop.ini
-
-# Dev utilities (not needed in production)
-check_db.py
