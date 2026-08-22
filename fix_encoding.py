@@ -1,4 +1,4 @@
-"""
+﻿"""
 Apply all required text changes to Mind Link templates cleanly.
 Uses Python's utf-8 encoding throughout to avoid mojibake.
 """
@@ -55,11 +55,11 @@ content = content.replace(
 
 # Doctor intro section
 content = content.replace(
-    '<h2>Dr. Sarah Mitchell</h2>\n            <p>MBBS, DPM (Psychiatry) — Neuro Psychiatrist</p>',
+    '<h2>Dr. Vikarn</h2>\n            <p>MBBS, DPM (Psychiatry) — Neuro Psychiatrist</p>',
     '<h2>Dr. Vikram Akavaram</h2>\n            <p>MBBS, DPM (Osm) — Neuro Psychiatrist</p>'
 )
 content = content.replace(
-    'alt="Dr. Sarah Mitchell, MD — Board-Certified Psychiatrist">',
+    'alt="Dr. Vikarn — Board-Certified Psychiatrist">',
     'alt="Dr. Vikram Akavaram — MBBS, DPM (Osm) Neuro Psychiatrist">'
 )
 content = content.replace(
@@ -67,7 +67,7 @@ content = content.replace(
     '<div class="doctor-intro-badge">🩺 Neuro Psychiatrist</div>'
 )
 content = content.replace(
-    '<h3>Dr. Sarah Mitchell, <span>MD</span></h3>',
+    '<h3>Dr. Vikarn, <span>MD</span></h3>',
     '<h3>Dr. Vikram Akavaram, <span>MBBS, DPM (Osm)</span></h3>'
 )
 content = content.replace(
@@ -75,15 +75,15 @@ content = content.replace(
     '<p class="doctor-credential">Neuro Psychiatrist &bull; Helium Mind Center</p>'
 )
 content = content.replace(
-    '<p>With over 17+ years of experience, Dr. Sarah Mitchell provides comprehensive and individualized psychiatric care for patients across all age groups.</p>',
+    '<p>With over 17+ years of experience, Dr. Vikarn provides comprehensive and individualized psychiatric care for patients across all age groups.</p>',
     '<p>Dr. Vikram Akavaram is a highly committed neuropsychiatrist specializing in the comprehensive treatment of mental health disorders. His holistic approach integrates the complexities of both mind and brain, leveraging extensive expertise in psychology and neurology to provide personalized and effective care for each patient.</p>'
 )
 content = content.replace(
-    'Know More About Dr. Mitchell',
+    'Know More About Dr. Vikarn',
     'Know More About Dr. Akavaram'
 )
 content = content.replace(
-    'alt="Dr. Sarah Mitchell — Board-Certified Psychiatrist"',
+    'alt="Dr. Vikarn — Board-Certified Psychiatrist"',
     'alt="Dr. Vikram Akavaram — MBBS, DPM (Osm) Neuro Psychiatrist"'
 )
 
@@ -99,19 +99,19 @@ for old, new in BRAND:
     content = content.replace(old, new)
 
 content = content.replace(
-    '{% block title %}About Dr. Sarah Mitchell — Mind Link Psychiatry{% endblock %}',
+    '{% block title %}About Dr. Vikarn — Mind Link Psychiatry{% endblock %}',
     '{% block title %}About Dr. Vikram Akavaram — HELIUM MIND CENTRE{% endblock %}'
 )
 content = content.replace(
-    '{% block description %}Learn about Dr. Sarah Mitchell, MD — a board-certified psychiatrist with over 15 years of experience in compassionate, evidence-based mental health care.{% endblock %}',
+    '{% block description %}Learn about Dr. Vikarn — a board-certified psychiatrist with over 15 years of experience in compassionate, evidence-based mental health care.{% endblock %}',
     '{% block description %}Learn about Dr. Vikram Akavaram, MBBS, DPM (Osm) — a dedicated Neuro Psychiatrist at Helium Mind Center, committed to holistic mental health care.{% endblock %}'
 )
 content = content.replace(
-    'alt="Dr. Sarah Mitchell, MD — Board-Certified Psychiatrist">',
+    'alt="Dr. Vikarn — Board-Certified Psychiatrist">',
     'alt="Dr. Vikram Akavaram — MBBS, DPM (Osm) Neuro Psychiatrist">'
 )
 content = content.replace(
-    '<h1>Dr. Sarah Mitchell, MD</h1>',
+    '<h1>Dr. Vikarn</h1>',
     '<h1>Dr. Vikram Akavaram, <span style="font-size:0.7em;font-weight:500;">MBBS, DPM (Osm)</span></h1>'
 )
 content = content.replace(
@@ -119,19 +119,19 @@ content = content.replace(
     '<p class="credential">Neuro Psychiatrist &bull; Helium Mind Center</p>'
 )
 content = content.replace(
-    "<p>Dr. Sarah Mitchell is a compassionate and experienced psychiatrist dedicated to helping individuals achieve lasting mental wellness. With a patient-centered approach, she combines the latest advancements in psychiatric medicine with genuine empathy to provide care that truly makes a difference.</p>",
+    "<p>Dr. Vikarn is a compassionate and experienced psychiatrist dedicated to helping individuals achieve lasting mental wellness. With a patient-centered approach, she combines the latest advancements in psychiatric medicine with genuine empathy to provide care that truly makes a difference.</p>",
     "<p>Dr. Vikram Akavaram is a highly committed neuropsychiatrist specializing in the comprehensive treatment of mental health disorders. With a strong foundation in neuropsychiatry, he brings a unique perspective to the diagnosis and management of psychiatric conditions.</p>"
 )
 content = content.replace(
-    "<p>After completing her medical degree at Johns Hopkins University School of Medicine and her psychiatry residency at Massachusetts General Hospital, Dr. Mitchell went on to specialize in mood disorders, anxiety, and trauma-related conditions.</p>",
+    "<p>After completing her medical degree at Johns Hopkins University School of Medicine and her psychiatry residency at Massachusetts General Hospital, Dr. Vikarn went on to specialize in mood disorders, anxiety, and trauma-related conditions.</p>",
     "<p>His holistic approach integrates the complexities of both mind and brain, leveraging extensive expertise in psychology and neurology to provide personalized and effective care for each patient.</p>"
 )
 content = content.replace(
-    "<p>Dr. Mitchell specializes in a wide range of psychiatric conditions, providing tailored treatment plans for each patient.</p>",
+    "<p>Dr. Vikarn specializes in a wide range of psychiatric conditions, providing tailored treatment plans for each patient.</p>",
     "<p>Dr. Akavaram specializes in a wide range of neuropsychiatric conditions, providing tailored treatment plans for each patient.</p>"
 )
 content = content.replace(
-    "<p>Dr. Mitchell's extensive training and affiliations ensure the highest standard of psychiatric care.</p>",
+    "<p>Dr. Vikarn's extensive training and affiliations ensure the highest standard of psychiatric care.</p>",
     "<p>Dr. Akavaram's extensive training and commitment ensure the highest standard of neuropsychiatric care.</p>"
 )
 content = content.replace(
@@ -151,7 +151,7 @@ content = content.replace(
     '<h4>Indian Psychiatric Society</h4>\n                    <p>Member</p>'
 )
 content = content.replace(
-    '<h2>Meet Dr. Mitchell in Person</h2>',
+    '<h2>Meet Dr. Vikarn in Person</h2>',
     '<h2>Meet Dr. Akavaram in Person</h2>'
 )
 content = content.replace(

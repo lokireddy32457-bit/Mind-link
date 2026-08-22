@@ -341,10 +341,16 @@ function closeSettingsModal() {
 function saveSettings() {
     var nameInput = document.getElementById('settingsSiteName');
     var locationInput = document.getElementById('settingsSiteLocation');
+    var facebookInput = document.getElementById('settingsFacebook');
+    var instagramInput = document.getElementById('settingsInstagram');
+    var whatsappInput = document.getElementById('settingsWhatsapp');
     var saveBtn = document.getElementById('saveSettingsBtn');
 
     var siteName = nameInput ? nameInput.value.trim() : '';
     var siteLocation = locationInput ? locationInput.value.trim() : '';
+    var socialFacebook = facebookInput ? facebookInput.value.trim() : '';
+    var socialInstagram = instagramInput ? instagramInput.value.trim() : '';
+    var socialWhatsapp = whatsappInput ? whatsappInput.value.trim() : '';
 
     if (!siteName) {
         showToast('⚠️ Clinic name cannot be empty.', 'error');
@@ -362,13 +368,18 @@ function saveSettings() {
         saveBtn.textContent = '⏳ Saving...';
     }
 
+    var payload = {
+        site_name: siteName,
+        site_location: siteLocation
+    };
+    if (socialFacebook) payload.social_facebook = socialFacebook;
+    if (socialInstagram) payload.social_instagram = socialInstagram;
+    if (socialWhatsapp) payload.social_whatsapp = socialWhatsapp;
+
     fetch('/admin/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            site_name: siteName,
-            site_location: siteLocation
-        })
+        body: JSON.stringify(payload)
     })
     .then(function (r) { return r.json(); })
     .then(function (data) {

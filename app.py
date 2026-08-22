@@ -54,6 +54,9 @@ def inject_globals():
         'now': datetime.utcnow,
         'site_name': site.get('site_name', 'HELIUM MIND CENTRE'),
         'site_location': site.get('site_location', ''),
+        'social_facebook': site.get('social_facebook', 'https://www.facebook.com/heliummindcenter'),
+        'social_instagram': site.get('social_instagram', '#'),
+        'social_whatsapp': site.get('social_whatsapp', 'https://api.whatsapp.com/send/?phone=919951432102'),
     }
 
 
@@ -561,6 +564,14 @@ def admin_dashboard():
                            })
 
 
+@app.route('/admin/settings')
+@login_required
+def admin_settings():
+    """Dedicated settings page with per-page configuration tabs."""
+    settings = get_site_settings()
+    return render_template('admin/settings.html', settings=settings)
+
+
 @app.route('/admin/appointments/<int:appointment_id>/approve', methods=['POST'])
 @login_required
 def approve_appointment(appointment_id):
@@ -646,7 +657,43 @@ def api_stats():
 def api_update_settings():
     """Update site settings (hospital name and location) via AJAX."""
     data = request.get_json() or {}
-    allowed_keys = {'site_name', 'site_location'}
+    allowed_keys = {
+        # General / clinic identity
+        'site_name', 'site_location', 'site_phone', 'site_email',
+        'hours_weekday', 'hours_weekend',
+        # Social
+        'social_facebook', 'social_instagram', 'social_whatsapp',
+        # Home page
+        'home_hero_title', 'home_hero_subtitle',
+        'home_hero_cta_primary', 'home_hero_cta_secondary',
+        'home_stat1_number', 'home_stat1_label',
+        'home_stat2_number', 'home_stat2_label',
+        'home_stat3_number', 'home_stat3_label',
+        'home_whyus_title', 'home_whyus_subtitle',
+        'home_show_telehealth_banner', 'home_show_testimonials', 'home_show_articles',
+        # About page
+        'about_doctor_name', 'about_doctor_credentials', 'about_doctor_title',
+        'about_doctor_bio', 'about_doctor_experience', 'about_doctor_languages',
+        'about_page_title', 'about_page_tagline',
+        'about_show_photo', 'about_show_qualifications', 'about_show_awards',
+        # Services page
+        'services_page_title', 'services_page_subtitle',
+        'services_show_psychotherapy', 'services_show_medication', 'services_show_telehealth',
+        'services_show_anxiety', 'services_show_ptsd', 'services_show_child',
+        'services_show_insomnia', 'services_show_adhd',
+        'services_consultation_fee', 'services_followup_fee', 'services_insurance_note',
+        # Booking page
+        'booking_page_title', 'booking_page_subtitle',
+        'booking_slot_start', 'booking_slot_end', 'booking_slot_duration',
+        'booking_advance_days', 'booking_available_days',
+        'booking_require_message', 'booking_allow_telehealth', 'booking_accepting_patients',
+        'booking_success_message',
+        # Contact page
+        'contact_page_title', 'contact_page_subtitle',
+        'contact_phone', 'contact_phone2', 'contact_email', 'contact_maps_embed',
+        'contact_hours_weekday', 'contact_hours_weekend',
+        'contact_show_map', 'contact_show_form', 'contact_show_whatsapp',
+    }
     errors = []
     updated = []
 

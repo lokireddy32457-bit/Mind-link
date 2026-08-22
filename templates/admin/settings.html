@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings — Admin Panel</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:        #0f1117;
+            --surface:   #1a1d27;
+            --surface2:  #22263a;
+            --border:    rgba(255,255,255,0.1);
+            --border2:   rgba(255,255,255,0.06);
+            --text:      #e8eaf0;
+            --text-mid:  #9da3b8;
+            --text-dim:  #6b7190;
+            --purple:    #7c3aed;
+            --purple-lt: #a78bfa;
+            --green:     #22c55e;
+            --radius:    12px;
+            --radius-lg: 18px;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* ─── Top Navigation ─── */
+        .top-nav {
+            height: 58px;
+            background: rgba(15,17,23,0.96);
+            border-bottom: 1px solid var(--border2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            backdrop-filter: blur(12px);
+        }
+        .nav-left { display: flex; align-items: center; gap: 16px; }
+        .nav-brand {
+            font-weight: 700; font-size: 14px; color: #fff;
+            text-decoration: none; letter-spacing: 0.4px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .nav-brand span { font-size: 18px; }
+        .nav-back {
+            font-size: 13px; color: var(--text-mid);
+            text-decoration: none; transition: color .2s;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .nav-back:hover { color: var(--purple-lt); }
+        .nav-right { display: flex; align-items: center; gap: 14px; }
+        .nav-viewsite {
+            font-size: 13px; color: var(--text-mid); text-decoration: none;
+            transition: color .2s;
+        }
+        .nav-viewsite:hover { color: var(--text); }
+        .nav-sep { color: var(--border); }
+        .nav-user { font-size: 13px; color: var(--text-dim); }
+        .nav-logout {
+            font-size: 12px; padding: 6px 14px; border-radius: 8px;
+            border: 1px solid var(--border); background: var(--surface);
+            color: var(--text-mid); cursor: pointer; text-decoration: none;
+            transition: all .2s;
+        }
+        .nav-logout:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+        /* ─── Page ─── */
+        .page { max-width: 860px; margin: 0 auto; padding: 36px 20px 120px; }
+
+        .page-title {
+            font-size: 24px; font-weight: 700; margin-bottom: 6px;
+            background: linear-gradient(135deg, #c4b5fd, #7c3aed);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .page-desc {
+            font-size: 14px; color: var(--text-mid); margin-bottom: 28px;
+        }
+
+        /* ─── Tab Bar ─── */
+        .tab-bar {
+            display: flex;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 5px;
+            gap: 3px;
+            margin-bottom: 28px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .tab-bar::-webkit-scrollbar { display: none; }
+        .tab-btn {
+            flex: 1 0 auto;
+            padding: 9px 14px;
+            border: none;
+            border-radius: var(--radius);
+            background: transparent;
+            color: var(--text-mid);
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+            display: flex; align-items: center; gap: 6px; justify-content: center;
+        }
+        .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #7c3aed, #9d5cf6);
+            color: #fff;
+            box-shadow: 0 3px 12px rgba(124,58,237,.4);
+        }
+
+        /* ─── Panels ─── */
+        .panel { display: none; }
+        .panel.active { display: block; }
+
+        /* ─── Section card ─── */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px 26px;
+            margin-bottom: 16px;
+        }
+
+        /* Section title inside card */
+        .section-title {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--purple-lt);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border2);
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        /* ─── Fields ─── */
+        .field { margin-bottom: 18px; }
+        .field:last-child { margin-bottom: 0; }
+
+        .field-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 5px;
+        }
+
+        /* Sub-hint shown in a visibly readable colour */
+        .field-hint {
+            display: block;
+            font-size: 12px;
+            color: var(--text-mid);
+            margin-top: 5px;
+            line-height: 1.5;
+        }
+
+        .field-input,
+        .field-textarea,
+        .field-select {
+            width: 100%;
+            padding: 10px 13px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+            -webkit-appearance: none;
+        }
+        .field-input::placeholder,
+        .field-textarea::placeholder { color: var(--text-dim); }
+        .field-input:focus,
+        .field-textarea:focus,
+        .field-select:focus {
+            border-color: var(--purple);
+            box-shadow: 0 0 0 3px rgba(124,58,237,.18);
+        }
+        .field-textarea { resize: vertical; min-height: 90px; }
+        .field-select { cursor: pointer; }
+        .field-select option { background: #1a1d27; }
+
+        /* Grid layout */
+        .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        @media (max-width: 580px) {
+            .row2 { grid-template-columns: 1fr; }
+            .tab-btn { font-size: 12px; padding: 8px 10px; }
+        }
+
+        /* ─── On/Off Toggle ─── */
+        .toggle-list { display: flex; flex-direction: column; gap: 0; }
+
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border2);
+            gap: 16px;
+        }
+        .toggle-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .toggle-item:first-child { padding-top: 0; }
+
+        .toggle-text { flex: 1; }
+        .toggle-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+            display: block;
+            margin-bottom: 2px;
+        }
+        .toggle-desc {
+            font-size: 12px;
+            color: var(--text-mid);
+            line-height: 1.45;
+        }
+
+        /* pill-style toggle */
+        .tog {
+            position: relative;
+            width: 46px; height: 26px;
+            flex-shrink: 0;
+        }
+        .tog input { opacity: 0; width: 0; height: 0; }
+        .tog-track {
+            position: absolute; inset: 0;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 99px;
+            cursor: pointer;
+            transition: background .25s, border-color .25s;
+        }
+        .tog-track::after {
+            content: '';
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            background: var(--text-dim);
+            transition: transform .25s, background .25s;
+        }
+        .tog input:checked + .tog-track {
+            background: var(--purple);
+            border-color: var(--purple);
+        }
+        .tog input:checked + .tog-track::after {
+            transform: translateX(20px);
+            background: #fff;
+        }
+
+        /* ─── Day chips ─── */
+        .day-picker { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+        .day-chip { position: relative; }
+        .day-chip input { position: absolute; opacity: 0; width: 0; height: 0; }
+        .day-chip-label {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 16px;
+            border-radius: 99px;
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text-mid);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all .2s;
+            user-select: none;
+        }
+        .day-chip input:checked + .day-chip-label {
+            background: rgba(124,58,237,.2);
+            border-color: var(--purple);
+            color: #c4b5fd;
+        }
+        .day-chip-label:hover { border-color: rgba(255,255,255,.2); color: var(--text); }
+
+        /* ─── Sticky Save Bar ─── */
+        .save-bar {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 68px;
+            background: rgba(15,17,23,0.97);
+            border-top: 1px solid var(--border2);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 14px;
+            padding: 0 28px;
+            z-index: 150;
+        }
+        .save-msg { font-size: 13px; color: var(--text-mid); transition: color .3s; }
+        .save-msg.ok  { color: #4ade80; }
+        .save-msg.err { color: #f87171; }
+
+        .btn-save {
+            padding: 11px 28px;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, #7c3aed, #9d5cf6);
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(124,58,237,.4);
+            transition: transform .15s, box-shadow .15s, opacity .2s;
+        }
+        .btn-save:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,.5); }
+        .btn-save:active { transform: none; }
+        .btn-save:disabled { opacity: .55; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* ─── Toast ─── */
+        .toast {
+            position: fixed;
+            bottom: 82px; right: 24px;
+            padding: 11px 18px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            display: flex; align-items: center; gap: 8px;
+            opacity: 0; transform: translateY(6px);
+            transition: opacity .3s, transform .3s;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.ok  { background: rgba(34,197,94,.15); border: 1px solid rgba(34,197,94,.3); color: #4ade80; }
+        .toast.err { background: rgba(239,68,68,.15);  border: 1px solid rgba(239,68,68,.3);  color: #f87171; }
+
+        /* ─── Info callout box ─── */
+        .info-box {
+            background: rgba(124,58,237,.08);
+            border: 1px solid rgba(124,58,237,.2);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            font-size: 13px;
+            color: var(--text-mid);
+            margin-bottom: 16px;
+            line-height: 1.55;
+        }
+        .info-box strong { color: var(--purple-lt); }
+    </style>
+</head>
+<body>
+
+<!-- ─── Navigation ─── -->
+<nav class="top-nav">
+    <div class="nav-left">
+        <a href="/admin/dashboard" class="nav-brand"><span>🧠</span> HELIUM MIND CENTRE</a>
+        <a href="/admin/dashboard" class="nav-back">← Dashboard</a>
+    </div>
+    <div class="nav-right">
+        <a href="/" class="nav-viewsite" target="_blank">🌐 View Website</a>
+        <span class="nav-sep">|</span>
+        <span class="nav-user">👤 Dr. {{ session.get('admin_username','Admin') }}</span>
+        <a href="/admin/logout" class="nav-logout">Logout</a>
+    </div>
+</nav>
+
+<!-- ─── Flash messages ─── -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div style="max-width:860px;margin:16px auto;padding:0 20px;">
+    {% for cat, msg in messages %}
+    <div style="padding:12px 16px;border-radius:10px;font-size:13px;margin-bottom:8px;font-weight:500;
+        {% if cat=='success' %}background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:#4ade80;
+        {% elif cat=='error'  %}background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.25); color:#f87171;
+        {% else               %}background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);color:#60a5fa;{% endif %}">
+        {% if cat=='success' %}✓{% elif cat=='error' %}✕{% else %}ℹ{% endif %} {{ msg }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+<!-- ─── Page content ─── -->
+<div class="page">
+
+    <h1 class="page-title">⚙️ Settings</h1>
+    <p class="page-desc">Make changes below and click <strong style="color:#c4b5fd;">Save Changes</strong> at the bottom when you're done.</p>
+
+    <!-- Tab bar -->
+    <div class="tab-bar" role="tablist">
+        <button class="tab-btn active" onclick="switchTab('clinic',   this)" id="tab-clinic">🏥 Clinic</button>
+        <button class="tab-btn"        onclick="switchTab('home',     this)" id="tab-home">🏠 Home Page</button>
+        <button class="tab-btn"        onclick="switchTab('about',    this)" id="tab-about">👨‍⚕️ About</button>
+        <button class="tab-btn"        onclick="switchTab('services', this)" id="tab-services">🩺 Services</button>
+        <button class="tab-btn"        onclick="switchTab('booking',  this)" id="tab-booking">📅 Booking</button>
+        <button class="tab-btn"        onclick="switchTab('contact',  this)" id="tab-contact">📞 Contact</button>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════
+         🏥  CLINIC TAB
+    ══════════════════════════════════════════════════════ -->
+    <div class="panel active" id="panel-clinic">
+
+        <!-- Basic info -->
+        <div class="card">
+            <div class="section-title">🏥 Basic Clinic Information</div>
+
+            <div class="field">
+                <label class="field-label" for="cl_name">Clinic Name</label>
+                <input class="field-input" type="text" id="cl_name" name="site_name"
+                       value="{{ settings.get('site_name','') }}" maxlength="120"
+                       placeholder="e.g. HELIUM MIND CENTRE">
+                <span class="field-hint">This name appears at the top and bottom of the website, and in patient emails.</span>
+            </div>
+
+            <div class="row2">
+                <div class="field">
+                    <label class="field-label" for="cl_phone">Phone Number</label>
+                    <input class="field-input" type="text" id="cl_phone" name="site_phone"
+                           value="{{ settings.get('site_phone','') }}"
+                           placeholder="e.g. +91 99514 32102">
+                    <span class="field-hint">Shown at the top of the website and on the Contact page.</span>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="cl_email">Email Address</label>
+                    <input class="field-input" type="email" id="cl_email" name="site_email"
+                           value="{{ settings.get('site_email','') }}"
+                           placeholder="e.g. appointments@heliummind.com">
+                    <span class="field-hint">Shown at the bottom of the website and on the Contact page.</span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="field-label" for="cl_address">Clinic Address</label>
+                <textarea class="field-textarea" id="cl_address" name="site_location"
+                          rows="2" maxlength="300"
+                          placeholder="e.g. 23, Park Street, Banjara Hills, Hyderabad – 500034">{{ settings.get('site_location','') }}</textarea>
+                <span class="field-hint">Your full clinic address as you want patients to see it.</span>
+            </div>
+        </div>
+
+        <!-- Opening hours -->
+        <div class="card">
+            <div class="section-title">🕐 Opening Hours</div>
+            <div class="row2">
+                <div class="field">
+                    <label class="field-label" for="cl_hrs_week">Monday to Friday</label>
+                    <input class="field-input" type="text" id="cl_hrs_week" name="hours_weekday"
+                           value="{{ settings.get('hours_weekday','') }}"
+                           placeholder="e.g. 9:00 AM – 6:00 PM">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="cl_hrs_wknd">Saturday, Sunday & Holidays</label>
+                    <input class="field-input" type="text" id="cl_hrs_wknd" name="hours_weekend"
+                           value="{{ settings.get('hours_weekend','') }}"
+                           placeholder="e.g. Saturday 10 AM–2 PM | Sunday: Closed">
+                </div>
+            </div>
+        </div>
+
+        <!-- Social media -->
+        <div class="card">
+            <div class="section-title">📱 Social Media & Online Pages</div>
+            <p class="field-hint" style="margin-bottom:16px;">These appear at the bottom of the website so patients can find and follow you online.</p>
+
+            <div class="field">
+                <label class="field-label" for="cl_fb">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#1877f2" style="vertical-align:middle;margin-right:5px;"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    Facebook Page Address
+                </label>
+                <input class="field-input" type="url" id="cl_fb" name="social_facebook"
+                       value="{{ settings.get('social_facebook','') }}"
+                       placeholder="https://www.facebook.com/your-clinic-page">
+                <span class="field-hint">Open your Facebook page, copy the address from the top of your browser, and paste it here.</span>
+            </div>
+
+            <div class="field">
+                <label class="field-label" for="cl_ig">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#e1306c" style="vertical-align:middle;margin-right:5px;"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                    Instagram Page Address
+                </label>
+                <input class="field-input" type="url" id="cl_ig" name="social_instagram"
+                       value="{{ settings.get('social_instagram','') }}"
+                       placeholder="https://www.instagram.com/your-clinic-page">
+                <span class="field-hint">Open your Instagram page, copy the address from the top of your browser, and paste it here.</span>
+            </div>
+
+            <div class="field">
+                <label class="field-label" for="cl_wa">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#25d366" style="vertical-align:middle;margin-right:5px;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    Your WhatsApp Number (for patients to message you)
+                </label>
+                <input class="field-input" type="text" id="cl_wa" name="social_whatsapp_number"
+                       value="{{ settings.get('social_whatsapp_number', '') }}"
+                       placeholder="e.g. 919951432102">
+                <span class="field-hint">Enter your WhatsApp number with country code but no + sign or spaces. For India: start with 91 then your 10-digit mobile number. Example: <strong style="color:#c4b5fd;">919951432102</strong></span>
+            </div>
+        </div>
+
+    </div><!-- /panel-clinic -->
+
+
+    <!-- ══════════════════════════════════════════════════════
+         🏠  HOME PAGE TAB
+    ══════════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-home">
+
+        <!-- Welcome section -->
+        <div class="card">
+            <div class="section-title">🖼️ Welcome Area — What Patients See First</div>
+            <p class="field-hint" style="margin-bottom:16px;">This is the large section at the very top of your home page. Keep it short and welcoming.</p>
+
+            <div class="field">
+                <label class="field-label" for="h_heading">Main Heading</label>
+                <input class="field-input" type="text" id="h_heading" name="home_hero_title"
+                       value="{{ settings.get('home_hero_title','') }}" maxlength="120"
+                       placeholder="e.g. Expert Mental Health Care, Close to Home">
+                <span class="field-hint">The biggest text on the page. Make it clear and welcoming.</span>
+            </div>
+
+            <div class="field">
+                <label class="field-label" for="h_subtext">Smaller Text Below the Heading</label>
+                <input class="field-input" type="text" id="h_subtext" name="home_hero_subtitle"
+                       value="{{ settings.get('home_hero_subtitle','') }}" maxlength="200"
+                       placeholder="e.g. Compassionate care for every stage of life.">
+                <span class="field-hint">One short sentence that supports the heading above.</span>
+            </div>
+
+            <div class="row2">
+                <div class="field">
+                    <label class="field-label" for="h_btn1">Main Button Text</label>
+                    <input class="field-input" type="text" id="h_btn1" name="home_hero_cta_primary"
+                           value="{{ settings.get('home_hero_cta_primary','') }}" maxlength="60"
+                           placeholder="e.g. Book an Appointment">
+                    <span class="field-hint">Words shown on the main purple button visitors click.</span>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="h_btn2">Second Button Text</label>
+                    <input class="field-input" type="text" id="h_btn2" name="home_hero_cta_secondary"
+                           value="{{ settings.get('home_hero_cta_secondary','') }}" maxlength="60"
+                           placeholder="e.g. Learn About Our Services">
+                    <span class="field-hint">Words on the second, smaller button. Leave empty if not needed.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Numbers -->
+        <div class="card">
+            <div class="section-title">🔢 Key Numbers (shown as highlights on the home page)</div>
+            <p class="field-hint" style="margin-bottom:16px;">These are the three achievement numbers shown prominently on the home page to build trust with patients. Fill in the number and what it represents.</p>
+
+            <div class="row2">
+                <div class="field">
+                    <label class="field-label" for="h_n1">First Number</label>
+                    <input class="field-input" type="text" id="h_n1" name="home_stat1_number"
+                           value="{{ settings.get('home_stat1_number','') }}" placeholder="e.g. 1,000+">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="h_n1l">What the First Number Means</label>
+                    <input class="field-input" type="text" id="h_n1l" name="home_stat1_label"
+                           value="{{ settings.get('home_stat1_label','') }}" placeholder="e.g. Patients Treated">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="h_n2">Second Number</label>
+                    <input class="field-input" type="text" id="h_n2" name="home_stat2_number"
+                           value="{{ settings.get('home_stat2_number','') }}" placeholder="e.g. 10+">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="h_n2l">What the Second Number Means</label>
+                    <input class="field-input" type="text" id="h_n2l" name="home_stat2_label"
+                           value="{{ settings.get('home_stat2_label','') }}" placeholder="e.g. Years of Experience">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="h_n3">Third Number</label>
+                    <input class="field-input" type="text" id="h_n3" name="home_stat3_number"
+                           value="{{ settings.get('home_stat3_number','') }}" placeholder="e.g. 8">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="h_n3l">What the Third Number Means</label>
+                    <input class="field-input" type="text" id="h_n3l" name="home_stat3_label"
+                           value="{{ settings.get('home_stat3_label','') }}" placeholder="e.g. Areas of Specialisation">
+                </div>
+            </div>
+        </div>
+
+        <!-- Why choose us -->
+        <div class="card">
+            <div class="section-title">✨ "Why Choose Us" Section</div>
+            <div class="field">
+                <label class="field-label" for="h_wcu_h">Heading for this Section</label>
+                <input class="field-input" type="text" id="h_wcu_h" name="home_whyus_title"
+                       value="{{ settings.get('home_whyus_title','') }}" maxlength="100"
+                       placeholder="e.g. Why Choose Helium Mind Centre?">
+            </div>
+            <div class="field">
+                <label class="field-label" for="h_wcu_s">Short Description Under the Heading</label>
+                <input class="field-input" type="text" id="h_wcu_s" name="home_whyus_subtitle"
+                       value="{{ settings.get('home_whyus_subtitle','') }}" maxlength="200"
+                       placeholder="e.g. Trusted, compassionate care — tailored to you.">
+            </div>
+        </div>
+
+        <!-- Show/hide -->
+        <div class="card">
+            <div class="section-title">👁 Show or Hide Sections on the Home Page</div>
+            <div class="toggle-list">
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">Online Appointment Notice</span>
+                        <span class="toggle-desc">Show a message letting patients know they can book video appointments from home.</span>
+                    </div>
+                    <label class="tog">
+                        <input type="checkbox" name="home_show_telehealth_banner"
+                               {% if settings.get('home_show_telehealth_banner','1')=='1' %}checked{% endif %}>
+                        <span class="tog-track"></span>
+                    </label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">Patient Reviews</span>
+                        <span class="toggle-desc">Show what previous patients have said about the clinic.</span>
+                    </div>
+                    <label class="tog">
+                        <input type="checkbox" name="home_show_testimonials"
+                               {% if settings.get('home_show_testimonials','1')=='1' %}checked{% endif %}>
+                        <span class="tog-track"></span>
+                    </label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">Health Tips &amp; Articles Section</span>
+                        <span class="toggle-desc">Show a preview of health articles or blog posts on the home page.</span>
+                    </div>
+                    <label class="tog">
+                        <input type="checkbox" name="home_show_articles"
+                               {% if settings.get('home_show_articles','1')=='1' %}checked{% endif %}>
+                        <span class="tog-track"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /panel-home -->
+
+
+    <!-- ══════════════════════════════════════════════════════
+         👨‍⚕️  ABOUT TAB
+    ══════════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-about">
+
+        <div class="card">
+            <div class="section-title">🩺 Doctor's Details</div>
+
+            <div class="row2">
+                <div class="field">
+                    <label class="field-label" for="a_name">Doctor's Full Name</label>
+                    <input class="field-input" type="text" id="a_name" name="about_doctor_name"
+                           value="{{ settings.get('about_doctor_name','') }}" maxlength="100"
+                           placeholder="e.g. Dr. Suresh Kumar">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="a_deg">Educational Qualifications</label>
+                    <input class="field-input" type="text" id="a_deg" name="about_doctor_credentials"
+                           value="{{ settings.get('about_doctor_credentials','') }}" maxlength="150"
+                           placeholder="e.g. MBBS, MD (Psychiatry), DPM">
+                    <span class="field-hint">Degrees and certifications, separated by commas.</span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="field-label" for="a_title">Job Title / Role</label>
+                <input class="field-input" type="text" id="a_title" name="about_doctor_title"
+                       value="{{ settings.get('about_doctor_title','') }}" maxlength="120"
+                       placeholder="e.g. Senior Consultant Psychiatrist">
+            </div>
+
+            <div class="field">
+                <label class="field-label" for="a_bio">About the Doctor</label>
+                <textarea class="field-textarea" id="a_bio" name="about_doctor_bio"
+                          rows="6" maxlength="2000"
+                          placeholder="Write a short introduction — who the doctor is, their experience, and their approach to patient care. This appears on the About page.">{{ settings.get('about_doctor_bio','') }}</textarea>
+                <span class="field-hint">Just write normally — no special formatting needed. Maximum 2,000 characters.</span>
+            </div>
+
+            <div class="row2">
+                <div class="field">
+                    <label class="field-label" for="a_exp">Years of Experience</label>
+                    <input class="field-input" type="text" id="a_exp" name="about_doctor_experience"
+                           value="{{ settings.get('about_doctor_experience','') }}" maxlength="30"
+                           placeholder="e.g. 12 years">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="a_lang">Languages Spoken</label>
+                    <input class="field-input" type="text" id="a_lang" name="about_doctor_languages"
+                           value="{{ settings.get('about_doctor_languages','') }}" maxlength="100"
+                           placeholder="e.g. English, Telugu, Hindi">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-title">📄 About Page — Top Section</div>
+            <p class="field-hint" style="margin-bottom:16px;">This is the heading and short text that appears at the top of the About page, above the doctor's details.</p>
+            <div class="field">
+                <label class="field-label" for="a_ph">Page Heading</label>
+                <input class="field-input" type="text" id="a_ph" name="about_page_title"
+                       value="{{ settings.get('about_page_title','') }}" maxlength="100"
+                       placeholder="e.g. Meet Our Doctor">
+            </div>
+            <div class="field">
+                <label class="field-label" for="a_ps">Short Description Below the Heading</label>
+                <input class="field-input" type="text" id="a_ps" name="about_page_tagline"
+                       value="{{ settings.get('about_page_tagline','') }}" maxlength="200"
+                       placeholder="e.g. Dedicated to compassionate, evidence-based mental health care.">
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-title">👁 Show or Hide on the About Page</div>
+            <div class="toggle-list">
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">Doctor's Photo</span>
+                        <span class="toggle-desc">Display the doctor's photo on the About page.</span>
+                    </div>
+                    <label class="tog">
+                        <input type="checkbox" name="about_show_photo"
+                               {% if settings.get('about_show_photo','1')=='1' %}checked{% endif %}>
+                        <span class="tog-track"></span>
+                    </label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">Education &amp; Qualifications Section</span>
+                        <span class="toggle-desc">Show the doctor's academic background and training details.</span>
+                    </div>
+                    <label class="tog">
+                        <input type="checkbox" name="about_show_qualifications"
+                               {% if settings.get('about_show_qualifications','1')=='1' %}checked{% endif %}>
+                        <span class="tog-track"></span>
+                    </label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">Awards &amp; Recognition Section</span>
+                        <span class="toggle-desc">Show any achievements, certificates, or honours the doctor has received.</span>
+                    </div>
+                    <label class="tog">
+                        <input type="checkbox" name="about_show_awards"
+                               {% if settings.get('about_show_awards','1')=='1' %}checked{% endif %}>
+                        <span class="tog-track"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /panel-about -->
+
+
+    <!-- ══════════════════════════════════════════════════════
+         🩺  SERVICES TAB
+    ══════════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-services">
+
+        <div class="card">
+            <div class="section-title">🩺 Services Page — Top Section</div>
+            <div class="field">
+                <label class="field-label" for="sv_h">Page Heading</label>
+                <input class="field-input" type="text" id="sv_h" name="services_page_title"
+                       value="{{ settings.get('services_page_title','') }}" maxlength="100"
+                       placeholder="e.g. Our Services">
+            </div>
+            <div class="field">
+                <label class="field-label" for="sv_s">Short Description Below the Heading</label>
+                <input class="field-input" type="text" id="sv_s" name="services_page_subtitle"
+                       value="{{ settings.get('services_page_subtitle','') }}" maxlength="250"
+                       placeholder="e.g. We offer comprehensive psychiatric care tailored to your needs.">
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-title">✅ Which Services to Display to Patients</div>
+            <p class="field-hint" style="margin-bottom:16px;">Turn off any service you currently do not offer or want to temporarily remove from the website.</p>
+            <div class="toggle-list">
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">Individual Therapy Sessions</span>
+                        <span class="toggle-desc">One-on-one talk therapy sessions with the doctor.</span>
+                    </div>
+                    <label class="tog"><input type="checkbox" name="services_show_psychotherapy" {% if settings.get('services_show_psychotherapy','1')=='1' %}checked{% endif %}><span class="tog-track"></span></label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">Medication Consultation &amp; Monitoring</span>
+                        <span class="toggle-desc">Psychiatric evaluation and ongoing medication management.</span>
+                    </div>
+                    <label class="tog"><input type="checkbox" name="services_show_medication" {% if settings.get('services_show_medication','1')=='1' %}checked{% endif %}><span class="tog-track"></span></label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">Online Video Appointments</span>
+                        <span class="toggle-desc">Appointments conducted over a secure video call from the patient's home.</span>
+                    </div>
+                    <label class="tog"><input type="checkbox" name="services_show_telehealth" {% if settings.get('services_show_telehealth','1')=='1' %}checked{% endif %}><span class="tog-track"></span></label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">Anxiety &amp; Depression Treatment</span>
+                        <span class="toggle-desc">Evidence-based care for anxiety disorders and depression.</span>
+                    </div>
+                    <label class="tog"><input type="checkbox" name="services_show_anxiety" {% if settings.get('services_show_anxiety','1')=='1' %}checked{% endif %}><span class="tog-track"></span></label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">PTSD &amp; Trauma Therapy</span>
+                        <span class="toggle-desc">Trauma-informed therapy for patients recovering from past traumatic events.</span>
+                    </div>
+                    <label class="tog"><input type="checkbox" name="services_show_ptsd" {% if settings.get('services_show_ptsd','1')=='1' %}checked{% endif %}><span class="tog-track"></span></label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">Child &amp; Adolescent Psychiatry</span>
+                        <span class="toggle-desc">Specialised mental health care for children and teenagers (ages 5–17).</span>
+                    </div>
+                    <label class="tog"><input type="checkbox" name="services_show_child" {% if settings.get('services_show_child','1')=='1' %}checked{% endif %}><span class="tog-track"></span></label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">Sleep Problems &amp; Insomnia</span>
+                        <span class="toggle-desc">Treatment for poor sleep, chronic insomnia, and related conditions.</span>
+                    </div>
+                    <label class="tog"><input type="checkbox" name="services_show_insomnia" {% if settings.get('services_show_insomnia','1')=='1' %}checked{% endif %}><span class="tog-track"></span></label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">ADHD &amp; Behavioural Support</span>
+                        <span class="toggle-desc">Evaluation and treatment for attention, focus, and behavioural challenges.</span>
+                    </div>
+                    <label class="tog"><input type="checkbox" name="services_show_adhd" {% if settings.get('services_show_adhd','1')=='1' %}checked{% endif %}><span class="tog-track"></span></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-title">💰 Fees &amp; Payment Information</div>
+            <div class="row2">
+                <div class="field">
+                    <label class="field-label" for="sv_f1">First Appointment Fee</label>
+                    <input class="field-input" type="text" id="sv_f1" name="services_consultation_fee"
+                           value="{{ settings.get('services_consultation_fee','') }}"
+                           placeholder="e.g. ₹800">
+                    <span class="field-hint">Fee charged for a new patient's first visit.</span>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="sv_f2">Return / Follow-up Visit Fee</label>
+                    <input class="field-input" type="text" id="sv_f2" name="services_followup_fee"
+                           value="{{ settings.get('services_followup_fee','') }}"
+                           placeholder="e.g. ₹500">
+                    <span class="field-hint">Fee charged for returning patients.</span>
+                </div>
+            </div>
+            <div class="field">
+                <label class="field-label" for="sv_pay">Payment &amp; Insurance Note</label>
+                <input class="field-input" type="text" id="sv_pay" name="services_insurance_note"
+                       value="{{ settings.get('services_insurance_note','') }}" maxlength="200"
+                       placeholder="e.g. We accept cash, UPI, and most major health insurance plans.">
+                <span class="field-hint">This note is shown to patients so they know how to pay before their visit.</span>
+            </div>
+        </div>
+
+    </div><!-- /panel-services -->
+
+
+    <!-- ══════════════════════════════════════════════════════
+         📅  BOOKING TAB
+    ══════════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-booking">
+
+        <div class="card">
+            <div class="section-title">📅 Booking Page — Top Section</div>
+            <div class="field">
+                <label class="field-label" for="b_h">Page Heading</label>
+                <input class="field-input" type="text" id="b_h" name="booking_page_title"
+                       value="{{ settings.get('booking_page_title','') }}" maxlength="100"
+                       placeholder="e.g. Book an Appointment">
+            </div>
+            <div class="field">
+                <label class="field-label" for="b_s">Short Description Below the Heading</label>
+                <input class="field-input" type="text" id="b_s" name="booking_page_subtitle"
+                       value="{{ settings.get('booking_page_subtitle','') }}" maxlength="250"
+                       placeholder="e.g. Fill in the form below and we will confirm your appointment within 24 hours.">
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-title">⏰ Appointment Time Settings</div>
+
+            <div class="row2">
+                <div class="field">
+                    <label class="field-label" for="b_t1">Earliest Appointment Time</label>
+                    <input class="field-input" type="time" id="b_t1" name="booking_slot_start"
+                           value="{{ settings.get('booking_slot_start','09:00') }}">
+                    <span class="field-hint">What time does the first appointment of the day start?</span>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="b_t2">Last Appointment Time</label>
+                    <input class="field-input" type="time" id="b_t2" name="booking_slot_end"
+                           value="{{ settings.get('booking_slot_end','17:00') }}">
+                    <span class="field-hint">What time does the last appointment of the day start?</span>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="b_dur">How Long is Each Appointment?</label>
+                    <select class="field-input field-select" id="b_dur" name="booking_slot_duration">
+                        {% for d in [15,20,30,45,60] %}
+                        <option value="{{ d }}" {% if settings.get('booking_slot_duration','30')==d|string %}selected{% endif %}>{{ d }} minutes</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="b_adv">How Far Ahead Can Patients Book?</label>
+                    <select class="field-input field-select" id="b_adv" name="booking_advance_days">
+                        {% for n in [7,14,21,30,60,90] %}
+                        <option value="{{ n }}" {% if settings.get('booking_advance_days','30')==n|string %}selected{% endif %}>Up to {{ n }} days from today</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="field-label">Which Days Are Appointments Available?</label>
+                <div class="day-picker">
+                    {% set avail = settings.get('booking_available_days','Mon,Tue,Wed,Thu,Fri') %}
+                    {% for day in ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] %}
+                    <span class="day-chip">
+                        <input type="checkbox" id="day_{{ day }}" name="booking_available_days" value="{{ day }}"
+                               {% if day in avail %}checked{% endif %}>
+                        <label class="day-chip-label" for="day_{{ day }}">{{ day }}</label>
+                    </span>
+                    {% endfor %}
+                </div>
+                <span class="field-hint">Patients will only be able to pick dates on the days you select here.</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-title">📋 Booking Form Options</div>
+            <div class="toggle-list">
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">Make "Reason for Visit" Required</span>
+                        <span class="toggle-desc">Patients must write a brief reason before they can submit the booking form.</span>
+                    </div>
+                    <label class="tog"><input type="checkbox" name="booking_require_message" {% if settings.get('booking_require_message','0')=='1' %}checked{% endif %}><span class="tog-track"></span></label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">Allow Online Video Appointment Bookings</span>
+                        <span class="toggle-desc">Show "Video Appointment" as an option in the booking form's service list.</span>
+                    </div>
+                    <label class="tog"><input type="checkbox" name="booking_allow_telehealth" {% if settings.get('booking_allow_telehealth','1')=='1' %}checked{% endif %}><span class="tog-track"></span></label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">Currently Accepting New Patients</span>
+                        <span class="toggle-desc">When turned <strong style="color:#f87171;">off</strong>, the booking form is hidden and patients see a "Not currently accepting new patients" message instead.</span>
+                    </div>
+                    <label class="tog"><input type="checkbox" name="booking_accepting_patients" {% if settings.get('booking_accepting_patients','1')=='1' %}checked{% endif %}><span class="tog-track"></span></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-title">✅ Message Patients See After Booking</div>
+            <div class="field">
+                <label class="field-label" for="b_conf">Confirmation Message</label>
+                <textarea class="field-textarea" id="b_conf" name="booking_success_message"
+                          rows="3" maxlength="400"
+                          placeholder="e.g. Thank you! We have received your booking request. Our team will call you within 24 hours to confirm your appointment.">{{ settings.get('booking_success_message','') }}</textarea>
+                <span class="field-hint">This message appears on screen immediately after a patient submits the booking form.</span>
+            </div>
+        </div>
+
+    </div><!-- /panel-booking -->
+
+
+    <!-- ══════════════════════════════════════════════════════
+         📞  CONTACT TAB
+    ══════════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-contact">
+
+        <div class="card">
+            <div class="section-title">📞 Contact Page — Top Section</div>
+            <div class="field">
+                <label class="field-label" for="c_h">Page Heading</label>
+                <input class="field-input" type="text" id="c_h" name="contact_page_title"
+                       value="{{ settings.get('contact_page_title','') }}" maxlength="100"
+                       placeholder="e.g. Get in Touch With Us">
+            </div>
+            <div class="field">
+                <label class="field-label" for="c_s">Short Description Below the Heading</label>
+                <input class="field-input" type="text" id="c_s" name="contact_page_subtitle"
+                       value="{{ settings.get('contact_page_subtitle','') }}" maxlength="250"
+                       placeholder="e.g. We are here to help. Send us a message and we will get back to you soon.">
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-title">📍 Contact Details Shown on the Page</div>
+            <div class="row2">
+                <div class="field">
+                    <label class="field-label" for="c_p1">Main Phone Number</label>
+                    <input class="field-input" type="text" id="c_p1" name="contact_phone"
+                           value="{{ settings.get('contact_phone', settings.get('site_phone','')) }}"
+                           placeholder="e.g. +91 99514 32102">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="c_p2">Second Phone Number <span style="font-weight:400;color:var(--text-mid);">(optional)</span></label>
+                    <input class="field-input" type="text" id="c_p2" name="contact_phone2"
+                           value="{{ settings.get('contact_phone2','') }}"
+                           placeholder="e.g. 040-2345 6789 (landline)">
+                </div>
+            </div>
+            <div class="field">
+                <label class="field-label" for="c_em">Contact Email</label>
+                <input class="field-input" type="email" id="c_em" name="contact_email"
+                       value="{{ settings.get('contact_email', settings.get('site_email','')) }}"
+                       placeholder="e.g. hello@heliummindcentre.com">
+            </div>
+
+            <div class="field">
+                <label class="field-label" for="c_map">Google Maps — Show Your Clinic Location</label>
+                <input class="field-input" type="url" id="c_map" name="contact_maps_embed"
+                       value="{{ settings.get('contact_maps_embed','') }}"
+                       placeholder="Paste the Google Maps code here">
+                <div class="info-box" style="margin-top:10px;">
+                    <strong>How to add your clinic location:</strong><br>
+                    1. Open <strong>Google Maps</strong> on your computer and search for your clinic name.<br>
+                    2. Click the <strong>Share</strong> button, then click the second tab that says <strong>"Embed a map"</strong>.<br>
+                    3. Click the blue <strong>"COPY HTML"</strong> button, come back here, and paste it into the box above.<br>
+                    Don't worry about the long code — we'll handle it for you.
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-title">🕐 Opening Hours (shown on the Contact page)</div>
+            <div class="row2">
+                <div class="field">
+                    <label class="field-label" for="c_hw">Monday to Friday</label>
+                    <input class="field-input" type="text" id="c_hw" name="contact_hours_weekday"
+                           value="{{ settings.get('contact_hours_weekday', settings.get('hours_weekday','')) }}"
+                           placeholder="e.g. 9:00 AM – 6:00 PM">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="c_hwe">Saturday, Sunday &amp; Holidays</label>
+                    <input class="field-input" type="text" id="c_hwe" name="contact_hours_weekend"
+                           value="{{ settings.get('contact_hours_weekend', settings.get('hours_weekend','')) }}"
+                           placeholder="e.g. Saturday 10 AM–2 PM | Sunday: Closed">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-title">👁 Show or Hide on the Contact Page</div>
+            <div class="toggle-list">
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">Show Location Map</span>
+                        <span class="toggle-desc">Display an interactive Google Map so patients can find the clinic easily.</span>
+                    </div>
+                    <label class="tog"><input type="checkbox" name="contact_show_map" {% if settings.get('contact_show_map','1')=='1' %}checked{% endif %}><span class="tog-track"></span></label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">Show Send a Message Form</span>
+                        <span class="toggle-desc">Let patients send a written inquiry directly from the contact page.</span>
+                    </div>
+                    <label class="tog"><input type="checkbox" name="contact_show_form" {% if settings.get('contact_show_form','1')=='1' %}checked{% endif %}><span class="tog-track"></span></label>
+                </div>
+                <div class="toggle-item">
+                    <div class="toggle-text">
+                        <span class="toggle-name">Show WhatsApp Chat Button</span>
+                        <span class="toggle-desc">Display a button that opens a WhatsApp conversation with the clinic.</span>
+                    </div>
+                    <label class="tog"><input type="checkbox" name="contact_show_whatsapp" {% if settings.get('contact_show_whatsapp','1')=='1' %}checked{% endif %}><span class="tog-track"></span></label>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /panel-contact -->
+
+</div><!-- /page -->
+
+<!-- ─── Fixed Save Bar ─── -->
+<div class="save-bar">
+    <span class="save-msg" id="saveMsg"></span>
+    <button class="btn-save" id="saveBtn" onclick="save()">💾 Save Changes</button>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Tab switching ─────────────────────────────────────────
+function switchTab(id, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    btn.classList.add('active');
+    sessionStorage.setItem('st', id);
+}
+(function () {
+    const s = sessionStorage.getItem('st');
+    if (s) { const b = document.getElementById('tab-' + s); if (b) b.click(); }
+})();
+
+// ── Toast ─────────────────────────────────────────────────
+function toast(msg, type) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'toast ' + type + ' show';
+    setTimeout(() => { el.className = 'toast ' + type; }, 3500);
+}
+
+// ── Collect all field values ──────────────────────────────
+function collect() {
+    const d = {};
+
+    // All named text/email/url/time/number inputs, textareas, selects
+    document.querySelectorAll('[name]:not([type=checkbox])').forEach(el => {
+        if (el.name === 'booking_available_days') return;
+        d[el.name] = el.value.trim();
+    });
+
+    // Single checkboxes → '1' or '0'
+    document.querySelectorAll('input[type=checkbox][name]').forEach(el => {
+        if (el.name === 'booking_available_days') return;
+        d[el.name] = el.checked ? '1' : '0';
+    });
+
+    // WhatsApp number → build full API link
+    const wa = (d['social_whatsapp_number'] || '').replace(/\D/g,'');
+    if (wa) d['social_whatsapp'] = 'https://api.whatsapp.com/send/?phone=' + wa;
+    delete d['social_whatsapp_number'];
+
+    // Available days → comma string
+    const days = [];
+    document.querySelectorAll('input[name="booking_available_days"]:checked').forEach(e => days.push(e.value));
+    d['booking_available_days'] = days.join(',');
+
+    // Google Maps — if user pasted full iframe, extract src
+    const mapRaw = d['contact_maps_embed'] || '';
+    const srcMatch = mapRaw.match(/src="([^"]+)"/);
+    if (srcMatch) d['contact_maps_embed'] = srcMatch[1];
+
+    return d;
+}
+
+// ── Save ──────────────────────────────────────────────────
+async function save() {
+    const btn = document.getElementById('saveBtn');
+    const msg = document.getElementById('saveMsg');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    msg.textContent = '';
+    msg.className = 'save-msg';
+
+    try {
+        const res  = await fetch('/admin/api/settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(collect())
+        });
+        const json = await res.json();
+        if (json.success) {
+            toast('✓  All changes saved successfully!', 'ok');
+            msg.textContent = '✓ Saved';
+            msg.className = 'save-msg ok';
+        } else {
+            toast('✕  Could not save. ' + (json.message || 'Please try again.'), 'err');
+            msg.textContent = '✕ Not saved';
+            msg.className = 'save-msg err';
+        }
+    } catch {
+        toast('✕  Connection error. Please try again.', 'err');
+        msg.textContent = '✕ Error';
+        msg.className = 'save-msg err';
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '💾 Save Changes';
+    }
+}
+</script>
+</body>
+</html>

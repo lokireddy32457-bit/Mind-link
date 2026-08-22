@@ -142,8 +142,11 @@ def init_db():
             cursor.execute('''
                 INSERT INTO site_settings (key, value)
                 VALUES
-                    ('site_name',     'HELIUM MIND CENTRE'),
-                    ('site_location', '123 Wellness Avenue, Suite 200, Springfield, IL 62701')
+                    ('site_name',        'HELIUM MIND CENTRE'),
+                    ('site_location',    '123 Wellness Avenue, Suite 200, Springfield, IL 62701'),
+                    ('social_facebook',  'https://www.facebook.com/heliummindcenter'),
+                    ('social_instagram', '#'),
+                    ('social_whatsapp',  'https://api.whatsapp.com/send/?phone=919951432102')
                 ON CONFLICT (key) DO NOTHING
             ''')
 
@@ -387,8 +390,11 @@ def admin_user_exists():
 # ---------------------
 
 _SETTING_DEFAULTS = {
-    'site_name':     'HELIUM MIND CENTRE',
-    'site_location': '123 Wellness Avenue, Suite 200, Springfield, IL 62701',
+    'site_name':        'HELIUM MIND CENTRE',
+    'site_location':    '123 Wellness Avenue, Suite 200, Springfield, IL 62701',
+    'social_facebook':  'https://www.facebook.com/heliummindcenter',
+    'social_instagram': '#',
+    'social_whatsapp':  'https://api.whatsapp.com/send/?phone=919951432102',
 }
 
 
@@ -412,8 +418,14 @@ def get_site_settings():
 
 def update_site_setting(key, value):
     """Upsert a single site setting. Returns True on success."""
-    if key not in _SETTING_DEFAULTS:
+    # Accept original defaults OR any key that belongs to a known page/section prefix.
+    _ALLOWED_PREFIXES = (
+        'site_', 'social_', 'hours_',
+        'home_', 'about_', 'services_', 'booking_', 'contact_',
+    )
+    if key not in _SETTING_DEFAULTS and not any(key.startswith(p) for p in _ALLOWED_PREFIXES):
         raise ValueError(f'Unknown setting key: {key!r}')
+
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute(
