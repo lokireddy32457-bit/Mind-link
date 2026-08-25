@@ -157,9 +157,17 @@ def init_db():
             print('[Database] Connected to PostgreSQL successfully.', file=sys.stderr)
             return  # success
         except Exception as exc:
+            print(
+                f'[Database] Connection attempt {attempt} failed: '
+                f'{type(exc).__name__}: {exc}',
+                file=sys.stderr
+            )
+
             if attempt < 2:
-                print(f'[Database] Connection attempt {attempt} failed, retrying in 3s…',
-                      file=sys.stderr)
+                print(
+                    '[Database] Retrying in 3 seconds...',
+                    file=sys.stderr
+                )
                 time.sleep(3)
             else:
                 print(
