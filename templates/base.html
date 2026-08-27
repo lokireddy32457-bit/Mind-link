@@ -9,7 +9,7 @@
     <meta name="description" content="{% block description %}HELIUM MIND CENTRE offers compassionate, evidence-based mental health care. Book your appointment for psychotherapy, medication management, and telehealth services.{% endblock %}">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+    <link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='images/clinic-logo.jpg') }}">
 
     <!-- Google Fonts preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -56,8 +56,7 @@
     <nav class="navbar" id="navbar">
         <div class="container">
             <a href="{{ url_for('home') }}" class="nav-logo">
-                <span class="nav-logo-icon">🧠</span>
-                {{ site_name }}
+                <img src="{{ url_for('static', filename='images/clinic-logo.jpg') }}" alt="{{ site_name }}" class="nav-logo-img">
             </a>
 
             <ul class="nav-links" id="navLinks">
@@ -132,8 +131,7 @@
             <div class="footer-grid">
                 <div class="footer-brand">
                     <a href="{{ url_for('home') }}" class="nav-logo">
-                        <span class="nav-logo-icon">🧠</span>
-                        {{ site_name }}
+                        <img src="{{ url_for('static', filename='images/clinic-logo.jpg') }}" alt="{{ site_name }}" class="nav-logo-img">
                     </a>
                     <p>Compassionate, evidence-based mental health care. Helping you find clarity, resilience, and peace of mind.</p>
                 </div>

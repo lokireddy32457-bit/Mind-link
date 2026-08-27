@@ -1,4 +1,4 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block title %}HELIUM MIND CENTRE — Compassionate Mental Health Care{% endblock %}
 {% block description %}HELIUM MIND CENTRE offers compassionate, evidence-based mental health care by Dr. Vikarn. Book
@@ -8,23 +8,17 @@ your appointment today for psychotherapy, medication management, and telehealth 
 
 <!-- Hero Section -->
 <section class="hero" id="hero">
-    <div class="hero-bg">
-        <img src="{{ url_for('static', filename='images/hero-bg.png') }}" alt="Calming abstract background"
-            loading="eager">
-    </div>
     <div class="container">
         <div class="hero-grid">
             <div class="hero-content">
-                <div class="hero-badge">
-                    ✨ Now Accepting New Patients
-                </div>
-                <p style="font-size:1rem;font-weight:600;letter-spacing:0.08em;opacity:0.75;margin-bottom:0.25rem;">DR.
-                    VIKRAM AKAVARAM</p>
-                <h1>Dedicated Neuropsychiatrist Committed to <span>Holistic Mental Health Care</span></h1>
-
+                <p class="hero-label">COMPASSIONATE CARE. EXPERT SUPPORT.</p>
+                <h1>Better Mental Health,<br><span>Better Life.</span></h1>
+                <div class="hero-divider"></div>
+                <p class="hero-description">Personalized treatment and therapy for a wide range
+                    of mental health concerns. You're not alone—<br>we're here for you.</p>
                 <div class="hero-actions">
                     <a href="{{ url_for('booking') }}" class="btn btn-accent btn-lg" id="heroCta">
-                        📅 Book Appointment
+                        📅 Book an Appointment
                     </a>
                     <a href="https://api.whatsapp.com/send/?phone=919951432102" class="btn btn-lg whatsapp-hero-btn"
                         id="heroWhatsapp" target="_blank" rel="noopener noreferrer">
@@ -35,13 +29,36 @@ your appointment today for psychotherapy, medication management, and telehealth 
                         WhatsApp Now
                     </a>
                 </div>
-
             </div>
             <div class="hero-image">
                 <div class="hero-image-wrapper">
-                    <img src="{{ url_for('static', filename='images/doctor-hero.png') }}"
-                        alt="Dr. Vikram Akavaram — MBBS, DPM (Osm) Neuro Psychiatrist" loading="eager">
-                    <div class="hero-image-glow"></div>
+                    <img src="{{ url_for('static', filename='images/hero-person.jpg') }}"
+                        alt="Mental health support — you're not alone" loading="eager">
+                    <!-- Floating condition badges -->
+                    <div class="hero-badge-float hero-badge-depression">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a5 5 0 015 5c0 2-1.5 3.5-3 4.5V14a2 2 0 01-4 0v-2.5C8.5 10.5 7 9 7 7a5 5 0 015-5z"/><line x1="8" y1="18" x2="16" y2="18"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
+                        <span>Depression</span>
+                    </div>
+                    <div class="hero-badge-float hero-badge-anxiety">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/></svg>
+                        <span>Anxiety</span>
+                    </div>
+                    <div class="hero-badge-float hero-badge-burnout">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="7" width="12" height="14" rx="2"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="10" y1="7" x2="10" y2="4"/><line x1="14" y1="7" x2="14" y2="4"/></svg>
+                        <span>Burnout</span>
+                    </div>
+                    <div class="hero-badge-float hero-badge-insomnia">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/><text x="14" y="8" font-size="6" fill="currentColor" font-weight="bold">z</text><text x="17" y="5" font-size="5" fill="currentColor" font-weight="bold">z</text></svg>
+                        <span>Insomnia</span>
+                    </div>
+                    <div class="hero-badge-float hero-badge-stress">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        <span>Stress</span>
+                    </div>
+                    <div class="hero-badge-float hero-badge-trauma">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/><line x1="4" y1="4" x2="20" y2="20"/></svg>
+                        <span>Trauma</span>
+                    </div>
                 </div>
             </div>
         </div>

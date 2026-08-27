@@ -375,16 +375,10 @@ p {
     text-decoration: none;
 }
 
-.nav-logo-icon {
-    width: 38px;
-    height: 38px;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-    border-radius: var(--radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.1rem;
+.nav-logo-img {
+    height: 42px;
+    width: auto;
+    object-fit: contain;
     flex-shrink: 0;
 }
 
@@ -773,28 +767,7 @@ p {
     align-items: center;
     overflow: hidden;
     padding-top: calc(var(--nav-height) + var(--top-bar-height));
-}
-
-.hero-bg {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-}
-
-.hero-bg img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.hero-bg::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg,
-            hsla(207, 44%, 22%, 0.82) 0%,
-            hsla(207, 44%, 32%, 0.65) 40%,
-            hsla(162, 38%, 38%, 0.45) 100%);
+    background: linear-gradient(135deg, #f8f4f0 0%, #ede4f5 35%, #e8e0f0 60%, #f0ebe5 100%);
 }
 
 .hero-grid {
@@ -812,6 +785,70 @@ p {
     z-index: 1;
 }
 
+.hero-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: #1a3a6b;
+    margin-bottom: var(--space-md);
+    text-transform: uppercase;
+}
+
+.hero h1 {
+    color: #1a2744;
+    font-size: clamp(2.2rem, 5.5vw, 3.5rem);
+    font-weight: 800;
+    margin-bottom: var(--space-md);
+    line-height: 1.15;
+}
+
+.hero h1 span {
+    background: linear-gradient(135deg, #1a3a6b, #3a5a9b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-divider {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #1a3a6b, #6b5ce7);
+    border-radius: 2px;
+    margin-bottom: var(--space-lg);
+    position: relative;
+}
+
+.hero-divider::after {
+    content: '🕊';
+    position: absolute;
+    top: -10px;
+    left: 70px;
+    font-size: 0.9rem;
+    opacity: 0.6;
+}
+
+.hero-description {
+    color: #4a5568;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin-bottom: var(--space-xl);
+    max-width: 480px;
+}
+
+.hero p {
+    color: #4a5568;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin-bottom: var(--space-xl);
+    max-width: 480px;
+}
+
+.hero-actions {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}
+
 /* Hero Doctor Image */
 .hero-image {
     display: flex;
@@ -821,35 +858,93 @@ p {
 
 .hero-image-wrapper {
     position: relative;
-    max-width: 420px;
+    max-width: 480px;
     width: 100%;
-    animation: heroFloat 6s ease-in-out infinite;
 }
 
-.hero-image-wrapper img {
+.hero-image-wrapper > img {
     width: 100%;
     height: auto;
     border-radius: var(--radius-xl);
-    box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.25),
-        0 0 40px hsla(162, 38%, 48%, 0.15);
-    border: 3px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
     object-fit: cover;
     aspect-ratio: 3 / 4;
 }
 
-.hero-image-glow {
+/* Floating condition badges */
+.hero-badge-float {
     position: absolute;
-    inset: -20px;
-    border-radius: var(--radius-xl);
-    background: radial-gradient(
-        ellipse at center,
-        hsla(162, 50%, 55%, 0.18) 0%,
-        hsla(207, 44%, 45%, 0.08) 50%,
-        transparent 70%
-    );
-    z-index: -1;
-    filter: blur(20px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.6);
+    color: #4a3f6b;
+    z-index: 2;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: badgeFloat 4s ease-in-out infinite;
+}
+
+.hero-badge-float:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.hero-badge-float svg {
+    opacity: 0.7;
+}
+
+.hero-badge-float span {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+/* Position each badge around the image */
+.hero-badge-depression {
+    top: 2%;
+    left: -8%;
+    animation-delay: 0s;
+}
+
+.hero-badge-anxiety {
+    top: 30%;
+    left: -15%;
+    animation-delay: 0.7s;
+}
+
+.hero-badge-burnout {
+    bottom: 22%;
+    left: -12%;
+    animation-delay: 1.4s;
+}
+
+.hero-badge-insomnia {
+    top: -2%;
+    right: -5%;
+    animation-delay: 0.3s;
+}
+
+.hero-badge-stress {
+    top: 32%;
+    right: -14%;
+    animation-delay: 1s;
+}
+
+.hero-badge-trauma {
+    bottom: 18%;
+    right: -10%;
+    animation-delay: 1.7s;
+}
+
+@keyframes badgeFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
 }
 
 @keyframes heroFloat {
@@ -862,43 +957,13 @@ p {
     align-items: center;
     gap: var(--space-sm);
     padding: 6px 16px;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(8px);
+    background: rgba(26, 58, 107, 0.1);
     border-radius: var(--radius-full);
-    color: rgba(255, 255, 255, 0.9);
+    color: #1a3a6b;
     font-size: 0.85rem;
     font-weight: 500;
     margin-bottom: var(--space-lg);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.hero h1 {
-    color: white;
-    font-size: clamp(2.2rem, 5.5vw, 3.5rem);
-    font-weight: 800;
-    margin-bottom: var(--space-lg);
-    line-height: 1.15;
-}
-
-.hero h1 span {
-    background: linear-gradient(135deg, hsl(162, 55%, 65%), hsl(162, 45%, 78%));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.hero p {
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 1.15rem;
-    line-height: 1.8;
-    margin-bottom: var(--space-xl);
-    max-width: 550px;
-}
-
-.hero-actions {
-    display: flex;
-    gap: var(--space-md);
-    flex-wrap: wrap;
+    border: 1px solid rgba(26, 58, 107, 0.15);
 }
 
 .hero-stats {
@@ -906,7 +971,7 @@ p {
     gap: var(--space-2xl);
     margin-top: var(--space-3xl);
     padding-top: var(--space-xl);
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid rgba(26, 58, 107, 0.12);
 }
 
 .hero-stat {
@@ -918,12 +983,12 @@ p {
     font-family: var(--font-heading);
     font-size: 2rem;
     font-weight: 800;
-    color: white;
+    color: #1a2744;
 }
 
 .hero-stat-label {
     font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.7);
+    color: #6b7280;
     margin: 0;
 }
 
@@ -2843,6 +2908,10 @@ textarea {
 
     .hero-image-wrapper {
         max-width: 340px;
+    }
+
+    .hero-badge-float {
+        display: none;
     }
 
     .hero h1 {
