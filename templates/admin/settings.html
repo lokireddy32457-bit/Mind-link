@@ -1194,13 +1194,21 @@ async function save() {
             toast('✓  All changes saved successfully!', 'ok');
             msg.textContent = '✓ Saved';
             msg.className = 'save-msg ok';
+        } else if (res.status === 503) {
+            // Database waking up — auto retry after 3s
+            toast('⏳  Database is waking up. Retrying in 3 seconds…', 'err');
+            msg.textContent = '⏳ Retrying…';
+            msg.className = 'save-msg';
+            btn.textContent = '⏳ Retrying…';
+            setTimeout(() => save(), 3000);
+            return; // don't re-enable button yet
         } else {
             toast('✕  Could not save. ' + (json.message || 'Please try again.'), 'err');
             msg.textContent = '✕ Not saved';
             msg.className = 'save-msg err';
         }
     } catch {
-        toast('✕  Connection error. Please try again.', 'err');
+        toast('✕  Connection error. Check your internet and try again.', 'err');
         msg.textContent = '✕ Error';
         msg.className = 'save-msg err';
     } finally {

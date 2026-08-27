@@ -55,7 +55,7 @@ def get_db():
         sep = '&' if '?' in url else '?'
         url += sep + f'sslmode={DATABASE_SSL_MODE}'
     try:
-        return psycopg2.connect(url, connect_timeout=10)
+        return psycopg2.connect(url, connect_timeout=15)
     except psycopg2.OperationalError as exc:
         error_msg = str(exc)
         print('\n' + '=' * 60, file=sys.stderr)
@@ -425,7 +425,8 @@ def get_site_settings():
 
 
 def update_site_setting(key, value):
-    """Upsert a single site setting. Returns True on success."""
+    """Upsert a single site setting. Returns True on success.
+    Retries once on transient connection failures (e.g. Supabase cold start)."""
     # Accept original defaults OR any key that belongs to a known page/section prefix.
     _ALLOWED_PREFIXES = (
         'site_', 'social_', 'hours_',
@@ -434,19 +435,33 @@ def update_site_setting(key, value):
     if key not in _SETTING_DEFAULTS and not any(key.startswith(p) for p in _ALLOWED_PREFIXES):
         raise ValueError(f'Unknown setting key: {key!r}')
 
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute(
-        '''
-        INSERT INTO site_settings (key, value, updated_at)
-        VALUES (%s, %s, %s)
-        ON CONFLICT (key) DO UPDATE
-            SET value = EXCLUDED.value,
-                updated_at = EXCLUDED.updated_at
-        ''',
-        (key, value, datetime.now().isoformat())
-    )
-    conn.commit()
-    cursor.close()
-    conn.close()
-    return True
+    last_exc = None
+    for attempt in range(2):  # retry once
+        try:
+            conn = get_db()
+            cursor = conn.cursor()
+            cursor.execute(
+                '''
+                INSERT INTO site_settings (key, value, updated_at)
+                VALUES (%s, %s, %s)
+                ON CONFLICT (key) DO UPDATE
+                    SET value = EXCLUDED.value,
+                        updated_at = EXCLUDED.updated_at
+                ''',
+                (key, value, datetime.now().isoformat())
+            )
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return True
+        except (psycopg2.OperationalError, psycopg2.InterfaceError) as e:
+            last_exc = e
+            if attempt == 0:
+                time.sleep(1)  # brief pause before retry
+                continue
+            raise
+        except Exception:
+            raise
+
+    raise last_exc
+

@@ -6,6 +6,7 @@ Serves public pages and admin dashboard with appointment management.
 
 import os
 import secrets
+import psycopg2
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
@@ -706,6 +707,11 @@ def api_update_settings():
             try:
                 update_site_setting(key, value)
                 updated.append(key)
+            except (psycopg2.OperationalError, psycopg2.InterfaceError) as e:
+                return jsonify({
+                    'success': False,
+                    'message': 'Database connection timed out. The database may be waking up — please wait a moment and try again.'
+                }), 503
             except Exception as e:
                 errors.append(str(e))
 
