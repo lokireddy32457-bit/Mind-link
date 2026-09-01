@@ -695,25 +695,31 @@ def api_update_settings():
         'contact_hours_weekday', 'contact_hours_weekend',
         'contact_show_map', 'contact_show_form', 'contact_show_whatsapp',
     }
+    # Required fields that must not be blank
+    REQUIRED_KEYS = {'site_name', 'site_location'}
+
     errors = []
     updated = []
 
     for key in allowed_keys:
-        if key in data:
-            value = str(data[key]).strip()
-            if not value:
+        if key not in data:
+            continue
+        value = str(data[key]).strip()
+        # Enforce non-empty only for required fields; skip empty optional fields silently
+        if not value:
+            if key in REQUIRED_KEYS:
                 errors.append(f'{key} cannot be empty.')
-                continue
-            try:
-                update_site_setting(key, value)
-                updated.append(key)
-            except (psycopg2.OperationalError, psycopg2.InterfaceError) as e:
-                return jsonify({
-                    'success': False,
-                    'message': 'Database connection timed out. The database may be waking up — please wait a moment and try again.'
-                }), 503
-            except Exception as e:
-                errors.append(str(e))
+            continue
+        try:
+            update_site_setting(key, value)
+            updated.append(key)
+        except (psycopg2.OperationalError, psycopg2.InterfaceError) as e:
+            return jsonify({
+                'success': False,
+                'message': 'Database connection timed out. The database may be waking up — please wait a moment and try again.'
+            }), 503
+        except Exception as e:
+            errors.append(str(e))
 
     if errors:
         return jsonify({'success': False, 'message': ' '.join(errors)}), 400
