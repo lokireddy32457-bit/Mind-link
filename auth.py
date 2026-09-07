@@ -28,10 +28,15 @@ def verify_password(password, password_hash):
 
 
 def login_required(f):
-    """Decorator to protect admin routes — redirects to login if not authenticated."""
+    """Decorator to protect admin routes — redirects to login if not authenticated.
+    For AJAX/JSON requests, returns a 401 JSON response instead of an HTML redirect.
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'admin_logged_in' not in session:
+            from flask import request as _req, jsonify
+            if _req.is_json or 'application/json' in _req.headers.get('Accept', ''):
+                return jsonify({'success': False, 'message': 'Session expired. Please log in again.'}), 401
             flash('Please log in to access the dashboard.', 'warning')
             return redirect(url_for('admin_login'))
         return f(*args, **kwargs)

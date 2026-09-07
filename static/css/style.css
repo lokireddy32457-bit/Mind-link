@@ -376,7 +376,7 @@ p {
 }
 
 .nav-logo-img {
-    height: 42px;
+    height: 68px;
     width: auto;
     object-fit: contain;
     flex-shrink: 0;
@@ -420,7 +420,8 @@ p {
     width: 100%;
 }
 
-.nav-links .nav-cta {
+.nav-links .nav-cta,
+.nav-cta {
     display: inline-flex;
     align-items: center;
     gap: var(--space-sm);
@@ -432,13 +433,16 @@ p {
     border-radius: var(--radius-lg);
     transition: all var(--transition-base);
     box-shadow: 0 2px 8px hsla(207, 44%, 32%, 0.25);
+    text-decoration: none;
 }
 
-.nav-links .nav-cta::after {
+.nav-links .nav-cta::after,
+.nav-cta::after {
     display: none !important;
 }
 
-.nav-links .nav-cta:hover {
+.nav-links .nav-cta:hover,
+.nav-cta:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 16px hsla(207, 44%, 32%, 0.35);
     color: white !important;

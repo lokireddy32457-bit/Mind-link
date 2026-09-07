@@ -1,4 +1,4 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block title %}About Dr. Vikarn — HELIUM MIND CENTRE{% endblock %}
 {% block description %}Learn about Dr. Vikram Akavaram, MBBS, DPM (Osm) — a dedicated Neuro Psychiatrist at Helium Mind Center, committed to holistic mental health care.{% endblock %}
@@ -14,14 +14,37 @@
             </div>
             <div class="about-text reveal">
                 <h1>Dr. Vikram Akavaram, <span style="font-size:0.7em;font-weight:500;">MBBS, DPM (Osm)</span></h1>
-                <p class="credential">Neuro Psychiatrist &bull; Helium Mind Center</p>
+                <p class="credential">Neuro Psychiatrist &amp; Sexologist &bull; Helium Mind Center</p>
+                <p style="font-size:1.05rem; font-weight:600; color:var(--color-primary); margin-bottom:var(--space-sm);">Dedicated Neuropsychiatrist in Hyderabad</p>
                 <p>Dr. Vikram Akavaram is a highly committed neuropsychiatrist specializing in the comprehensive treatment of mental health disorders. With a strong foundation in neuropsychiatry, he brings a unique perspective to the diagnosis and management of psychiatric conditions.</p>
                 <p>His holistic approach integrates the complexities of both mind and brain, leveraging extensive expertise in psychology and neurology to provide personalized and effective care for each patient.</p>
-                <a href="{{ url_for('booking') }}" class="btn btn-primary">📅 Book a Consultation</a>
+                <div style="display:flex;gap:var(--space-md);flex-wrap:wrap;margin-top:var(--space-md);">
+                    <a href="{{ url_for('booking') }}" class="btn btn-primary">📅 Book a Consultation</a>
+                    <a href="#credentials" class="btn btn-secondary">Know More</a>
+                </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Doctor Stats -->
+<section class="section" id="doctorStats" style="padding: var(--space-xl) 0; background: var(--color-primary);">
+    <div class="container">
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl); text-align:center;">
+            <div class="reveal">
+                <div style="font-size:2.8rem; font-weight:800; color:#fff; line-height:1;">15+</div>
+                <div style="color:rgba(255,255,255,0.85); font-size:1rem; margin-top:var(--space-xs);">Years of Experience</div>
+            </div>
+            <div class="reveal">
+                <div style="font-size:2.8rem; font-weight:800; color:#fff; line-height:1;">99%</div>
+                <div style="color:rgba(255,255,255,0.85); font-size:1rem; margin-top:var(--space-xs);">Partners Recommend</div>
+            </div>
+            <div class="reveal">
+                <div style="font-size:2.8rem; font-weight:800; color:#fff; line-height:1;">10,000+</div>
+                <div style="color:rgba(255,255,255,0.85); font-size:1rem; margin-top:var(--space-xs);">Satisfied Clients</div>
+            </div>
+        </div>
+    </div>
 
 <!-- Specialties -->
 <section class="section section--alt" id="specialties">

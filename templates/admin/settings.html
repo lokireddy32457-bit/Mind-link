@@ -1183,38 +1183,67 @@ async function save() {
     msg.textContent = '';
     msg.className = 'save-msg';
 
+    let res;
     try {
-        const res  = await fetch('/admin/api/settings', {
+        res = await fetch('/admin/api/settings', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(collect())
         });
-        const json = await res.json();
-        if (json.success) {
-            toast('✓  All changes saved successfully!', 'ok');
-            msg.textContent = '✓ Saved';
-            msg.className = 'save-msg ok';
-        } else if (res.status === 503) {
-            // Database waking up — auto retry after 3s
-            toast('⏳  Database is waking up. Retrying in 3 seconds…', 'err');
-            msg.textContent = '⏳ Retrying…';
-            msg.className = 'save-msg';
-            btn.textContent = '⏳ Retrying…';
-            setTimeout(() => save(), 3000);
-            return; // don't re-enable button yet
-        } else {
-            toast('✕  Could not save. ' + (json.message || 'Please try again.'), 'err');
-            msg.textContent = '✕ Not saved';
-            msg.className = 'save-msg err';
-        }
-    } catch {
-        toast('✕  Connection error. Check your internet and try again.', 'err');
-        msg.textContent = '✕ Error';
+    } catch (networkErr) {
+        console.error('[Settings] Network error:', networkErr);
+        toast('✕  Network error — is the server running?', 'err');
+        msg.textContent = '✕ Network error';
         msg.className = 'save-msg err';
-    } finally {
         btn.disabled = false;
         btn.textContent = '💾 Save Changes';
+        return;
     }
+
+    // Try to parse response as JSON
+    let json;
+    try {
+        json = await res.json();
+    } catch (parseErr) {
+        // Server returned non-JSON (HTML error page / redirect page)
+        const rawText = await res.text().catch(() => '(unreadable)');
+        console.error('[Settings] Server returned non-JSON. Status:', res.status, res.url);
+        console.error('[Settings] Raw response (first 500 chars):', rawText.slice(0, 500));
+        if (res.status === 302 || res.redirected) {
+            toast('✕  Session expired — please log out and log in again.', 'err');
+            msg.textContent = '✕ Session expired';
+        } else {
+            toast(`✕  Server error (HTTP ${res.status}). Check console for details.`, 'err');
+            msg.textContent = `✕ Server error ${res.status}`;
+        }
+        msg.className = 'save-msg err';
+        btn.disabled = false;
+        btn.textContent = '💾 Save Changes';
+        return;
+    }
+
+    if (res.status === 401) {
+        toast('Session expired. Redirecting to login…', 'err');
+        setTimeout(() => window.location.href = '/admin/login', 1500);
+    } else if (json.success) {
+        toast('✓  All changes saved successfully!', 'ok');
+        msg.textContent = '✓ Saved';
+        msg.className = 'save-msg ok';
+    } else if (res.status === 503) {
+        toast('⏳  Database is waking up. Retrying in 3 seconds…', 'err');
+        msg.textContent = '⏳ Retrying…';
+        msg.className = 'save-msg';
+        btn.textContent = '⏳ Retrying…';
+        setTimeout(() => save(), 3000);
+        return;
+    } else {
+        toast('✕  ' + (json.message || 'Could not save. Please try again.'), 'err');
+        msg.textContent = '✕ ' + (json.message || 'Not saved');
+        msg.className = 'save-msg err';
+    }
+
+    btn.disabled = false;
+    btn.textContent = '💾 Save Changes';
 }
 </script>
 </body>
