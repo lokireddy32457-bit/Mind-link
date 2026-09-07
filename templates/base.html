@@ -85,8 +85,8 @@
                 </li>
                 <li class="nav-dropdown-wrapper">
                     <a href="{{ url_for('services') }}"
-                        class="nav-dropdown-trigger {{ 'active' if request.endpoint == 'services' }}">
-                        Services
+                        class="nav-dropdown-trigger {{ 'active' if request.endpoint == 'services' or request.endpoint == 'service_detail' }}">
+                        Treatments
                         <svg class="nav-dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="6 9 12 15 18 9" />
@@ -106,7 +106,10 @@
                                 Psychiatry</a></li>
                         <li><a href="{{ url_for('service_detail', slug='insomnia') }}">🌙 Insomnia &amp; Sleep
                                 Disorders</a></li>
-                        <li><a href="{{ url_for('service_detail', slug='adhd') }}">🧩 ADHD Behavioural</a></li>
+                        <li><a href="{{ url_for('service_detail', slug='adhd') }}">🧩 ADHD &amp; Behavioural</a></li>
+                        <li><a href="{{ url_for('service_detail', slug='ocd') }}">🔄 OCD Treatment</a></li>
+                        <li><a href="{{ url_for('service_detail', slug='addiction') }}">🚫 Addiction &amp; De-addiction</a></li>
+                        <li><a href="{{ url_for('service_detail', slug='schizophrenia') }}">🧠 Schizophrenia &amp; Psychosis</a></li>
                     </ul>
                 </li>
                 <li><a href="{{ url_for('contact') }}"
@@ -174,7 +177,7 @@
                     <ul class="footer-links">
                         <li><a href="{{ url_for('home') }}">Home</a></li>
                         <li><a href="{{ url_for('about') }}">About Dr. Vikarn</a></li>
-                        <li><a href="{{ url_for('services') }}">Services</a></li>
+                        <li><a href="{{ url_for('services') }}">Treatments</a></li>
                         <li><a href="{{ url_for('booking') }}">Book Appointment</a></li>
                         <li><a href="{{ url_for('contact') }}">Contact Us</a></li>
                     </ul>
@@ -187,7 +190,10 @@
                         <li><a href="{{ url_for('service_detail', slug='medication') }}">Medication Management</a></li>
                         <li><a href="{{ url_for('service_detail', slug='anxiety') }}">Anxiety &amp; Depression</a></li>
                         <li><a href="{{ url_for('service_detail', slug='ptsd') }}">PTSD &amp; Trauma Therapy</a></li>
-                        <li><a href="{{ url_for('service_detail', slug='adhd') }}">ADHD Behavioural</a></li>
+                        <li><a href="{{ url_for('service_detail', slug='adhd') }}">ADHD &amp; Behavioural</a></li>
+                        <li><a href="{{ url_for('service_detail', slug='insomnia') }}">Insomnia &amp; Sleep Disorders</a></li>
+                        <li><a href="{{ url_for('service_detail', slug='ocd') }}">OCD Treatment</a></li>
+                        <li><a href="{{ url_for('service_detail', slug='addiction') }}">Addiction &amp; De-addiction</a></li>
                     </ul>
                 </div>
 

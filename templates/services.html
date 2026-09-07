@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}Our Services — HELIUM MIND CENTRE{% endblock %}
-{% block description %}Explore the comprehensive psychiatric services offered at HELIUM MIND CENTRE, including psychotherapy, medication management, telehealth, anxiety treatment, PTSD therapy, and more.{% endblock %}
+{% block title %}Our Treatments — HELIUM MIND CENTRE{% endblock %}
+{% block description %}Explore the comprehensive psychiatric treatments offered at HELIUM MIND CENTRE, including psychotherapy, medication management, telehealth, anxiety treatment, PTSD therapy, OCD, addiction, insomnia, ADHD treatment, and more.{% endblock %}
 
 {% block content %}
 
@@ -9,8 +9,8 @@
 <section class="section services-hero" id="servicesHero">
     <div class="container">
         <div class="reveal">
-            <h1>Our Services</h1>
-            <p>Comprehensive, evidence-based psychiatric care tailored to your unique needs. Every treatment plan is personalized to help you achieve lasting wellness.</p>
+            <h1>Our Treatments</h1>
+            <p>Comprehensive, evidence-based psychiatric treatments tailored to your unique needs. Every treatment plan is personalized to help you achieve lasting wellness.</p>
         </div>
     </div>
 </section>
@@ -96,6 +96,71 @@
                     <li>Family Psychoeducation</li>
                 </ul>
                 <a href="{{ url_for('booking', service='child') }}" class="btn btn-primary btn-sm" style="margin-top: var(--space-md); display: inline-block;">📅 Book Now</a>
+            </div>
+            <div class="service-full-card">
+                <div class="card-icon">🌙</div>
+                <h3>Insomnia &amp; Sleep Disorders</h3>
+                <p>Targeted treatment for sleep-related conditions using evidence-based approaches including CBT for insomnia (CBT-I), sleep hygiene therapy, and medication when appropriate.</p>
+                <ul>
+                    <li>CBT for Insomnia (CBT-I)</li>
+                    <li>Sleep Apnea Evaluation</li>
+                    <li>Circadian Rhythm Disorders</li>
+                    <li>Nightmare &amp; Parasomnias</li>
+                    <li>Sleep Hygiene Counseling</li>
+                </ul>
+                <a href="{{ url_for('booking', service='insomnia') }}" class="btn btn-primary btn-sm" style="margin-top: var(--space-md); display: inline-block;">📅 Book Now</a>
+            </div>
+            <div class="service-full-card">
+                <div class="card-icon">🧩</div>
+                <h3>ADHD &amp; Behavioural Therapy</h3>
+                <p>Comprehensive evaluation and management of Attention Deficit Hyperactivity Disorder across all age groups, combining behavioural strategies with medication management.</p>
+                <ul>
+                    <li>ADHD Diagnostic Evaluation</li>
+                    <li>Stimulant &amp; Non-stimulant Medications</li>
+                    <li>Behavioural Coaching &amp; CBT</li>
+                    <li>Parent Training Programs</li>
+                    <li>School &amp; Workplace Accommodations</li>
+                </ul>
+                <a href="{{ url_for('booking', service='adhd') }}" class="btn btn-primary btn-sm" style="margin-top: var(--space-md); display: inline-block;">📅 Book Now</a>
+            </div>
+            <div class="service-full-card">
+                <div class="card-icon">🔄</div>
+                <h3>OCD Treatment</h3>
+                <p>Specialized Exposure and Response Prevention (ERP) therapy and medication management for Obsessive-Compulsive Disorder — one of the most effective evidence-based treatments available.</p>
+                <ul>
+                    <li>Exposure &amp; Response Prevention (ERP)</li>
+                    <li>Cognitive Therapy for OCD</li>
+                    <li>SSRI Medication Management</li>
+                    <li>Hoarding Disorder Treatment</li>
+                    <li>Body Dysmorphic Disorder</li>
+                </ul>
+                <a href="{{ url_for('booking', service='ocd') }}" class="btn btn-primary btn-sm" style="margin-top: var(--space-md); display: inline-block;">📅 Book Now</a>
+            </div>
+            <div class="service-full-card">
+                <div class="card-icon">🚫</div>
+                <h3>Addiction &amp; De-addiction</h3>
+                <p>Compassionate, non-judgmental treatment for substance use disorders and behavioural addictions, combining medical support, therapy, and long-term relapse prevention strategies.</p>
+                <ul>
+                    <li>Alcohol &amp; Drug De-addiction</li>
+                    <li>Medically Supervised Detox</li>
+                    <li>Motivational Enhancement Therapy</li>
+                    <li>Relapse Prevention Planning</li>
+                    <li>Family &amp; Group Counseling</li>
+                </ul>
+                <a href="{{ url_for('booking', service='addiction') }}" class="btn btn-primary btn-sm" style="margin-top: var(--space-md); display: inline-block;">📅 Book Now</a>
+            </div>
+            <div class="service-full-card">
+                <div class="card-icon">🧠</div>
+                <h3>Schizophrenia &amp; Psychosis</h3>
+                <p>Specialized psychiatric management for schizophrenia spectrum and psychotic disorders, focusing on stabilization, recovery, and improving quality of life with a holistic approach.</p>
+                <ul>
+                    <li>Antipsychotic Medication Management</li>
+                    <li>Psychoeducation for Patients &amp; Families</li>
+                    <li>Cognitive Remediation Therapy</li>
+                    <li>Social Skills Training</li>
+                    <li>Relapse Prevention &amp; Crisis Planning</li>
+                </ul>
+                <a href="{{ url_for('booking', service='schizophrenia') }}" class="btn btn-primary btn-sm" style="margin-top: var(--space-md); display: inline-block;">📅 Book Now</a>
             </div>
         </div>
     </div>
