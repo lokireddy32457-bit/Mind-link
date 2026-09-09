@@ -424,9 +424,106 @@ def get_site_settings():
         return dict(_SETTING_DEFAULTS)
 
 
+# Number of retry attempts and sleep duration for transient DB failures.
+# Supabase free-tier can take 15–30 s to resume after auto-pause.
+_DB_RETRY_ATTEMPTS = 3
+_DB_RETRY_SLEEP    = 5  # seconds between attempts
+
+
+def wake_db():
+    """Attempt a lightweight SELECT to wake a paused Supabase instance.
+
+    Safe to call at startup or before a write-heavy operation.  Returns True
+    if the database responded, False otherwise (the app will still start).
+    """
+    for attempt in range(1, _DB_RETRY_ATTEMPTS + 1):
+        try:
+            conn = get_db()
+            cursor = conn.cursor()
+            cursor.execute('SELECT 1')
+            cursor.close()
+            conn.close()
+            print(f'[Database] wake_db: connected on attempt {attempt}.', file=sys.stderr)
+            return True
+        except Exception as exc:
+            print(
+                f'[Database] wake_db attempt {attempt}/{_DB_RETRY_ATTEMPTS} failed: {exc}',
+                file=sys.stderr
+            )
+            if attempt < _DB_RETRY_ATTEMPTS:
+                time.sleep(_DB_RETRY_SLEEP)
+    print('[Database] wake_db: database did not respond — app will retry on first request.', file=sys.stderr)
+    return False
+
+
+def batch_update_site_settings(settings_dict):
+    """Upsert multiple site settings in a single database transaction.
+
+    Much faster than calling update_site_setting() in a loop — opens one
+    connection, runs all UPSERTs, and commits once.  Retries up to
+    _DB_RETRY_ATTEMPTS times on transient connection failures.
+
+    Args:
+        settings_dict: dict mapping setting key → value (already validated/stripped).
+
+    Raises:
+        psycopg2.OperationalError / InterfaceError on persistent DB failure.
+    """
+    if not settings_dict:
+        return True
+
+    _ALLOWED_PREFIXES = (
+        'site_', 'social_', 'hours_',
+        'home_', 'about_', 'services_', 'booking_', 'contact_',
+    )
+    now = datetime.now().isoformat()
+    last_exc = None
+
+    for attempt in range(_DB_RETRY_ATTEMPTS):
+        try:
+            conn = get_db()
+            cursor = conn.cursor()
+            for key, value in settings_dict.items():
+                if key not in _SETTING_DEFAULTS and not any(key.startswith(p) for p in _ALLOWED_PREFIXES):
+                    continue  # silently skip unknown keys
+                cursor.execute(
+                    '''
+                    INSERT INTO site_settings (key, value, updated_at)
+                    VALUES (%s, %s, %s)
+                    ON CONFLICT (key) DO UPDATE
+                        SET value = EXCLUDED.value,
+                            updated_at = EXCLUDED.updated_at
+                    ''',
+                    (key, value, now)
+                )
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return True
+        except (psycopg2.OperationalError, psycopg2.InterfaceError) as e:
+            last_exc = e
+            print(
+                f'[Database] batch_update_site_settings attempt {attempt + 1}/{_DB_RETRY_ATTEMPTS} '
+                f'failed ({type(e).__name__}). Retrying in {_DB_RETRY_SLEEP}s…',
+                file=sys.stderr
+            )
+            if attempt < _DB_RETRY_ATTEMPTS - 1:
+                time.sleep(_DB_RETRY_SLEEP)
+                continue
+            raise
+        except Exception:
+            raise
+
+    raise last_exc
+
+
 def update_site_setting(key, value):
     """Upsert a single site setting. Returns True on success.
-    Retries once on transient connection failures (e.g. Supabase cold start)."""
+
+    Retries up to _DB_RETRY_ATTEMPTS times with _DB_RETRY_SLEEP second pauses
+    to handle Supabase free-tier cold starts (database auto-pauses after
+    inactivity and can take 15–30 s to resume).
+    """
     # Accept original defaults OR any key that belongs to a known page/section prefix.
     _ALLOWED_PREFIXES = (
         'site_', 'social_', 'hours_',
@@ -436,7 +533,7 @@ def update_site_setting(key, value):
         raise ValueError(f'Unknown setting key: {key!r}')
 
     last_exc = None
-    for attempt in range(2):  # retry once
+    for attempt in range(_DB_RETRY_ATTEMPTS):
         try:
             conn = get_db()
             cursor = conn.cursor()
@@ -456,8 +553,13 @@ def update_site_setting(key, value):
             return True
         except (psycopg2.OperationalError, psycopg2.InterfaceError) as e:
             last_exc = e
-            if attempt == 0:
-                time.sleep(1)  # brief pause before retry
+            print(
+                f'[Database] update_site_setting attempt {attempt + 1}/{_DB_RETRY_ATTEMPTS} '
+                f'failed ({type(e).__name__}). Retrying in {_DB_RETRY_SLEEP}s…',
+                file=sys.stderr
+            )
+            if attempt < _DB_RETRY_ATTEMPTS - 1:
+                time.sleep(_DB_RETRY_SLEEP)
                 continue
             raise
         except Exception:

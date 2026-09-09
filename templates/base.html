@@ -33,22 +33,26 @@
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                         </svg>
-                        V.R. Chambers, Lingampally Rd, Hyderabad 502032
+                        {{ site_location or 'V.R. Chambers, Lingampally Rd, Hyderabad 502032' }}
                     </a>
-                    <span class="top-bar-item">
+                    {% if site_phone %}
+                    <a href="tel:{{ site_phone }}" class="top-bar-item top-bar-item--link">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
                         </svg>
-                        99514 32102
-                    </span>
-                    <a href="mailto:psychiatristdrvikram@gmail.com" class="top-bar-item top-bar-item--link">
+                        {{ site_phone }}
+                    </a>
+                    {% endif %}
+                    {% if site_email %}
+                    <a href="mailto:{{ site_email }}" class="top-bar-item top-bar-item--link">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="2" y="4" width="20" height="16" rx="2" />
                             <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                         </svg>
-                        psychiatristdrvikram@gmail.com
+                        {{ site_email }}
                     </a>
+                    {% endif %}
                 </div>
                 <div class="top-bar-right">
                     <a href="{{ social_facebook }}" target="_blank" rel="noopener noreferrer" class="top-bar-social"
@@ -199,18 +203,28 @@
 
                 <div>
                     <h4>Contact</h4>
-                    <div class="footer-contact-item">📍 Shop No. 13, V.R. Chambers, Lingampally Rd, Chanda Nagar, Hyderabad, Telangana 502032</div>
-                    <div class="footer-contact-item">📞 99514 32102</div>
+                    {% if site_location %}
+                    <div class="footer-contact-item">📍 {{ site_location }}</div>
+                    {% endif %}
+                    {% if site_phone %}
+                    <div class="footer-contact-item">📞 {{ site_phone }}</div>
+                    {% endif %}
+                    {% if site_email %}
                     <div class="footer-contact-item">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
                             <rect x="2" y="4" width="20" height="16" rx="2" />
                             <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                         </svg>
-                        psychiatristdrvikram@gmail.com
+                        {{ site_email }}
                     </div>
-                    <div class="footer-contact-item">🕐 Mon–Sat: 11 AM – 1 PM | 5 PM – 8 PM</div>
-                    <div class="footer-contact-item">🕐 Sun: 11 AM – 1 PM</div>
+                    {% endif %}
+                    {% if hours_weekday %}
+                    <div class="footer-contact-item">🕐 {{ hours_weekday }}</div>
+                    {% endif %}
+                    {% if hours_weekend %}
+                    <div class="footer-contact-item">🕐 {{ hours_weekend }}</div>
+                    {% endif %}
                 </div>
             </div>
 

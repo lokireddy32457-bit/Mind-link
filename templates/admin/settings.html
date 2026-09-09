@@ -1144,10 +1144,19 @@ function toast(msg, type) {
 function collect() {
     const d = {};
 
-    // All named text/email/url/time/number inputs, textareas, selects
-    document.querySelectorAll('[name]:not([type=checkbox])').forEach(el => {
-        if (el.name === 'booking_available_days') return;
-        d[el.name] = el.value.trim();
+    // All named inputs, textareas, selects — explicitly scoped to avoid
+    // matching <meta name="..."> tags which have no .value property.
+    const formEls = document.querySelectorAll(
+        'input[name]:not([type=checkbox]):not([type=radio]), textarea[name], select[name]'
+    );
+    formEls.forEach(el => {
+        try {
+            if (el.name === 'booking_available_days') return;
+            const val = el.value;
+            d[el.name] = (val == null ? '' : String(val)).trim();
+        } catch(e) {
+            console.error('[collect] Error on element:', el.tagName, el.name, el, e);
+        }
     });
 
     // Single checkboxes → '1' or '0'
@@ -1175,6 +1184,36 @@ function collect() {
 }
 
 // ── Save ──────────────────────────────────────────────────
+let _saveRetries = 0;
+const _MAX_SAVE_RETRIES = 3;
+
+async function waitForDb(waitSecs) {
+    /** Poll /admin/api/db-ping while counting down, resolve when DB is up. */
+    const btn = document.getElementById('saveBtn');
+    const msg = document.getElementById('saveMsg');
+    return new Promise(resolve => {
+        let remaining = waitSecs;
+        const tick = () => {
+            btn.textContent = `⏳ Waking DB… ${remaining}s`;
+            msg.textContent  = `⏳ Database waking up… retrying in ${remaining}s`;
+            msg.className    = 'save-msg';
+        };
+        tick();
+        const countdown = setInterval(() => {
+            remaining--;
+            tick();
+            if (remaining <= 0) {
+                clearInterval(countdown);
+                // Quick ping before retrying the save
+                fetch('/admin/api/db-ping')
+                    .then(r => r.json())
+                    .catch(() => ({ ok: false }))
+                    .then(j => resolve());   // resolve regardless — let save() decide
+            }
+        }, 1000);
+    });
+}
+
 async function save() {
     const btn = document.getElementById('saveBtn');
     const msg = document.getElementById('saveMsg');
@@ -1197,6 +1236,7 @@ async function save() {
         msg.className = 'save-msg err';
         btn.disabled = false;
         btn.textContent = '💾 Save Changes';
+        _saveRetries = 0;
         return;
     }
 
@@ -1205,9 +1245,8 @@ async function save() {
     try {
         json = await res.json();
     } catch (parseErr) {
-        // Server returned non-JSON (HTML error page / redirect page)
         const rawText = await res.text().catch(() => '(unreadable)');
-        console.error('[Settings] Server returned non-JSON. Status:', res.status, res.url);
+        console.error('[Settings] Server returned non-JSON. Status:', res.status);
         console.error('[Settings] Raw response (first 500 chars):', rawText.slice(0, 500));
         if (res.status === 302 || res.redirected) {
             toast('✕  Session expired — please log out and log in again.', 'err');
@@ -1219,31 +1258,53 @@ async function save() {
         msg.className = 'save-msg err';
         btn.disabled = false;
         btn.textContent = '💾 Save Changes';
+        _saveRetries = 0;
         return;
     }
 
     if (res.status === 401) {
         toast('Session expired. Redirecting to login…', 'err');
+        _saveRetries = 0;
         setTimeout(() => window.location.href = '/admin/login', 1500);
-    } else if (json.success) {
+        return;
+    }
+
+    if (json.success) {
         toast('✓  All changes saved successfully!', 'ok');
         msg.textContent = '✓ Saved';
         msg.className = 'save-msg ok';
-    } else if (res.status === 503) {
-        toast('⏳  Database is waking up. Retrying in 3 seconds…', 'err');
-        msg.textContent = '⏳ Retrying…';
-        msg.className = 'save-msg';
-        btn.textContent = '⏳ Retrying…';
-        setTimeout(() => save(), 3000);
+        btn.disabled = false;
+        btn.textContent = '💾 Save Changes';
+        _saveRetries = 0;
         return;
-    } else {
-        toast('✕  ' + (json.message || 'Could not save. Please try again.'), 'err');
-        msg.textContent = '✕ ' + (json.message || 'Not saved');
-        msg.className = 'save-msg err';
     }
 
+    // 503 / DB waking up — smart retry with countdown
+    if (res.status === 503 || json.db_error) {
+        _saveRetries++;
+        if (_saveRetries > _MAX_SAVE_RETRIES) {
+            toast('✕  Database is not responding after multiple attempts. Please try again later.', 'err');
+            msg.textContent = '✕ Database unavailable';
+            msg.className = 'save-msg err';
+            btn.disabled = false;
+            btn.textContent = '💾 Save Changes';
+            _saveRetries = 0;
+            return;
+        }
+        const waitSecs = json.retry_after || 10;
+        toast(`⏳  Database waking up… retrying in ${waitSecs}s (attempt ${_saveRetries}/${_MAX_SAVE_RETRIES})`, 'err');
+        await waitForDb(waitSecs);
+        save();   // retry
+        return;
+    }
+
+    // Any other error
+    toast('✕  ' + (json.message || 'Could not save. Please try again.'), 'err');
+    msg.textContent = '✕ ' + (json.message || 'Not saved');
+    msg.className = 'save-msg err';
     btn.disabled = false;
     btn.textContent = '💾 Save Changes';
+    _saveRetries = 0;
 }
 </script>
 </body>

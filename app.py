@@ -21,7 +21,8 @@ from database import (
     get_appointments, get_appointment_by_id,
     update_appointment_status, get_dashboard_stats,
     get_booked_slots, cancel_appointments_by_date,
-    get_site_settings, update_site_setting
+    get_site_settings, update_site_setting,
+    batch_update_site_settings, wake_db
 )
 from auth import (
     login_required, authenticate_admin, create_default_admin
@@ -49,15 +50,22 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=8)
 
 @app.context_processor
 def inject_globals():
-    """Inject commonly needed globals into all templates."""
+    """Inject all site settings into every template as both individual variables
+    and a full `site` dict so public pages can render dynamic content."""
     site = get_site_settings()
     return {
         'now': datetime.utcnow,
-        'site_name': site.get('site_name', 'HELIUM MIND CENTRE'),
-        'site_location': site.get('site_location', ''),
-        'social_facebook': site.get('social_facebook', 'https://www.facebook.com/heliummindcenter'),
+        'site': site,
+        # Commonly used individual variables (kept for backward compat)
+        'site_name':        site.get('site_name',        'HELIUM MIND CENTRE'),
+        'site_location':    site.get('site_location',    ''),
+        'site_phone':       site.get('site_phone',       '99514 32102'),
+        'site_email':       site.get('site_email',       'psychiatristdrvikram@gmail.com'),
+        'hours_weekday':    site.get('hours_weekday',    'Mon–Sat: 11 AM – 1 PM | 5 PM – 8 PM'),
+        'hours_weekend':    site.get('hours_weekend',    'Sun: 11 AM – 1 PM'),
+        'social_facebook':  site.get('social_facebook',  'https://www.facebook.com/heliummindcenter'),
         'social_instagram': site.get('social_instagram', '#'),
-        'social_whatsapp': site.get('social_whatsapp', 'https://api.whatsapp.com/send/?phone=919951432102'),
+        'social_whatsapp':  site.get('social_whatsapp',  'https://api.whatsapp.com/send/?phone=919951432102'),
     }
 
 
@@ -67,6 +75,9 @@ def inject_globals():
 with app.app_context():
     init_db()
     create_default_admin()
+    # Proactively wake Supabase so the first admin request isn't slow.
+    # This runs in the background at startup and does not block requests.
+    wake_db()
 
 
 # =====================
@@ -653,10 +664,35 @@ def api_stats():
     return jsonify(stats)
 
 
+@app.route('/admin/api/db-ping')
+@login_required
+def api_db_ping():
+    """Lightweight endpoint the frontend calls to wake a paused Supabase DB.
+
+    Returns JSON {ok: true} once the database responds, or {ok: false} with an
+    error message if it still cannot connect.  The Settings page calls this
+    before saving so that the actual POST succeeds on the first attempt.
+    """
+    try:
+        conn = __import__('database').get_db()
+        cursor = conn.cursor()
+        cursor.execute('SELECT 1')
+        cursor.close()
+        conn.close()
+        return jsonify({'ok': True})
+    except Exception as exc:
+        return jsonify({'ok': False, 'error': str(exc)}), 503
+
+
 @app.route('/admin/api/settings', methods=['POST'])
 @login_required
 def api_update_settings():
-    """Update site settings (hospital name and location) via AJAX."""
+    """Update site settings via AJAX using a single batch DB transaction.
+
+    All validated key/value pairs are saved in one connection and one commit,
+    which avoids the per-key retry loop that could block for minutes when the
+    Supabase free-tier database is waking from sleep.
+    """
     data = request.get_json() or {}
     allowed_keys = {
         # General / clinic identity
@@ -698,33 +734,42 @@ def api_update_settings():
     # Required fields that must not be blank
     REQUIRED_KEYS = {'site_name', 'site_location'}
 
+    # ── Validate & collect settings to save ──────────────────────────────────
     errors = []
-    updated = []
+    to_save = {}
 
     for key in allowed_keys:
         if key not in data:
             continue
         value = str(data[key]).strip()
-        # Enforce non-empty only for required fields; skip empty optional fields silently
         if not value:
             if key in REQUIRED_KEYS:
                 errors.append(f'{key} cannot be empty.')
             continue
-        try:
-            update_site_setting(key, value)
-            updated.append(key)
-        except (psycopg2.OperationalError, psycopg2.InterfaceError) as e:
-            return jsonify({
-                'success': False,
-                'message': 'Database connection timed out. The database may be waking up — please wait a moment and try again.'
-            }), 503
-        except Exception as e:
-            errors.append(str(e))
+        to_save[key] = value
 
     if errors:
-        return jsonify({'success': False, 'message': ' '.join(errors)}), 400
+        return jsonify({'success': False, 'message': ' | '.join(errors)}), 400
 
-    return jsonify({'success': True, 'message': f'Settings saved successfully ({len(updated)} updated).'})
+    # ── Batch-save all settings in a single DB transaction ───────────────────
+    try:
+        batch_update_site_settings(to_save)
+    except (psycopg2.OperationalError, psycopg2.InterfaceError):
+        # Database is unreachable even after built-in retries — tell the
+        # client to wait and try the whole save again.
+        return jsonify({
+            'success': False,
+            'db_error': True,
+            'message': (
+                'The database is waking up from sleep (Supabase free-tier). '
+                'Your changes were not saved yet — please wait and try again.'
+            ),
+            'retry_after': 8,
+        }), 503
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+    return jsonify({'success': True, 'message': f'Settings saved successfully ({len(to_save)} updated).'})
 
 
 # =====================
