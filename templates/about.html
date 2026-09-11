@@ -163,13 +163,17 @@
 
 {% block extra_scripts %}
 <script>
-(function () {
+document.addEventListener('DOMContentLoaded', function () {
+
     function animateCounter(el) {
-        const target = parseInt(el.dataset.target, 10);
-        const suffix = el.dataset.suffix || '';
-        const useComma = el.dataset.comma === 'true';
-        const duration = 1800; // ms
-        const startTime = performance.now();
+        if (el.dataset.animated === 'true') return; // prevent re-run
+        el.dataset.animated = 'true';
+
+        var target = parseInt(el.dataset.target, 10);
+        var suffix = el.dataset.suffix || '';
+        var useComma = el.dataset.comma === 'true';
+        var duration = 1800;
+        var startTime = null;
 
         function easeOutQuart(t) {
             return 1 - Math.pow(1 - t, 4);
@@ -177,35 +181,46 @@
 
         function formatNum(n) {
             if (useComma) return n.toLocaleString('en-IN');
-            return n;
+            return String(n);
         }
 
-        function step(now) {
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const current = Math.round(easeOutQuart(progress) * target);
+        function step(timestamp) {
+            if (!startTime) startTime = timestamp;
+            var elapsed = timestamp - startTime;
+            var progress = Math.min(elapsed / duration, 1);
+            var current = Math.round(easeOutQuart(progress) * target);
             el.textContent = formatNum(current) + suffix;
-            if (progress < 1) requestAnimationFrame(step);
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            }
         }
 
         requestAnimationFrame(step);
     }
 
-    const statsSection = document.getElementById('doctorStats');
-    const statEls = statsSection ? statsSection.querySelectorAll('.stat-number') : [];
+    var statsSection = document.getElementById('doctorStats');
+    if (!statsSection) return;
 
+    var statEls = statsSection.querySelectorAll('.stat-number');
     if (!statEls.length) return;
 
-    const observer = new IntersectionObserver(function (entries) {
+    var observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
             if (entry.isIntersecting) {
                 statEls.forEach(animateCounter);
                 observer.disconnect();
             }
         });
-    }, { threshold: 0.3 });
+    }, { threshold: 0.2 });
 
     observer.observe(statsSection);
-})();
+
+    // If already visible on page load, trigger immediately
+    var rect = statsSection.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+        statEls.forEach(animateCounter);
+        observer.disconnect();
+    }
+});
 </script>
 {% endblock %}
