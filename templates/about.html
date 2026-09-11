@@ -32,20 +32,21 @@
 <section class="section" id="doctorStats" style="padding: 4rem 0; background: var(--color-primary);">
     <div class="container">
         <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; text-align:center; padding: 1.5rem 0;">
-            <div class="reveal stat-card" style="background:rgba(255,255,255,0.1); border-radius:1.2rem; padding:2.5rem 1.5rem; backdrop-filter:blur(8px);">
+            <div class="stat-card" style="background:rgba(255,255,255,0.1); border-radius:1.2rem; padding:2.5rem 1.5rem; backdrop-filter:blur(8px);">
                 <div class="stat-number" data-target="18" data-suffix="+" style="font-size:3.6rem; font-weight:900; color:#fff; line-height:1; letter-spacing:-1px;">0+</div>
                 <div style="color:rgba(255,255,255,0.9); font-size:1.1rem; font-weight:500; margin-top:0.75rem;">Years of Experience</div>
             </div>
-            <div class="reveal stat-card" style="background:rgba(255,255,255,0.1); border-radius:1.2rem; padding:2.5rem 1.5rem; backdrop-filter:blur(8px);">
+            <div class="stat-card" style="background:rgba(255,255,255,0.1); border-radius:1.2rem; padding:2.5rem 1.5rem; backdrop-filter:blur(8px);">
                 <div class="stat-number" data-target="99" data-suffix="%" style="font-size:3.6rem; font-weight:900; color:#fff; line-height:1; letter-spacing:-1px;">0%</div>
                 <div style="color:rgba(255,255,255,0.9); font-size:1.1rem; font-weight:500; margin-top:0.75rem;">Patients Recommend</div>
             </div>
-            <div class="reveal stat-card" style="background:rgba(255,255,255,0.1); border-radius:1.2rem; padding:2.5rem 1.5rem; backdrop-filter:blur(8px);">
+            <div class="stat-card" style="background:rgba(255,255,255,0.1); border-radius:1.2rem; padding:2.5rem 1.5rem; backdrop-filter:blur(8px);">
                 <div class="stat-number" data-target="12000" data-suffix="+" data-comma="true" style="font-size:3.6rem; font-weight:900; color:#fff; line-height:1; letter-spacing:-1px;">0+</div>
                 <div style="color:rgba(255,255,255,0.9); font-size:1.1rem; font-weight:500; margin-top:0.75rem;">Satisfied Clients</div>
             </div>
         </div>
     </div>
+</section>
 
 <!-- Specialties -->
 <section class="section section--alt" id="specialties">
@@ -166,7 +167,7 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     function animateCounter(el) {
-        if (el.dataset.animated === 'true') return; // prevent re-run
+        if (el.dataset.animated === 'true') return;
         el.dataset.animated = 'true';
 
         var target = parseInt(el.dataset.target, 10);
@@ -190,9 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var progress = Math.min(elapsed / duration, 1);
             var current = Math.round(easeOutQuart(progress) * target);
             el.textContent = formatNum(current) + suffix;
-            if (progress < 1) {
-                requestAnimationFrame(step);
-            }
+            if (progress < 1) requestAnimationFrame(step);
         }
 
         requestAnimationFrame(step);
@@ -204,23 +203,25 @@ document.addEventListener('DOMContentLoaded', function () {
     var statEls = statsSection.querySelectorAll('.stat-number');
     if (!statEls.length) return;
 
-    var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-            if (entry.isIntersecting) {
-                statEls.forEach(animateCounter);
-                observer.disconnect();
-            }
-        });
-    }, { threshold: 0.2 });
-
-    observer.observe(statsSection);
-
-    // If already visible on page load, trigger immediately
-    var rect = statsSection.getBoundingClientRect();
-    if (rect.top < window.innerHeight && rect.bottom > 0) {
+    var triggered = false;
+    function triggerAll() {
+        if (triggered) return;
+        triggered = true;
         statEls.forEach(animateCounter);
-        observer.disconnect();
     }
+
+    // Use scroll event as primary trigger (most reliable)
+    function checkVisibility() {
+        var rect = statsSection.getBoundingClientRect();
+        if (rect.top < window.innerHeight - 80 && rect.bottom > 0) {
+            triggerAll();
+            window.removeEventListener('scroll', checkVisibility);
+        }
+    }
+
+    window.addEventListener('scroll', checkVisibility, { passive: true });
+    // Also check immediately on load
+    checkVisibility();
 });
 </script>
 {% endblock %}
