@@ -1,5 +1,5 @@
-/*
- * Mind Link — Design System & Page Styles
+﻿/*
+ * Mind Link â€” Design System & Page Styles
  * A calming, professional design for a psychiatrist clinic.
  * Mobile-first, accessible, premium aesthetic.
  */
@@ -13,7 +13,7 @@
    CSS Custom Properties (Design Tokens)
    ======================================== */
 :root {
-    /* Colors — Calming Clinical Palette */
+    /* Colors â€” Calming Clinical Palette */
     --color-primary: hsl(207, 44%, 32%);
     --color-primary-light: hsl(207, 44%, 45%);
     --color-primary-dark: hsl(207, 44%, 22%);
@@ -448,6 +448,25 @@ p {
     color: white !important;
 }
 
+/* Nav CTA Group (wrapper for both buttons) */
+.nav-cta-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+/* Chat With Us button - teal accent variant */
+.nav-cta--chat {
+    background: linear-gradient(135deg, hsl(174, 60%, 38%), hsl(174, 55%, 50%)) !important;
+    box-shadow: 0 2px 8px hsla(174, 60%, 38%, 0.28) !important;
+}
+
+.nav-cta--chat:hover {
+    box-shadow: 0 4px 16px hsla(174, 60%, 38%, 0.40) !important;
+}
+
+
 /* Admin Panel Icon */
 .nav-admin-icon {
     display: inline-flex;
@@ -548,7 +567,7 @@ p {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    /* Slightly slow open — 180ms delay before appearing, 350ms fade */
+    /* Slightly slow open â€” 180ms delay before appearing, 350ms fade */
     transition:
         opacity 350ms ease,
         transform 350ms ease,
@@ -575,7 +594,7 @@ p {
     visibility: visible;
     pointer-events: auto;
     transform: translateX(-50%) translateY(0);
-    /* No delay on open — fade in immediately after the 180ms hover delay */
+    /* No delay on open â€” fade in immediately after the 180ms hover delay */
     transition:
         opacity 300ms ease,
         transform 300ms ease,
@@ -823,7 +842,7 @@ p {
 }
 
 .hero-divider::after {
-    content: '🕊';
+    content: 'ðŸ•Š';
     position: absolute;
     top: -10px;
     left: 70px;
@@ -1231,7 +1250,7 @@ p {
 }
 
 .service-card .learn-more::after {
-    content: '→';
+    content: 'â†’';
     transition: transform var(--transition-fast);
 }
 
@@ -1650,7 +1669,7 @@ p {
     color: var(--color-primary);
 }
 .article-content .learn-more::after {
-    content: '→';
+    content: 'â†’';
     transition: transform var(--transition-fast);
 }
 .article-card:hover .learn-more::after {
@@ -1882,7 +1901,7 @@ p {
 }
 
 .service-full-card ul li::before {
-    content: '✓';
+    content: 'âœ“';
     color: var(--color-accent);
     font-weight: 700;
     flex-shrink: 0;
@@ -1955,7 +1974,7 @@ p {
 }
 
 .faq-item.open .faq-question::after {
-    content: '−';
+    content: 'âˆ’';
     color: var(--color-primary);
 }
 
@@ -3123,7 +3142,7 @@ textarea {
         display: none;
     }
 
-    /* Mobile dropdown — inline within the open nav */
+    /* Mobile dropdown â€” inline within the open nav */
     .nav-dropdown-wrapper {
         flex-direction: column;
         align-items: flex-start;
@@ -3873,6 +3892,15 @@ textarea {
         font-size: 0.88rem;
     }
 
+    .nav-cta-group {
+        gap: 6px;
+    }
+
+    .nav-cta--chat {
+        padding: 8px 14px;
+        font-size: 0.88rem;
+    }
+
     .credential-item {
         flex-direction: column;
         text-align: center;
@@ -4055,7 +4083,7 @@ textarea {
     transform: translateY(-1px);
 }
 
-/* Settings modal — wider than standard modals */
+/* Settings modal â€” wider than standard modals */
 .settings-modal {
     max-width: 520px !important;
     width: 100%;
@@ -4250,7 +4278,7 @@ textarea {
     transform: translateY(-1px);
 }
 
-/* Settings modal — wider than standard modals */
+/* Settings modal â€” wider than standard modals */
 .settings-modal {
     max-width: 520px !important;
     width: 100%;
@@ -4370,10 +4398,10 @@ textarea {
 }
 
 /* ========================================
-   About Page — Heading Hierarchy
+   About Page â€” Heading Hierarchy
    ======================================== */
 
-/* Main H1 — highlighted, eye-catching */
+/* Main H1 â€” highlighted, eye-catching */
 .about-main-heading {
     font-size: clamp(2rem, 4.5vw, 3rem);
     font-weight: 900;
@@ -4398,7 +4426,7 @@ textarea {
     margin-top: 10px;
 }
 
-/* Doctor sub-heading block — clearly secondary */
+/* Doctor sub-heading block â€” clearly secondary */
 .doctor-subheading {
     margin: 0 0 var(--space-lg);
     padding: var(--space-sm) var(--space-md);
@@ -4407,7 +4435,7 @@ textarea {
     border-left: 4px solid var(--color-primary-light);
 }
 
-/* Doctor name — medium, clearly smaller than h1 */
+/* Doctor name â€” medium, clearly smaller than h1 */
 .doctor-subheading-name {
     font-size: 1.05rem;
     font-weight: 700;
@@ -4422,7 +4450,7 @@ textarea {
     color: var(--color-text-muted);
 }
 
-/* Role lines — muted, small */
+/* Role lines â€” muted, small */
 .doctor-subheading-role {
     font-size: 0.85rem;
     font-weight: 500;

@@ -581,6 +581,11 @@ def admin_dashboard():
 def admin_settings():
     """Dedicated settings page with per-page configuration tabs."""
     settings = get_site_settings()
+    if not settings.get('social_whatsapp_number') and settings.get('social_whatsapp'):
+        import re
+        m = re.search(r'phone=(\d+)', settings['social_whatsapp'])
+        if m:
+            settings['social_whatsapp_number'] = m.group(1)
     return render_template('admin/settings.html', settings=settings)
 
 

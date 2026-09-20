@@ -89,25 +89,20 @@
                                 <label for="preferred_time">Preferred Time <span class="required">*</span></label>
                                 <select id="preferred_time" name="preferred_time" required>
                                     <option value="">Select a time...</option>
-                                    <!-- Weekday slots: 9:00 AM – 5:30 PM -->
-                                    <option value="09:00" data-day="weekday">9:00 AM</option>
-                                    <option value="09:30" data-day="weekday">9:30 AM</option>
-                                    <option value="10:00" data-day="all">10:00 AM</option>
-                                    <option value="10:30" data-day="all">10:30 AM</option>
+                                    <!-- Morning slots: 11:00 AM – 1:00 PM (Mon–Sat) -->
                                     <option value="11:00" data-day="all">11:00 AM</option>
                                     <option value="11:30" data-day="all">11:30 AM</option>
                                     <option value="12:00" data-day="all">12:00 PM</option>
                                     <option value="12:30" data-day="all">12:30 PM</option>
                                     <option value="13:00" data-day="all">1:00 PM</option>
-                                    <option value="13:30" data-day="saturday">1:30 PM</option>
-                                    <option value="14:00" data-day="weekday">2:00 PM</option>
-                                    <option value="14:30" data-day="weekday">2:30 PM</option>
-                                    <option value="15:00" data-day="weekday">3:00 PM</option>
-                                    <option value="15:30" data-day="weekday">3:30 PM</option>
-                                    <option value="16:00" data-day="weekday">4:00 PM</option>
-                                    <option value="16:30" data-day="weekday">4:30 PM</option>
+                                    <!-- Evening slots: 5:00 PM – 8:00 PM (Mon–Sat only) -->
                                     <option value="17:00" data-day="weekday">5:00 PM</option>
                                     <option value="17:30" data-day="weekday">5:30 PM</option>
+                                    <option value="18:00" data-day="weekday">6:00 PM</option>
+                                    <option value="18:30" data-day="weekday">6:30 PM</option>
+                                    <option value="19:00" data-day="weekday">7:00 PM</option>
+                                    <option value="19:30" data-day="weekday">7:30 PM</option>
+                                    <option value="20:00" data-day="weekday">8:00 PM</option>
                                 </select>
                                 <p class="error-message">Please select a preferred time.</p>
                             </div>
@@ -158,20 +153,10 @@
                             const dayOfWeek = selected.getDay(); // 0=Sun, 6=Sat
 
                             if (dayOfWeek === 0) {
-                                // Sunday — clinic closed, hide all slots
-                                allOptions.forEach(opt => { opt.style.display = 'none'; opt.disabled = true; });
-                                timeSelect.value = '';
-                                timeSelect.querySelector('option[value=""]').textContent = 'Clinic closed on Sundays';
-                                return;
-                            }
-
-                            timeSelect.querySelector('option[value=""]').textContent = 'Select a time...';
-
-                            if (dayOfWeek === 6) {
-                                // Saturday — 10:00 AM to 1:30 PM
+                                // Sunday — morning only (11 AM–1 PM), no evening
                                 allOptions.forEach(opt => {
                                     const tag = opt.getAttribute('data-day');
-                                    if (tag === 'all' || tag === 'saturday') {
+                                    if (tag === 'all') {
                                         opt.style.display = '';
                                         opt.disabled = false;
                                     } else {
@@ -179,12 +164,27 @@
                                         opt.disabled = true;
                                     }
                                 });
+                                timeSelect.querySelector('option[value=""]').textContent = 'Select a time...';
+                            } else if (dayOfWeek === 6) {
+                                // Saturday — morning 11 AM–1 PM only (no evening slots)
+                                allOptions.forEach(opt => {
+                                    const tag = opt.getAttribute('data-day');
+                                    if (tag === 'all') {
+                                        opt.style.display = '';
+                                        opt.disabled = false;
+                                    } else {
+                                        opt.style.display = 'none';
+                                        opt.disabled = true;
+                                    }
+                                });
+                                timeSelect.querySelector('option[value=""]').textContent = 'Select a time...';
                             } else {
-                                // Weekday — 9:00 AM to 5:30 PM
+                                // Weekday (Mon–Fri) — morning 11 AM–1 PM + evening 5 PM–8 PM
                                 allOptions.forEach(opt => {
                                     opt.style.display = '';
                                     opt.disabled = false;
                                 });
+                                timeSelect.querySelector('option[value=""]').textContent = 'Select a time...';
                             }
 
                             // Fetch booked slots from server and disable them
@@ -242,31 +242,18 @@
                     <div class="info-item">
                         <span class="info-item-icon">📅</span>
                         <div>
-                            <p><strong>Monday – Friday</strong><br>9:00 AM – 6:00 PM</p>
+                            <p><strong>Monday – Saturday</strong><br>11:00 AM – 1:00 PM &nbsp;|&nbsp; 5:00 PM – 8:00 PM</p>
                         </div>
                     </div>
                     <div class="info-item">
                         <span class="info-item-icon">📅</span>
                         <div>
-                            <p><strong>Saturday</strong><br>10:00 AM – 2:00 PM</p>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-item-icon">📅</span>
-                        <div>
-                            <p><strong>Sunday</strong><br>Closed</p>
+                            <p><strong>Sunday</strong><br>11:00 AM – 1:00 PM</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Crisis Resources -->
-                <div class="crisis-banner">
-                    <h4>🚨 Crisis Resources</h4>
-                    <p>If you or someone you know is in immediate danger, please call 911 or go to the nearest emergency room.</p>
-                    <div class="crisis-number">📞 988</div>
-                    <p><strong>Suicide & Crisis Lifeline</strong><br>Available 24/7 — Call or Text</p>
-                    <p style="margin-top: var(--space-md); font-size: 0.85rem;">Crisis Text Line: Text <strong>HOME</strong> to <strong>741741</strong></p>
-                </div>
+
             </div>
         </div>
     </div>
