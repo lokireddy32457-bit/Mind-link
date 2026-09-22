@@ -90,6 +90,7 @@ def init_db():
     global _db_available
 
     for attempt in range(1, 3):  # two attempts
+        conn = None
         try:
             conn = get_db()
             cursor = conn.cursor()
@@ -152,7 +153,6 @@ def init_db():
 
             conn.commit()
             cursor.close()
-            conn.close()
             _db_available = True
             print('[Database] Connected to PostgreSQL successfully.', file=sys.stderr)
             return  # success
@@ -177,6 +177,9 @@ def init_db():
                     '   database is reachable.\n',
                     file=sys.stderr,
                 )
+        finally:
+            if conn is not None and not conn.closed:
+                conn.close()
 
 
 # ---------------------
@@ -437,12 +440,12 @@ def wake_db():
     if the database responded, False otherwise (the app will still start).
     """
     for attempt in range(1, _DB_RETRY_ATTEMPTS + 1):
+        conn = None
         try:
             conn = get_db()
             cursor = conn.cursor()
             cursor.execute('SELECT 1')
             cursor.close()
-            conn.close()
             print(f'[Database] wake_db: connected on attempt {attempt}.', file=sys.stderr)
             return True
         except Exception as exc:
@@ -452,6 +455,9 @@ def wake_db():
             )
             if attempt < _DB_RETRY_ATTEMPTS:
                 time.sleep(_DB_RETRY_SLEEP)
+        finally:
+            if conn is not None and not conn.closed:
+                conn.close()
     print('[Database] wake_db: database did not respond — app will retry on first request.', file=sys.stderr)
     return False
 
@@ -480,6 +486,7 @@ def batch_update_site_settings(settings_dict):
     last_exc = None
 
     for attempt in range(_DB_RETRY_ATTEMPTS):
+        conn = None
         try:
             conn = get_db()
             cursor = conn.cursor()
@@ -498,7 +505,6 @@ def batch_update_site_settings(settings_dict):
                 )
             conn.commit()
             cursor.close()
-            conn.close()
             return True
         except (psycopg2.OperationalError, psycopg2.InterfaceError) as e:
             last_exc = e
@@ -513,6 +519,9 @@ def batch_update_site_settings(settings_dict):
             raise
         except Exception:
             raise
+        finally:
+            if conn is not None and not conn.closed:
+                conn.close()
 
     raise last_exc
 
@@ -534,6 +543,7 @@ def update_site_setting(key, value):
 
     last_exc = None
     for attempt in range(_DB_RETRY_ATTEMPTS):
+        conn = None
         try:
             conn = get_db()
             cursor = conn.cursor()
@@ -549,7 +559,6 @@ def update_site_setting(key, value):
             )
             conn.commit()
             cursor.close()
-            conn.close()
             return True
         except (psycopg2.OperationalError, psycopg2.InterfaceError) as e:
             last_exc = e
@@ -564,6 +573,9 @@ def update_site_setting(key, value):
             raise
         except Exception:
             raise
+        finally:
+            if conn is not None and not conn.closed:
+                conn.close()
 
     raise last_exc
 
