@@ -20,6 +20,8 @@
             <div class="dashboard-nav-right">
                 <a href="{{ url_for('home') }}">🌐 View Website</a>
                 <span style="color: rgba(255,255,255,0.5);">|</span>
+                <a href="{{ url_for('admin_blog') }}" style="color: rgba(255,255,255,0.8); font-size:0.9rem;">📝 Blog</a>
+                <span style="color: rgba(255,255,255,0.5);">|</span>
                 <a href="{{ url_for('admin_settings') }}" style="color: rgba(255,255,255,0.8); font-size:0.9rem;">⚙️ Settings</a>
                 <span style="color: rgba(255,255,255,0.5);">|</span>
                 <span style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">👤 Dr. {{ session.get('admin_username', 'Admin') }}</span>

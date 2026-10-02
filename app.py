@@ -14,7 +14,7 @@ load_dotenv()  # Load .env file into environment variables
 
 from flask import (
     Flask, render_template, request, redirect,
-    url_for, flash, session, jsonify
+    url_for, flash, session, jsonify, send_from_directory
 )
 from database import (
     init_db, save_appointment, save_inquiry,
@@ -22,12 +22,15 @@ from database import (
     update_appointment_status, get_dashboard_stats,
     get_booked_slots, cancel_appointments_by_date,
     get_site_settings, update_site_setting,
-    batch_update_site_settings, wake_db
+    batch_update_site_settings, wake_db,
+    save_blog_post, update_blog_post, get_blog_posts,
+    get_blog_post_by_id, get_blog_post_by_slug,
+    delete_blog_post, get_blog_stats
 )
 from auth import (
     login_required, authenticate_admin, create_default_admin
 )
-from email_utils import send_appointment_email
+from email_utils import send_appointment_email, send_new_appointment_notification
 
 app = Flask(__name__)
 
@@ -42,6 +45,15 @@ app.config['SESSION_COOKIE_SECURE'] = is_production
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=8)
+
+# =====================
+# Upload Configuration
+# =====================
+UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads', 'blog')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5 MB max upload
+ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
 
 # =====================
@@ -205,35 +217,68 @@ SERVICE_DATA = {
     },
     'anxiety': {
         'slug': 'anxiety',
-        'title': 'Anxiety & Depression Treatment',
+        'title': 'Anxiety Treatment',
         'icon': '😰',
-        'tagline': 'Evidence-based, compassionate care to help you reclaim joy, calm, and confidence.',
+        'tagline': 'Expert, evidence-based care to help you break free from fear, worry, and panic.',
         'image': 'article-anxiety.png',
         'overview': (
-            'Anxiety and depression are among the most common yet misunderstood conditions. At HELIUM MIND CENTRE, '
-            'we combine the latest evidence-based therapies with personalized medication management to help you '
-            'break free from the cycle of fear, sadness, and hopelessness. Recovery is possible — and we are with '
-            'you every step of the way.'
+            'Anxiety disorders are among the most common mental health conditions, yet they are highly treatable. '
+            'At HELIUM MIND CENTRE, we use the latest evidence-based approaches — including Cognitive Behavioral Therapy, '
+            'Exposure Therapy, and carefully managed medication — to help you regain control of your thoughts, '
+            'reduce physical symptoms, and live a calmer, more fulfilling life.'
         ),
         'what_we_treat': [
             'Generalized Anxiety Disorder (GAD)',
-            'Social Anxiety & Phobias',
-            'Major Depressive Disorder',
+            'Social Anxiety Disorder',
             'Panic Disorder & Panic Attacks',
-            'Treatment-Resistant Depression',
-            'Mixed Anxiety-Depression',
+            'Specific Phobias',
+            'Separation Anxiety',
+            'Health Anxiety (Hypochondria)',
         ],
         'approaches': [
-            ('Cognitive Behavioral Therapy', 'Challenge distorted thoughts and break cycles of avoidance that fuel anxiety and depression.'),
-            ('Exposure Therapy', 'Gradually and safely face feared situations to reduce their power over you.'),
-            ('Medication Evaluation', 'Antidepressants and anti-anxiety medications prescribed thoughtfully when clinically appropriate.'),
-            ('Lifestyle & Wellness Coaching', 'Sleep hygiene, exercise, and nutrition guidance to support your mental health journey.'),
+            ('Cognitive Behavioral Therapy (CBT)', 'Identify and challenge the distorted thoughts and avoidance behaviors that keep anxiety alive.'),
+            ('Exposure & Response Prevention', 'Gradually and safely face feared situations to reduce their power and break the anxiety cycle.'),
+            ('Relaxation & Mindfulness', 'Breathing techniques, progressive muscle relaxation, and mindfulness practices to calm the nervous system.'),
+            ('Medication Management', 'Anti-anxiety and antidepressant medications prescribed carefully when therapy alone is insufficient.'),
         ],
         'session_info': 'Weekly sessions recommended | In-person & Telehealth',
         'faq': [
-            ('Can anxiety and depression be cured?', 'Most people achieve significant symptom relief and long-term remission with the right treatment.'),
-            ('Do I need medication for depression?', 'Not always. Many patients respond well to therapy alone; medication is discussed case-by-case.'),
-            ('How long does treatment take?', 'Many people see improvement in 8–16 sessions; some continue longer for lasting results.'),
+            ('Can anxiety be cured completely?', 'Most patients achieve significant and lasting symptom relief with the right combination of therapy and lifestyle changes.'),
+            ('Will I need medication for anxiety?', 'Not always. Many patients do very well with therapy alone; medication is considered case-by-case.'),
+            ('How long before I feel better?', 'Many people notice meaningful improvement within 6–10 sessions of CBT or Exposure Therapy.'),
+        ],
+    },
+    'depression': {
+        'slug': 'depression',
+        'title': 'Depression Treatment',
+        'icon': '😔',
+        'tagline': 'Compassionate, evidence-based care to help you rediscover hope, energy, and joy.',
+        'image': 'article-depression.png',
+        'overview': (
+            'Depression is more than just feeling sad — it is a complex medical condition that affects thoughts, energy, '
+            'sleep, and daily functioning. At HELIUM MIND CENTRE, we offer a comprehensive, personalized approach to '
+            'treating depression that combines proven psychotherapy with careful medication management when needed. '
+            'Recovery is absolutely possible, and we walk every step of the journey with you.'
+        ),
+        'what_we_treat': [
+            'Major Depressive Disorder (MDD)',
+            'Persistent Depressive Disorder (Dysthymia)',
+            'Treatment-Resistant Depression',
+            'Postpartum Depression',
+            'Seasonal Affective Disorder (SAD)',
+            'Depression with Anxiety',
+        ],
+        'approaches': [
+            ('Cognitive Behavioral Therapy (CBT)', 'Identify and reshape negative thought patterns, behavioral withdrawal, and core beliefs that sustain depression.'),
+            ('Behavioral Activation', 'Gradually re-engage with meaningful activities to break the cycle of low mood and inactivity.'),
+            ('Antidepressant Management', 'SSRIs, SNRIs, and other antidepressants carefully chosen, monitored, and adjusted to your unique biology.'),
+            ('Lifestyle & Wellness Support', 'Sleep hygiene, nutrition, exercise, and social connection strategies to reinforce your recovery.'),
+        ],
+        'session_info': 'Weekly sessions recommended | In-person & Telehealth',
+        'faq': [
+            ('Is depression a sign of weakness?', 'Absolutely not. Depression is a medical condition with biological, psychological, and social causes — seeking help is a sign of strength.'),
+            ('How long does depression treatment take?', 'Most patients see significant improvement within 8–16 sessions; some continue maintenance therapy for lasting results.'),
+            ('Are antidepressants addictive?', 'No — antidepressants are not addictive. They are carefully tapered when discontinued under medical supervision.'),
         ],
     },
     'ptsd': {
@@ -388,6 +433,7 @@ def booking():
         'medication': 'medication_management',
         'telehealth': 'telehealth',
         'anxiety': 'anxiety_depression',
+        'depression': 'anxiety_depression',
         'ptsd': 'ptsd_trauma',
         'child': 'child_adolescent',
         'insomnia': 'insomnia',
@@ -468,6 +514,14 @@ def submit_booking():
     try:
         save_appointment(data)
         flash('Your appointment request has been submitted successfully! We will contact you shortly to confirm.', 'success')
+
+        # Notify doctor/admin about the new appointment request.
+        # Email failure must NOT affect the patient-facing success flow.
+        try:
+            send_new_appointment_notification(data)
+        except Exception:
+            pass  # logged inside email_utils
+
     except Exception as e:
         flash('An error occurred while processing your request. Please try again.', 'error')
         print(f'Database error: {e}')
@@ -597,9 +651,13 @@ def approve_appointment(appointment_id):
     if not appointment:
         return jsonify({'success': False, 'message': 'Appointment not found.'}), 404
 
+    # Duplicate-action guard: don't re-send email if already approved
+    if appointment.get('status') == 'approved':
+        return jsonify({'success': True, 'message': 'Appointment is already approved.', 'new_status': 'approved', 'email_sent': False})
+
     update_appointment_status(appointment_id, 'approved')
 
-    # Send confirmation email to patient
+    # Send confirmation email to patient (after DB success)
     email_sent = send_appointment_email(appointment, 'approved')
     message = 'Appointment approved successfully.'
     if email_sent:
@@ -616,9 +674,13 @@ def cancel_appointment(appointment_id):
     if not appointment:
         return jsonify({'success': False, 'message': 'Appointment not found.'}), 404
 
+    # Duplicate-action guard: don't re-send email if already cancelled
+    if appointment.get('status') == 'cancelled':
+        return jsonify({'success': True, 'message': 'Appointment is already cancelled.', 'new_status': 'cancelled', 'email_sent': False})
+
     update_appointment_status(appointment_id, 'cancelled')
 
-    # Send cancellation email to patient
+    # Send cancellation email to patient (after DB success)
     email_sent = send_appointment_email(appointment, 'cancelled')
     message = 'Appointment cancelled.'
     if email_sent:
@@ -775,6 +837,186 @@ def api_update_settings():
         return jsonify({'success': False, 'message': str(e)}), 500
 
     return jsonify({'success': True, 'message': f'Settings saved successfully ({len(to_save)} updated).'})
+
+
+# =====================
+# Public Blog Routes
+# =====================
+
+@app.route('/blog')
+def blog():
+    """Public blog listing page — shows all published posts."""
+    posts = get_blog_posts(status='published')
+    return render_template('blog.html', posts=posts)
+
+
+@app.route('/blog/<slug>')
+def blog_post(slug):
+    """Public individual blog post page."""
+    post = get_blog_post_by_slug(slug)
+    if not post or post.get('status') != 'published':
+        flash('Blog post not found.', 'error')
+        return redirect(url_for('blog'))
+    # Get recent posts for sidebar
+    recent = get_blog_posts(status='published', limit=5)
+    return render_template('blog_post.html', post=post, recent_posts=recent)
+
+
+# =====================
+# Admin Blog Routes
+# =====================
+
+def _allowed_image(filename):
+    """Check if a filename has an allowed image extension."""
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_IMAGE_EXTENSIONS
+
+
+def _generate_slug(title):
+    """Generate a URL-friendly slug from a title."""
+    import re
+    slug = title.lower().strip()
+    slug = re.sub(r'[^\w\s-]', '', slug)
+    slug = re.sub(r'[\s_]+', '-', slug)
+    slug = re.sub(r'-+', '-', slug).strip('-')
+    return slug
+
+
+@app.route('/admin/blog')
+@login_required
+def admin_blog():
+    """Admin blog management page — list all posts."""
+    posts = get_blog_posts()
+    stats = get_blog_stats()
+    return render_template('admin/blog.html', posts=posts, stats=stats)
+
+
+@app.route('/admin/blog/new', methods=['GET', 'POST'])
+@login_required
+def admin_blog_new():
+    """Create a new blog post."""
+    if request.method == 'POST':
+        title = request.form.get('title', '').strip()
+        excerpt = request.form.get('excerpt', '').strip()
+        content = request.form.get('content', '').strip()
+        status = request.form.get('status', 'draft').strip()
+        slug = _generate_slug(title)
+
+        if not title:
+            flash('Title is required.', 'error')
+            return render_template('admin/blog_form.html', post=request.form, is_new=True)
+
+        # Handle image upload
+        image_url = ''
+        image_file = request.files.get('image')
+        if image_file and image_file.filename:
+            if _allowed_image(image_file.filename):
+                from werkzeug.utils import secure_filename
+                import uuid
+                ext = image_file.filename.rsplit('.', 1)[1].lower()
+                safe_name = f"{uuid.uuid4().hex[:12]}.{ext}"
+                image_file.save(os.path.join(UPLOAD_FOLDER, safe_name))
+                image_url = f"/static/uploads/blog/{safe_name}"
+            else:
+                flash('Invalid image format. Use PNG, JPG, GIF, or WebP.', 'error')
+                return render_template('admin/blog_form.html', post=request.form, is_new=True)
+
+        data = {
+            'title': title,
+            'slug': slug,
+            'excerpt': excerpt,
+            'content': content,
+            'image_url': image_url,
+            'status': status,
+        }
+
+        try:
+            save_blog_post(data)
+            flash('Blog post created successfully!', 'success')
+            return redirect(url_for('admin_blog'))
+        except Exception as e:
+            if 'unique' in str(e).lower() or 'duplicate' in str(e).lower():
+                flash('A post with a similar title already exists. Please use a different title.', 'error')
+            else:
+                flash('An error occurred while saving the post.', 'error')
+                print(f'Blog save error: {e}')
+            return render_template('admin/blog_form.html', post=request.form, is_new=True)
+
+    return render_template('admin/blog_form.html', post={}, is_new=True)
+
+
+@app.route('/admin/blog/<int:post_id>/edit', methods=['GET', 'POST'])
+@login_required
+def admin_blog_edit(post_id):
+    """Edit an existing blog post."""
+    post = get_blog_post_by_id(post_id)
+    if not post:
+        flash('Blog post not found.', 'error')
+        return redirect(url_for('admin_blog'))
+
+    if request.method == 'POST':
+        title = request.form.get('title', '').strip()
+        excerpt = request.form.get('excerpt', '').strip()
+        content = request.form.get('content', '').strip()
+        status = request.form.get('status', 'draft').strip()
+        slug = _generate_slug(title)
+
+        if not title:
+            flash('Title is required.', 'error')
+            return render_template('admin/blog_form.html', post=post, is_new=False)
+
+        # Handle image upload (keep existing if no new one)
+        image_url = post.get('image_url', '')
+        image_file = request.files.get('image')
+        if image_file and image_file.filename:
+            if _allowed_image(image_file.filename):
+                from werkzeug.utils import secure_filename
+                import uuid
+                ext = image_file.filename.rsplit('.', 1)[1].lower()
+                safe_name = f"{uuid.uuid4().hex[:12]}.{ext}"
+                image_file.save(os.path.join(UPLOAD_FOLDER, safe_name))
+                image_url = f"/static/uploads/blog/{safe_name}"
+            else:
+                flash('Invalid image format. Use PNG, JPG, GIF, or WebP.', 'error')
+                return render_template('admin/blog_form.html', post=post, is_new=False)
+
+        # Check if image was removed
+        if request.form.get('remove_image') == '1':
+            image_url = ''
+
+        data = {
+            'title': title,
+            'slug': slug,
+            'excerpt': excerpt,
+            'content': content,
+            'image_url': image_url,
+            'status': status,
+        }
+
+        try:
+            update_blog_post(post_id, data)
+            flash('Blog post updated successfully!', 'success')
+            return redirect(url_for('admin_blog'))
+        except Exception as e:
+            if 'unique' in str(e).lower() or 'duplicate' in str(e).lower():
+                flash('A post with a similar title already exists.', 'error')
+            else:
+                flash('An error occurred while updating the post.', 'error')
+                print(f'Blog update error: {e}')
+            return render_template('admin/blog_form.html', post=post, is_new=False)
+
+    return render_template('admin/blog_form.html', post=post, is_new=False)
+
+
+@app.route('/admin/blog/<int:post_id>/delete', methods=['POST'])
+@login_required
+def admin_blog_delete(post_id):
+    """Delete a blog post."""
+    post = get_blog_post_by_id(post_id)
+    if not post:
+        return jsonify({'success': False, 'message': 'Post not found.'}), 404
+    delete_blog_post(post_id)
+    return jsonify({'success': True, 'message': 'Blog post deleted.'})
 
 
 # =====================

@@ -39,24 +39,15 @@ services:
       - key: DATABASE_URL
         sync: false
 
-      # ── Email / SMTP ─────────────────────────────────────────────────────────
+      # ── Email / Resend ──────────────────────────────────────────────────────
       # Set the values below in the Render dashboard (Environment tab) — NOT here.
-      - key: SMTP_HOST
-        sync: false
-
-      - key: SMTP_PORT
-        sync: false
-
-      - key: SMTP_USER
-        sync: false
-
-      - key: SMTP_PASSWORD
-        sync: false
-
-      - key: FROM_NAME
+      - key: RESEND_API_KEY
         sync: false
 
       - key: FROM_EMAIL
+        sync: false
+
+      - key: DOCTOR_EMAIL
         sync: false
 
       - key: PYTHON_VERSION

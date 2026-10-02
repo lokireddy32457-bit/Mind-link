@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ 'New Post' if is_new else 'Edit Post' }} — Blog Manager</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/jpeg" href="/static/images/clinic-logo.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Dashboard Navigation -->
+        <nav class="dashboard-nav">
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-logo">
+                <img src="{{ url_for('static', filename='images/clinic-logo.jpg') }}" alt="Helium Mind Centre" class="nav-logo-img">
+            </a>
+            <div class="dashboard-nav-right">
+                <a href="{{ url_for('admin_blog') }}">← Back to Blog</a>
+                <span style="color: rgba(255,255,255,0.5);">|</span>
+                <a href="{{ url_for('admin_dashboard') }}">📋 Appointments</a>
+                <a href="{{ url_for('admin_logout') }}" class="btn btn-sm">Logout</a>
+            </div>
+        </nav>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages" id="flashMessages">
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}" onclick="this.remove()">
+                            {% if category == 'success' %}✓{% elif category == 'error' %}✕{% else %}ℹ{% endif %}
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="dashboard-body">
+            <div class="dashboard-header">
+                <div>
+                    <h1>{{ '➕ New Blog Post' if is_new else '✏️ Edit Blog Post' }}</h1>
+                    <p>{{ 'Create a new article, photo, or update for your blog.' if is_new else 'Update the content and settings for this post.' }}</p>
+                </div>
+            </div>
+
+            <div class="blogform-container">
+                <form method="POST" enctype="multipart/form-data" class="blogform">
+                    <!-- Title -->
+                    <div class="blogform-field">
+                        <label for="blogTitle" class="blogform-label">📝 Post Title <span class="blogform-required">*</span></label>
+                        <input type="text" id="blogTitle" name="title" class="blogform-input"
+                            placeholder="e.g. Understanding Anxiety: Signs, Causes & Treatment"
+                            value="{{ post.get('title', '') if post else '' }}"
+                            maxlength="200" required>
+                    </div>
+
+                    <!-- Featured Image -->
+                    <div class="blogform-field">
+                        <label class="blogform-label">🖼️ Featured Image</label>
+                        <div class="blogform-upload-area" id="uploadArea">
+                            {% if post and post.get('image_url') %}
+                            <div class="blogform-preview" id="imagePreview">
+                                <img src="{{ post.image_url }}" alt="Preview" id="previewImg">
+                                <button type="button" class="blogform-preview-remove" onclick="removeImage()">✕ Remove</button>
+                            </div>
+                            {% else %}
+                            <div class="blogform-preview" id="imagePreview" style="display:none;">
+                                <img src="" alt="Preview" id="previewImg">
+                                <button type="button" class="blogform-preview-remove" onclick="removeImage()">✕ Remove</button>
+                            </div>
+                            {% endif %}
+                            <div class="blogform-upload-prompt" id="uploadPrompt" {% if post and post.get('image_url') %}style="display:none;"{% endif %}>
+                                <div class="blogform-upload-icon">📷</div>
+                                <p><strong>Click to upload</strong> or drag and drop</p>
+                                <p class="blogform-upload-hint">PNG, JPG, GIF, or WebP (max 5MB)</p>
+                            </div>
+                            <input type="file" id="imageInput" name="image" accept="image/png,image/jpeg,image/gif,image/webp"
+                                style="display:none;" onchange="previewFile(this)">
+                        </div>
+                        <input type="hidden" name="remove_image" id="removeImageFlag" value="0">
+                    </div>
+
+                    <!-- Excerpt -->
+                    <div class="blogform-field">
+                        <label for="blogExcerpt" class="blogform-label">📋 Short Excerpt</label>
+                        <textarea id="blogExcerpt" name="excerpt" class="blogform-input blogform-textarea" rows="3"
+                            placeholder="A brief summary shown on the blog listing page..."
+                            maxlength="500">{{ post.get('excerpt', '') if post else '' }}</textarea>
+                        <span class="blogform-hint">Optional. Shown on the blog listing cards.</span>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="blogform-field">
+                        <label for="blogContent" class="blogform-label">📄 Full Content</label>
+                        <div class="blogform-toolbar">
+                            <button type="button" onclick="insertTag('b')" title="Bold">𝐁</button>
+                            <button type="button" onclick="insertTag('i')" title="Italic">𝐼</button>
+                            <button type="button" onclick="insertTag('u')" title="Underline">U̲</button>
+                            <span class="blogform-toolbar-sep"></span>
+                            <button type="button" onclick="insertTag('h2')" title="Heading">H2</button>
+                            <button type="button" onclick="insertTag('h3')" title="Sub-heading">H3</button>
+                            <span class="blogform-toolbar-sep"></span>
+                            <button type="button" onclick="insertTag('p')" title="Paragraph">¶</button>
+                            <button type="button" onclick="insertTag('ul')" title="Bullet List">• List</button>
+                            <button type="button" onclick="insertTag('blockquote')" title="Quote">❝</button>
+                        </div>
+                        <textarea id="blogContent" name="content" class="blogform-input blogform-textarea blogform-content" rows="16"
+                            placeholder="Write your article content here. You can use HTML tags like <h2>, <p>, <ul>, <li>, <strong>, <em>, <blockquote>, etc.">{{ post.get('content', '') if post else '' }}</textarea>
+                        <span class="blogform-hint">Supports HTML formatting. Use the toolbar buttons for quick tags.</span>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="blogform-field">
+                        <label class="blogform-label">📢 Status</label>
+                        <div class="blogform-status-options">
+                            <label class="blogform-radio">
+                                <input type="radio" name="status" value="draft"
+                                    {{ 'checked' if not post or post.get('status', 'draft') == 'draft' }}>
+                                <span class="blogform-radio-box">📝 Draft</span>
+                            </label>
+                            <label class="blogform-radio">
+                                <input type="radio" name="status" value="published"
+                                    {{ 'checked' if post and post.get('status') == 'published' }}>
+                                <span class="blogform-radio-box">✅ Published</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="blogform-actions">
+                        <a href="{{ url_for('admin_blog') }}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">
+                            {{ '➕ Create Post' if is_new else '💾 Save Changes' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Image upload interaction
+    var uploadArea = document.getElementById('uploadArea');
+    var imageInput = document.getElementById('imageInput');
+    var uploadPrompt = document.getElementById('uploadPrompt');
+    var imagePreview = document.getElementById('imagePreview');
+    var previewImg = document.getElementById('previewImg');
+    var removeFlag = document.getElementById('removeImageFlag');
+
+    // Click to upload
+    uploadArea.addEventListener('click', function(e) {
+        if (e.target.closest('.blogform-preview-remove')) return;
+        imageInput.click();
+    });
+
+    // Drag and drop
+    uploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    uploadArea.addEventListener('dragleave', function() {
+        uploadArea.classList.remove('dragover');
+    });
+    uploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        if (e.dataTransfer.files.length) {
+            imageInput.files = e.dataTransfer.files;
+            previewFile(imageInput);
+        }
+    });
+
+    function previewFile(input) {
+        if (input.files && input.files[0]) {
+            var file = input.files[0];
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File is too large. Maximum size is 5MB.');
+                input.value = '';
+                return;
+            }
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                imagePreview.style.display = '';
+                uploadPrompt.style.display = 'none';
+                removeFlag.value = '0';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function removeImage() {
+        imageInput.value = '';
+        previewImg.src = '';
+        imagePreview.style.display = 'none';
+        uploadPrompt.style.display = '';
+        removeFlag.value = '1';
+    }
+
+    // HTML toolbar
+    function insertTag(tag) {
+        var textarea = document.getElementById('blogContent');
+        var start = textarea.selectionStart;
+        var end = textarea.selectionEnd;
+        var selected = textarea.value.substring(start, end);
+        var before = textarea.value.substring(0, start);
+        var after = textarea.value.substring(end);
+
+        var replacement;
+        if (tag === 'ul') {
+            replacement = '<ul>\n  <li>' + (selected || 'List item') + '</li>\n</ul>';
+        } else {
+            replacement = '<' + tag + '>' + (selected || '') + '</' + tag + '>';
+        }
+
+        textarea.value = before + replacement + after;
+        textarea.focus();
+        textarea.selectionStart = start + replacement.length;
+        textarea.selectionEnd = start + replacement.length;
+    }
+
+    // Auto-dismiss flash
+    document.querySelectorAll('.flash').forEach(function(f) {
+        setTimeout(function() {
+            f.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            f.style.opacity = '0';
+            f.style.transform = 'translateX(40px)';
+            setTimeout(function() { f.remove(); }, 300);
+        }, 5000);
+    });
+    </script>
+</body>
+</html>

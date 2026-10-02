@@ -49,14 +49,37 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ========================================
-    // Services Dropdown — Mobile Touch Support
+    // Services Dropdown — Hover + 3-sec close delay (desktop) & Touch (mobile)
     // ========================================
     const dropdownWrapper = document.querySelector('.nav-dropdown-wrapper');
     if (dropdownWrapper) {
         const trigger = dropdownWrapper.querySelector('.nav-dropdown-trigger');
-        // On touch / click of the trigger, toggle the open class (for mobile)
+        let closeTimer = null;
+
+        function openDropdown() {
+            clearTimeout(closeTimer);
+            dropdownWrapper.classList.add('open');
+        }
+
+        function scheduleClose() {
+            clearTimeout(closeTimer);
+            closeTimer = setTimeout(function () {
+                dropdownWrapper.classList.remove('open');
+            }, 3000); // 3-second hover-out delay
+        }
+
+        // Desktop: mouse enters wrapper → open immediately
+        dropdownWrapper.addEventListener('mouseenter', function () {
+            if (window.innerWidth > 900) openDropdown();
+        });
+
+        // Desktop: mouse leaves wrapper → start 3-sec countdown to close
+        dropdownWrapper.addEventListener('mouseleave', function () {
+            if (window.innerWidth > 900) scheduleClose();
+        });
+
+        // Mobile: tap trigger to toggle
         trigger.addEventListener('click', function (e) {
-            // Only intercept on mobile (hover handles desktop)
             if (window.innerWidth <= 900) {
                 e.preventDefault();
                 dropdownWrapper.classList.toggle('open');
@@ -66,6 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Close dropdown when clicking outside
         document.addEventListener('click', function (e) {
             if (!dropdownWrapper.contains(e.target)) {
+                clearTimeout(closeTimer);
                 dropdownWrapper.classList.remove('open');
             }
         });

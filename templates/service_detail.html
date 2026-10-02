@@ -13,6 +13,7 @@
         align-items: flex-end;
         overflow: hidden;
         margin-top: 0;
+        padding-top: calc(var(--top-bar-height) + var(--nav-height));
     }
 
     .sd-hero-img {
@@ -506,15 +507,30 @@
         .sd-other-services {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
+            gap: 4px;
         }
         .sd-hero { min-height: 360px; }
     }
 
     @media (max-width: 576px) {
-        .sd-hero { min-height: 300px; }
+        .sd-hero { min-height: 280px; }
         .sd-cta-banner { padding: var(--space-xl); }
         .sd-approaches-grid { grid-template-columns: 1fr; }
         .sd-other-services { grid-template-columns: 1fr; }
+        .sd-sidebar-card { padding: var(--space-md); }
+        .sd-body { padding: var(--space-xl) 0; gap: var(--space-xl); }
+        .sd-section { margin-bottom: var(--space-xl); }
+        .sd-hero-content h1 { font-size: clamp(1.5rem, 6vw, 2rem); }
+        .sd-hero-tagline { font-size: 0.95rem; }
+        .sd-cta-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .sd-cta-actions .btn-white,
+        .sd-cta-actions .btn-outline-white {
+            text-align: center;
+            justify-content: center;
+        }
     }
 </style>
 {% endblock %}
@@ -630,7 +646,8 @@
                     <li><a href="{{ url_for('service_detail', slug='psychotherapy') }}" class="{{ 'active' if service.slug == 'psychotherapy' }}"><span class="emoji">🗣️</span> Psychotherapy</a></li>
                     <li><a href="{{ url_for('service_detail', slug='medication') }}" class="{{ 'active' if service.slug == 'medication' }}"><span class="emoji">💊</span> Medication Mgmt</a></li>
                     <li><a href="{{ url_for('service_detail', slug='telehealth') }}" class="{{ 'active' if service.slug == 'telehealth' }}"><span class="emoji">🖥️</span> Telehealth</a></li>
-                    <li><a href="{{ url_for('service_detail', slug='anxiety') }}" class="{{ 'active' if service.slug == 'anxiety' }}"><span class="emoji">😰</span> Anxiety &amp; Depression</a></li>
+                    <li><a href="{{ url_for('service_detail', slug='anxiety') }}" class="{{ 'active' if service.slug == 'anxiety' }}"><span class="emoji">😰</span> Anxiety Treatment</a></li>
+                    <li><a href="{{ url_for('service_detail', slug='depression') }}" class="{{ 'active' if service.slug == 'depression' }}"><span class="emoji">😔</span> Depression Treatment</a></li>
                     <li><a href="{{ url_for('service_detail', slug='ptsd') }}" class="{{ 'active' if service.slug == 'ptsd' }}"><span class="emoji">💔</span> PTSD &amp; Trauma</a></li>
                     <li><a href="{{ url_for('service_detail', slug='child') }}" class="{{ 'active' if service.slug == 'child' }}"><span class="emoji">👨‍👩‍👧</span> Child Psychiatry</a></li>
                     <li><a href="{{ url_for('service_detail', slug='insomnia') }}" class="{{ 'active' if service.slug == 'insomnia' }}"><span class="emoji">🌙</span> Insomnia</a></li>
@@ -681,3 +698,4 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 {% endblock %}
+

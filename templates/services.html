@@ -60,16 +60,35 @@
             </div>
             <div class="service-full-card">
                 <div class="card-icon">😰</div>
-                <h3>Anxiety & Depression Treatment</h3>
-                <p>Specialized care for anxiety disorders and depression using a combination of therapy and medication when appropriate.</p>
+                <h3>Anxiety Treatment</h3>
+                <p>Expert, evidence-based care to help you break free from fear, worry, panic, and avoidance — so you can live calmly and confidently again.</p>
                 <ul>
-                    <li>Generalized Anxiety Disorder</li>
-                    <li>Social Anxiety & Phobias</li>
-                    <li>Major Depressive Disorder</li>
-                    <li>Panic Disorder</li>
-                    <li>Treatment-Resistant Depression</li>
+                    <li>Generalized Anxiety Disorder (GAD)</li>
+                    <li>Social Anxiety & Specific Phobias</li>
+                    <li>Panic Disorder & Panic Attacks</li>
+                    <li>Health Anxiety (Hypochondria)</li>
+                    <li>Exposure & Response Prevention Therapy</li>
                 </ul>
-                <a href="{{ url_for('booking', service='anxiety') }}" class="btn btn-primary btn-sm" style="margin-top: var(--space-md); display: inline-block;">📅 Book Now</a>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top: var(--space-md);">
+                    <a href="{{ url_for('service_detail', slug='anxiety') }}" class="btn btn-outline btn-sm">🔍 Learn More</a>
+                    <a href="{{ url_for('booking', service='anxiety') }}" class="btn btn-primary btn-sm">📅 Book Now</a>
+                </div>
+            </div>
+            <div class="service-full-card">
+                <div class="card-icon">😔</div>
+                <h3>Depression Treatment</h3>
+                <p>Compassionate, personalized care to help you rediscover hope, energy, and joy — combining therapy and medication when appropriate.</p>
+                <ul>
+                    <li>Major Depressive Disorder (MDD)</li>
+                    <li>Persistent Depressive Disorder</li>
+                    <li>Treatment-Resistant Depression</li>
+                    <li>Postpartum & Seasonal Depression</li>
+                    <li>Antidepressant Management</li>
+                </ul>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top: var(--space-md);">
+                    <a href="{{ url_for('service_detail', slug='depression') }}" class="btn btn-outline btn-sm">🔍 Learn More</a>
+                    <a href="{{ url_for('booking', service='depression') }}" class="btn btn-primary btn-sm">📅 Book Now</a>
+                </div>
             </div>
             <div class="service-full-card">
                 <div class="card-icon">💔</div>

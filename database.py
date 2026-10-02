@@ -139,6 +139,20 @@ def init_db():
                 )
             ''')
 
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS blog_posts (
+                    id          BIGSERIAL PRIMARY KEY,
+                    title       TEXT NOT NULL,
+                    slug        TEXT NOT NULL UNIQUE,
+                    excerpt     TEXT NOT NULL DEFAULT '',
+                    content     TEXT NOT NULL DEFAULT '',
+                    image_url   TEXT NOT NULL DEFAULT '',
+                    status      TEXT NOT NULL DEFAULT 'draft',
+                    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+
             # Seed default settings on first boot
             cursor.execute('''
                 INSERT INTO site_settings (key, value)
@@ -579,3 +593,120 @@ def update_site_setting(key, value):
 
     raise last_exc
 
+
+# ---------------------
+# Blog Post Helpers
+# ---------------------
+
+def save_blog_post(data):
+    """Save a new blog post. Returns the new row ID."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('''
+        INSERT INTO blog_posts (title, slug, excerpt, content, image_url, status)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        RETURNING id
+    ''', (
+        data['title'],
+        data['slug'],
+        data.get('excerpt', ''),
+        data.get('content', ''),
+        data.get('image_url', ''),
+        data.get('status', 'draft')
+    ))
+    row_id = cursor.fetchone()[0]
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return row_id
+
+
+def update_blog_post(post_id, data):
+    """Update an existing blog post."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('''
+        UPDATE blog_posts
+        SET title = %s, slug = %s, excerpt = %s, content = %s,
+            image_url = %s, status = %s, updated_at = %s
+        WHERE id = %s
+    ''', (
+        data['title'],
+        data['slug'],
+        data.get('excerpt', ''),
+        data.get('content', ''),
+        data.get('image_url', ''),
+        data.get('status', 'draft'),
+        datetime.now().isoformat(),
+        post_id
+    ))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+
+def get_blog_posts(status=None, limit=None):
+    """Retrieve blog posts, optionally filtered by status."""
+    conn = get_db()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    query = 'SELECT * FROM blog_posts'
+    params = []
+    if status:
+        query += ' WHERE status = %s'
+        params.append(status)
+    query += ' ORDER BY created_at DESC'
+    if limit:
+        query += ' LIMIT %s'
+        params.append(limit)
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return [dict(row) for row in rows]
+
+
+def get_blog_post_by_id(post_id):
+    """Retrieve a single blog post by ID."""
+    conn = get_db()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute('SELECT * FROM blog_posts WHERE id = %s', (post_id,))
+    row = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return dict(row) if row else None
+
+
+def get_blog_post_by_slug(slug):
+    """Retrieve a single blog post by slug."""
+    conn = get_db()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute('SELECT * FROM blog_posts WHERE slug = %s', (slug,))
+    row = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return dict(row) if row else None
+
+
+def delete_blog_post(post_id):
+    """Delete a blog post by ID."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM blog_posts WHERE id = %s', (post_id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+
+def get_blog_stats():
+    """Get aggregate stats for blog posts."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('SELECT COUNT(*) FROM blog_posts')
+    total = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) FROM blog_posts WHERE status = 'published'")
+    published = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) FROM blog_posts WHERE status = 'draft'")
+    drafts = cursor.fetchone()[0]
+    cursor.close()
+    conn.close()
+    return {'total': total, 'published': published, 'drafts': drafts}

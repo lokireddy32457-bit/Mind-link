@@ -59,16 +59,16 @@
             <p>Dr. Akavaram specializes in a wide range of neuropsychiatric conditions, providing tailored treatment plans for each patient.</p>
         </div>
         <div class="specialties-grid reveal" style="justify-content: center;">
-            <span class="specialty-tag">🧠 Depression & Mood Disorders</span>
-            <span class="specialty-tag">😰 Anxiety & Panic Disorders</span>
-            <span class="specialty-tag">💔 PTSD & Trauma Recovery</span>
-            <span class="specialty-tag">🔄 OCD & Related Disorders</span>
-            <span class="specialty-tag">🎯 ADHD & Focus Issues</span>
-            <span class="specialty-tag">😴 Insomnia & Sleep Disorders</span>
-            <span class="specialty-tag">💊 Medication Management</span>
-            <span class="specialty-tag">🗣️ Cognitive Behavioral Therapy</span>
-            <span class="specialty-tag">👨‍👩‍👧 Child & Adolescent Psychiatry</span>
-            <span class="specialty-tag">🏠 Telehealth Services</span>
+            <a href="{{ url_for('service_detail', slug='depression') }}" class="specialty-tag">🧠 Depression & Mood Disorders</a>
+            <a href="{{ url_for('service_detail', slug='anxiety') }}" class="specialty-tag">😰 Anxiety & Panic Disorders</a>
+            <a href="{{ url_for('service_detail', slug='ptsd') }}" class="specialty-tag">💔 PTSD & Trauma Recovery</a>
+            <a href="{{ url_for('services') }}" class="specialty-tag">🔄 OCD & Related Disorders</a>
+            <a href="{{ url_for('service_detail', slug='adhd') }}" class="specialty-tag">🎯 ADHD & Focus Issues</a>
+            <a href="{{ url_for('service_detail', slug='insomnia') }}" class="specialty-tag">😴 Insomnia & Sleep Disorders</a>
+            <a href="{{ url_for('service_detail', slug='medication') }}" class="specialty-tag">💊 Medication Management</a>
+            <a href="{{ url_for('service_detail', slug='psychotherapy') }}" class="specialty-tag">🗣️ Cognitive Behavioral Therapy</a>
+            <a href="{{ url_for('service_detail', slug='child') }}" class="specialty-tag">👨‍👩‍👧 Child & Adolescent Psychiatry</a>
+            <a href="{{ url_for('service_detail', slug='telehealth') }}" class="specialty-tag">🏠 Telehealth Services</a>
         </div>
     </div>
 </section>

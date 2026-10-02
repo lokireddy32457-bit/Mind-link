@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} — {{ site_name }}{% endblock %}
+{% block description %}{{ post.excerpt or post.title }}{% endblock %}
+
+{% block content %}
+<!-- Blog Post Hero -->
+<section class="blogpost-hero">
+    <div class="container">
+        <a href="{{ url_for('blog') }}" class="blogpost-back">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Back to Blog
+        </a>
+        <h1 class="blogpost-title">{{ post.title }}</h1>
+        <div class="blogpost-meta">
+            <span class="blogpost-date">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                {{ post.created_at.strftime('%B %d, %Y') if post.created_at else '' }}
+            </span>
+            <span class="blogpost-author">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Mind Link Team
+            </span>
+        </div>
+    </div>
+</section>
+
+<!-- Blog Post Content -->
+<section class="blogpost-content-section">
+    <div class="container">
+        <div class="blogpost-layout">
+            <!-- Main Article -->
+            <article class="blogpost-main">
+                {% if post.image_url %}
+                <div class="blogpost-featured-image">
+                    <img src="{{ post.image_url }}" alt="{{ post.title }}" loading="lazy">
+                </div>
+                {% endif %}
+
+                <div class="blogpost-body">
+                    {{ post.content | safe }}
+                </div>
+
+                <!-- Share / CTA -->
+                <div class="blogpost-cta">
+                    <div class="blogpost-cta-inner">
+                        <h3>Need professional support?</h3>
+                        <p>Our team is here to help you on your mental health journey.</p>
+                        <a href="{{ url_for('booking') }}" class="btn btn-primary">Book an Appointment</a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Sidebar -->
+            <aside class="blogpost-sidebar">
+                {% if recent_posts %}
+                <div class="sidebar-widget">
+                    <h3 class="sidebar-widget-title">Recent Posts</h3>
+                    <ul class="sidebar-recent-list">
+                        {% for rp in recent_posts %}
+                        {% if rp.id != post.id %}
+                        <li>
+                            <a href="{{ url_for('blog_post', slug=rp.slug) }}" class="sidebar-recent-item">
+                                {% if rp.image_url %}
+                                <div class="sidebar-recent-thumb" style="background-image: url('{{ rp.image_url }}');"></div>
+                                {% else %}
+                                <div class="sidebar-recent-thumb sidebar-recent-thumb--placeholder">🧠</div>
+                                {% endif %}
+                                <div class="sidebar-recent-info">
+                                    <span class="sidebar-recent-title">{{ rp.title }}</span>
+                                    <span class="sidebar-recent-date">{{ rp.created_at.strftime('%b %d, %Y') if rp.created_at else '' }}</span>
+                                </div>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <div class="sidebar-widget sidebar-widget--cta">
+                    <h3 class="sidebar-widget-title">📞 Get Help Today</h3>
+                    <p>You don't have to face it alone. Reach out to us for compassionate, professional support.</p>
+                    <a href="{{ url_for('booking') }}" class="btn btn-primary" style="width:100%;">Book Appointment</a>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+{% endblock %}

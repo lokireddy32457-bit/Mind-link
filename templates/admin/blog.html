@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Manager — Admin</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/jpeg" href="/static/images/clinic-logo.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Dashboard Navigation -->
+        <nav class="dashboard-nav">
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-logo">
+                <img src="{{ url_for('static', filename='images/clinic-logo.jpg') }}" alt="Helium Mind Centre" class="nav-logo-img">
+            </a>
+            <div class="dashboard-nav-right">
+                <a href="{{ url_for('admin_dashboard') }}">📋 Appointments</a>
+                <span style="color: rgba(255,255,255,0.5);">|</span>
+                <a href="{{ url_for('admin_blog') }}" style="color: #fff; font-weight:600; font-size:0.9rem;">📝 Blog</a>
+                <span style="color: rgba(255,255,255,0.5);">|</span>
+                <a href="{{ url_for('admin_settings') }}" style="color: rgba(255,255,255,0.8); font-size:0.9rem;">⚙️ Settings</a>
+                <span style="color: rgba(255,255,255,0.5);">|</span>
+                <a href="{{ url_for('home') }}">🌐 Website</a>
+                <a href="{{ url_for('admin_logout') }}" class="btn btn-sm">Logout</a>
+            </div>
+        </nav>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages" id="flashMessages">
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}" onclick="this.remove()">
+                            {% if category == 'success' %}✓{% elif category == 'error' %}✕{% elif category == 'warning' %}⚠{% else %}ℹ{% endif %}
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="dashboard-body">
+            <!-- Header -->
+            <div class="dashboard-header">
+                <div>
+                    <h1>📝 Blog Manager</h1>
+                    <p>Create and manage blog articles, photos, and content.</p>
+                </div>
+                <a href="{{ url_for('admin_blog_new') }}" class="btn-settings" style="background: var(--color-accent); color: #fff; padding: 10px 20px; border-radius: var(--radius-md); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                    ➕ New Post
+                </a>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="stat-card">
+                    <div class="stat-icon total">📊</div>
+                    <div class="stat-info">
+                        <h3>{{ stats.total }}</h3>
+                        <p>Total Posts</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon approved">✅</div>
+                    <div class="stat-info">
+                        <h3>{{ stats.published }}</h3>
+                        <p>Published</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon pending">📝</div>
+                    <div class="stat-info">
+                        <h3>{{ stats.drafts }}</h3>
+                        <p>Drafts</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blog Posts Table -->
+            {% if posts %}
+            <div class="table-container">
+                <table class="appointments-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for post in posts %}
+                        <tr id="blog-row-{{ post.id }}">
+                            <td>
+                                {% if post.image_url %}
+                                <img src="{{ post.image_url }}" alt="" style="width:60px; height:42px; object-fit:cover; border-radius:var(--radius-sm);">
+                                {% else %}
+                                <div style="width:60px; height:42px; background:var(--color-warm); border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:18px;">🧠</div>
+                                {% endif %}
+                            </td>
+                            <td><strong>{{ post.title }}</strong></td>
+                            <td>
+                                <span class="status-badge {{ 'approved' if post.status == 'published' else 'pending' }}">
+                                    {{ '✅' if post.status == 'published' else '📝' }} {{ post.status }}
+                                </span>
+                            </td>
+                            <td>{{ post.created_at.strftime('%d %b %Y') if post.created_at else '—' }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{{ url_for('admin_blog_edit', post_id=post.id) }}" class="btn-approve" style="text-decoration:none;">✏️ Edit</a>
+                                    {% if post.status == 'published' %}
+                                    <a href="{{ url_for('blog_post', slug=post.slug) }}" target="_blank" class="btn-approve" style="text-decoration:none; background: var(--color-info); color:#fff;">👁️ View</a>
+                                    {% endif %}
+                                    <button class="btn-cancel-action" onclick="deleteBlogPost({{ post.id }}, '{{ post.title | e }}')">🗑️ Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Cards -->
+            <div class="appointment-cards-mobile">
+                {% for post in posts %}
+                <div class="appointment-card-mobile" id="blog-card-{{ post.id }}">
+                    <div class="card-header-row">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            {% if post.image_url %}
+                            <img src="{{ post.image_url }}" alt="" style="width:44px; height:44px; object-fit:cover; border-radius:var(--radius-sm);">
+                            {% else %}
+                            <div style="width:44px; height:44px; background:var(--color-warm); border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:20px;">🧠</div>
+                            {% endif %}
+                            <strong>{{ post.title }}</strong>
+                        </div>
+                        <span class="status-badge {{ 'approved' if post.status == 'published' else 'pending' }}">
+                            {{ '✅' if post.status == 'published' else '📝' }} {{ post.status }}
+                        </span>
+                    </div>
+                    {% if post.excerpt %}
+                    <div class="card-detail">
+                        <span>Excerpt</span>
+                        <span>{{ post.excerpt[:80] }}{% if post.excerpt|length > 80 %}…{% endif %}</span>
+                    </div>
+                    {% endif %}
+                    <div class="card-detail">
+                        <span>Created</span>
+                        <span>{{ post.created_at.strftime('%d %b %Y') if post.created_at else '—' }}</span>
+                    </div>
+                    <div class="action-buttons">
+                        <a href="{{ url_for('admin_blog_edit', post_id=post.id) }}" class="btn-approve" style="text-decoration:none;">✏️ Edit</a>
+                        {% if post.status == 'published' %}
+                        <a href="{{ url_for('blog_post', slug=post.slug) }}" target="_blank" class="btn-approve" style="text-decoration:none; background:var(--color-info); color:#fff;">👁️ View</a>
+                        {% endif %}
+                        <button class="btn-cancel-action" onclick="deleteBlogPost({{ post.id }}, '{{ post.title | e }}')">🗑️ Delete</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% else %}
+            <div class="table-container">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📝</div>
+                    <h3>No Blog Posts Yet</h3>
+                    <p>Create your first blog post to share mental health insights with your patients.</p>
+                    <a href="{{ url_for('admin_blog_new') }}" class="btn btn-primary" style="margin-top:16px;">➕ Create First Post</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal">
+            <div class="modal-icon">🗑️</div>
+            <h3>Delete Blog Post?</h3>
+            <p>Are you sure you want to delete "<strong id="deletePostTitle"></strong>"? This cannot be undone.</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn btn-primary" id="confirmDeleteBtn" style="background: var(--color-error); box-shadow: none;">Yes, Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Delete blog post
+    let pendingDeleteId = null;
+
+    function deleteBlogPost(postId, title) {
+        pendingDeleteId = postId;
+        document.getElementById('deletePostTitle').textContent = title;
+        document.getElementById('deleteModal').classList.add('active');
+        document.getElementById('confirmDeleteBtn').onclick = function() {
+            fetch('/admin/blog/' + postId + '/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    // Remove from DOM
+                    var row = document.getElementById('blog-row-' + postId);
+                    var card = document.getElementById('blog-card-' + postId);
+                    if (row) row.remove();
+                    if (card) card.remove();
+                    closeDeleteModal();
+                    showToast('✅ Blog post deleted.', 'success');
+                } else {
+                    showToast('❌ ' + data.message, 'error');
+                }
+            })
+            .catch(function() {
+                showToast('❌ An error occurred.', 'error');
+            });
+        };
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('active');
+        pendingDeleteId = null;
+    }
+
+    // Close modal on overlay click or Escape
+    document.addEventListener('click', function(e) {
+        if (e.target.id === 'deleteModal') closeDeleteModal();
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeDeleteModal();
+    });
+
+    // Toast
+    function showToast(message, type) {
+        type = type || 'info';
+        var container = document.getElementById('flashMessages');
+        if (!container) {
+            container = document.createElement('div');
+            container.className = 'flash-messages';
+            container.id = 'flashMessages';
+            document.body.appendChild(container);
+        }
+        var toast = document.createElement('div');
+        toast.className = 'flash flash-' + type;
+        toast.textContent = message;
+        toast.style.cursor = 'pointer';
+        toast.onclick = function() { toast.remove(); };
+        container.appendChild(toast);
+        setTimeout(function() {
+            toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(40px)';
+            setTimeout(function() { toast.remove(); }, 300);
+        }, 4000);
+    }
+
+    // Auto-dismiss flash
+    document.querySelectorAll('.flash').forEach(function(f) {
+        setTimeout(function() {
+            f.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            f.style.opacity = '0';
+            f.style.transform = 'translateX(40px)';
+            setTimeout(function() { f.remove(); }, 300);
+        }, 5000);
+    });
+    </script>
+</body>
+</html>
