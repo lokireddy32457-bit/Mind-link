@@ -510,7 +510,7 @@ def submit_booking():
             flash(error, 'error')
         return render_template('booking.html', form_data=data), 400
 
-    # Save to database
+    # Save to database with error handling
     try:
         save_appointment(data)
         flash('Your appointment request has been submitted successfully! We will contact you shortly to confirm.', 'success')
@@ -521,12 +521,11 @@ def submit_booking():
             send_new_appointment_notification(data)
         except Exception:
             pass  # logged inside email_utils
-
     except Exception as e:
-        flash('An error occurred while processing your request. Please try again.', 'error')
+        # Database connection or other error
+        flash('An error occurred while processing your request. Please try again later.', 'error')
         print(f'Database error: {e}')
-
-    return redirect(url_for('booking'))
+        return render_template('booking.html', form_data=data), 500
 
 
 @app.route('/contact')
@@ -611,13 +610,20 @@ def admin_dashboard():
     date_from = request.args.get('date_from', '')
     date_to = request.args.get('date_to', '')
 
-    appointments = get_appointments(
-        status=status,
-        service_type=service_type,
-        date_from=date_from if date_from else None,
-        date_to=date_to if date_to else None
-    )
-    stats = get_dashboard_stats()
+    try:
+        appointments = get_appointments(
+            status=status,
+            service_type=service_type,
+            date_from=date_from if date_from else None,
+            date_to=date_to if date_to else None
+        )
+        stats = get_dashboard_stats()
+    except Exception as e:
+        # Database connection error – show a friendly message
+        flash('Unable to load dashboard data. Please try again later.', 'error')
+        print(f'Database error on admin dashboard: {e}')
+        appointments = []
+        stats = {'total': 0, 'pending': 0, 'approved': 0, 'cancelled': 0}
 
     return render_template('admin/dashboard.html',
                            appointments=appointments,
