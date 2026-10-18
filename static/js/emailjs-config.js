@@ -19,24 +19,23 @@
  */
 
 var EMAILJS_CONFIG = {
-    PUBLIC_KEY:   '9NzeteAAvwOrQkkcZ',         // Dashboard → Account → API Keys → Public Key
-    SERVICE_ID:   'service_zvn2yfl',           // Dashboard → Email Services → Service ID
-    TEMPLATE_ID:  'template_vlambw8'           // Dashboard → Email Templates → Template ID
+    PUBLIC_KEY: '9NzeteAAvwOrQkkcZ',         // Dashboard → Account → API Keys → Public Key
+    SERVICE_ID: 'service_zvn2yfl',           // Dashboard → Email Services → Service ID
+    TEMPLATE_ID: 'template_vlambw8'           // Dashboard → Email Templates → Template ID
 };
-
 
 /**
  * Map service_type form values to human-readable labels
  */
 var SERVICE_LABELS = {
-    'initial_consultation':   'Initial Consultation',
-    'psychotherapy':          'Individual Psychotherapy',
-    'medication_management':  'Medication Management',
-    'telehealth':             'Telehealth Session',
-    'anxiety_depression':     'Anxiety & Depression Treatment',
-    'ptsd_trauma':            'PTSD & Trauma Therapy',
-    'child_adolescent':       'Child & Adolescent Psychiatry',
-    'other':                  'Other'
+    'initial_consultation': 'Initial Consultation',
+    'psychotherapy': 'Individual Psychotherapy',
+    'medication_management': 'Medication Management',
+    'telehealth': 'Telehealth Session',
+    'anxiety_depression': 'Anxiety & Depression Treatment',
+    'ptsd_trauma': 'PTSD & Trauma Therapy',
+    'child_adolescent': 'Child & Adolescent Psychiatry',
+    'other': 'Other'
 };
 
 
@@ -92,13 +91,13 @@ function sendAppointmentEmail(form) {
 
     // Build the template parameters
     var templateParams = {
-        patient_name:      form.querySelector('#name').value.trim(),
-        patient_email:     form.querySelector('#email').value.trim(),
-        patient_phone:     form.querySelector('#phone').value.trim(),
-        service_type:      serviceLabel,
-        preferred_date:    formattedDate,
-        preferred_time:    formattedTime,
-        message:           (form.querySelector('#message').value || '').trim() || 'No additional notes provided.',
+        patient_name: form.querySelector('#name').value.trim(),
+        patient_email: form.querySelector('#email').value.trim(),
+        patient_phone: form.querySelector('#phone').value.trim(),
+        service_type: serviceLabel,
+        preferred_date: formattedDate,
+        preferred_time: formattedTime,
+        message: (form.querySelector('#message').value || '').trim() || 'No additional notes provided.',
         booking_timestamp: new Date().toLocaleString('en-US', {
             dateStyle: 'full',
             timeStyle: 'short'
@@ -112,13 +111,13 @@ function sendAppointmentEmail(form) {
         EMAILJS_CONFIG.TEMPLATE_ID,
         templateParams
     )
-    .then(function (response) {
-        console.log('[EmailJS] ✅ Email sent successfully!', response.status, response.text);
-        return response;
-    })
-    .catch(function (error) {
-        console.error('[EmailJS] ❌ Failed to send email:', error);
-        // Don't block form submission — the server-side save is the source of truth
-        return Promise.resolve();
-    });
+        .then(function (response) {
+            console.log('[EmailJS] ✅ Email sent successfully!', response.status, response.text);
+            return response;
+        })
+        .catch(function (error) {
+            console.error('[EmailJS] ❌ Failed to send email:', error);
+            // Don't block form submission — the server-side save is the source of truth
+            return Promise.resolve();
+        });
 }

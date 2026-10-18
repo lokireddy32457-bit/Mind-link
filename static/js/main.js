@@ -31,8 +31,8 @@ document.addEventListener('DOMContentLoaded', function () {
             navLinks.classList.toggle('open');
         });
 
-        // Close menu when a link is clicked
-        navLinks.querySelectorAll('a').forEach(function (link) {
+        // Close menu when a link is clicked (excluding dropdown toggle triggers)
+        navLinks.querySelectorAll('a:not(.nav-dropdown-trigger)').forEach(function (link) {
             link.addEventListener('click', function () {
                 hamburger.classList.remove('active');
                 navLinks.classList.remove('open');
@@ -70,18 +70,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Desktop: mouse enters wrapper → open immediately
         dropdownWrapper.addEventListener('mouseenter', function () {
-            if (window.innerWidth > 900) openDropdown();
+            if (window.innerWidth > 767) openDropdown();
         });
 
         // Desktop: mouse leaves wrapper → start 3-sec countdown to close
         dropdownWrapper.addEventListener('mouseleave', function () {
-            if (window.innerWidth > 900) scheduleClose();
+            if (window.innerWidth > 767) scheduleClose();
         });
 
         // Mobile: tap trigger to toggle
         trigger.addEventListener('click', function (e) {
-            if (window.innerWidth <= 900) {
+            if (window.innerWidth <= 767) {
                 e.preventDefault();
+                e.stopPropagation();
                 dropdownWrapper.classList.toggle('open');
             }
         });

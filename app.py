@@ -33,6 +33,7 @@ from auth import (
 from email_utils import send_appointment_email, send_new_appointment_notification
 
 app = Flask(__name__)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 # =====================
 # Security Configuration
