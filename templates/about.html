@@ -15,13 +15,15 @@
             <div class="about-text reveal">
                 <h1 class="about-main-heading">Dedicated Neuropsychiatrist in Hyderabad</h1>
                 <div class="doctor-subheading">
-                    <p class="doctor-subheading-name">Dr. Vikram Akavaram, <span>MBBS, DPM (Osm)</span></p>
-                    <p class="doctor-subheading-role">Neuro Psychiatrist &amp; Sexologist</p>
-                    <p class="doctor-subheading-role">Founder of Helium Mind Center</p>
+                    <p class="doctor-subheading-name">Dr. Vikram Akavaram, <span class="doctor-qualifications">MBBS, DPM (Osm)</span></p>
+                    <div class="doctor-role-badges">
+                        <span class="doctor-role-badge">Neuro Psychiatrist &amp; Sexologist</span>
+                        <span class="doctor-role-badge">Founder of Helium Mind Center</span>
+                    </div>
                 </div>
                 <p>Dr. Vikram Akavaram is a highly committed neuropsychiatrist specializing in the comprehensive treatment of mental health disorders. With a strong foundation in neuropsychiatry, he brings a unique perspective to the diagnosis and management of psychiatric conditions.</p>
                 <p>His holistic approach integrates the complexities of both mind and brain, leveraging extensive expertise in psychology and neurology to provide personalized and effective care for each patient.</p>
-                <div style="display:flex;gap:var(--space-md);flex-wrap:wrap;margin-top:var(--space-md);">
+                <div class="about-hero-actions">
                     <a href="{{ url_for('booking') }}" class="btn btn-primary">📅 Book a Consultation</a>
                     <a href="#credentials" class="btn btn-secondary">Know More</a>
                 </div>
@@ -31,21 +33,20 @@
 </section>
 
 <!-- Doctor Stats -->
-<section class="section" id="doctorStats" style="padding: 4rem 0; background: var(--color-primary);">
+<section class="section" id="doctorStats" style="padding: 3rem 0; background: var(--color-primary);">
     <div class="container">
-        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; text-align:center; padding: 1.5rem 0;">
-            <div class="stat-card" style="background:rgba(255,255,255,0.1); border-radius:1.2rem; padding:2.5rem 1.5rem; backdrop-filter:blur(8px);">
-                <div class="stat-number" data-target="15" data-suffix="+" style="font-size:3.6rem; font-weight:900; color:#fff; line-height:1; letter-spacing:-1px;">0+</div>
-                <div style="color:rgba(255,255,255,0.9); font-size:1.1rem; font-weight:500; margin-top:0.75rem;">Years of Experience</div>
+        <div class="about-stats-grid">
+            <div class="about-stat-card">
+                <div class="about-stat-number" data-target="15" data-suffix="+">0+</div>
+                <div class="about-stat-label">Years of<br>Experience</div>
             </div>
-            <div class="stat-card" style="background:rgba(255,255,255,0.1); border-radius:1.2rem; padding:2.5rem 1.5rem; backdrop-filter:blur(8px);">
-                <div class="stat-number" data-target="99" data-suffix="%" style="font-size:3.6rem; font-weight:900; color:#fff; line-height:1; letter-spacing:-1px;">0%</div>
-                <div style="color:rgba(255,255,255,0.9); font-size:1.1rem; font-weight:500; margin-top:0.75rem;">Partners Recommend</div>
+            <div class="about-stat-card">
+                <div class="about-stat-number" data-target="99" data-suffix="%">0%</div>
+                <div class="about-stat-label">Patients<br>Recommend</div>
             </div>
-            <div class="stat-card" style="background:rgba(255,255,255,0.1); border-radius:1.2rem; padding:2.5rem 1.5rem; backdrop-filter:blur(8px);">
-                <div class="stat-number" data-target="10000" data-suffix="+" data-comma="true" style="font-size:3.6rem; font-weight:900; color:#fff; line-height:1; letter-spacing:-1px;">0+</div>
-                <div style="color:rgba(255,255,255,0.9); font-size:1.1rem; font-weight:500; margin-top:0.75rem;">Satisfied Clients</div>
-                <div style="color:rgba(255,255,255,0.7); font-size:0.82rem; font-weight:400; margin-top:0.3rem;">Highly Recommended</div>
+            <div class="about-stat-card">
+                <div class="about-stat-number" data-target="10000" data-suffix="+" data-comma="true">0+</div>
+                <div class="about-stat-label">Satisfied<br>Clients</div>
             </div>
         </div>
     </div>
@@ -109,7 +110,7 @@
         </div>
 
         <!-- Row 1: Boxes 1–3 (small → medium) -->
-        <div class="reveal" style="display:grid; grid-template-columns: repeat(3,1fr); gap:1.5rem; margin-bottom:1.5rem;">
+        <div class="credentials-row reveal">
 
             <!-- Box 1 — smallest -->
             <div style="background:var(--color-surface,#fff); border-radius:1rem; padding:1.4rem 1.2rem; box-shadow:0 2px 12px rgba(0,0,0,0.07); display:flex; align-items:center; gap:1rem; transition:transform 0.25s,box-shadow 0.25s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(0,0,0,0.07)'">
@@ -140,7 +141,7 @@
         </div>
 
         <!-- Row 2: Boxes 4–6 (medium-large → largest) -->
-        <div class="reveal" style="display:grid; grid-template-columns: repeat(3,1fr); gap:1.5rem;">
+        <div class="credentials-row reveal">
 
             <!-- Box 4 -->
             <div style="background:var(--color-surface,#fff); border-radius:1.1rem; padding:2rem 1.8rem; box-shadow:0 4px 18px rgba(0,0,0,0.1); display:flex; align-items:center; gap:1.3rem; transition:transform 0.25s,box-shadow 0.25s;" onmouseover="this.style.transform='translateY(-5px)';this.style.boxShadow='0 10px 30px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 18px rgba(0,0,0,0.1)'">
@@ -222,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var statsSection = document.getElementById('doctorStats');
     if (!statsSection) return;
 
-    var statEls = statsSection.querySelectorAll('.stat-number');
+    var statEls = statsSection.querySelectorAll('.about-stat-number');
     if (!statEls.length) return;
 
     var triggered = false;

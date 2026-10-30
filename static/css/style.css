@@ -1752,6 +1752,45 @@ p {
     line-height: 1.8;
 }
 
+/* Doctor name / designation styling */
+.doctor-subheading {
+    margin-bottom: var(--space-lg);
+}
+
+.doctor-subheading-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 var(--space-sm);
+    line-height: 1.3;
+}
+
+.doctor-qualifications {
+    color: var(--color-accent, #3aab8c);
+    font-weight: 700;
+}
+
+.doctor-role-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.doctor-role-badge {
+    display: inline-block;
+    background: var(--color-bg, #f5f0e8);
+    color: var(--color-text-muted, #555);
+    border: 1px solid var(--color-border, #e0dbd0);
+    border-radius: var(--radius-full, 999px);
+    padding: 5px 14px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+
+
 /* Specialties */
 .specialties-grid {
     display: flex;
@@ -4245,6 +4284,11 @@ textarea {
 }
 
 .settings-textarea {
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.5;
+}
+
 .bulk-cancel-content p {
     font-size: 0.85rem;
     color: hsl(0, 20%, 50%);
@@ -4437,12 +4481,6 @@ textarea {
     outline: none;
     border-color: var(--color-primary-light);
     box-shadow: 0 0 0 3px var(--color-primary-ghost);
-}
-
-.settings-textarea {
-    resize: vertical;
-    min-height: 80px;
-    line-height: 1.5;
 }
 
 @media (max-width: 480px) {
@@ -5200,3 +5238,490 @@ textarea {
         text-align: center;
     }
 }
+
+/* ========================================
+   About Page — Stats Section
+   ======================================== */
+.about-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+}
+
+/* Stat card — matches reference image */
+.about-stat-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.4rem;
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 1.25rem;
+    padding: 2.2rem 2rem;
+    border: 1.5px solid rgba(255, 255, 255, 0.22);
+    transition: background 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+}
+
+.about-stat-card:hover {
+    background: rgba(255, 255, 255, 0.13);
+    border-color: rgba(255, 255, 255, 0.35);
+    transform: translateY(-3px);
+}
+
+.about-stat-number {
+    font-family: var(--font-heading);
+    font-size: 3.4rem;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: -2px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.about-stat-label {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.45;
+}
+
+.credentials-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.about-hero-actions {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    margin-top: var(--space-md);
+}
+
+/* ========================================
+   Mobile — About, Treatments, Blog, Contact
+   Breakpoint ≤ 768px
+   ======================================== */
+@media (max-width: 768px) {
+
+    /* --- About Hero --- */
+    .about-hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: var(--space-xl);
+        padding-top: calc(var(--nav-height) + var(--top-bar-height) + var(--space-xl));
+    }
+
+    .about-image {
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .about-text h1 {
+        font-size: 1.7rem;
+    }
+
+    .about-hero-actions {
+        justify-content: center;
+    }
+
+    .about-hero-actions .btn {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .doctor-subheading-name {
+        font-size: 1.1rem;
+    }
+
+    .doctor-role-badges {
+        justify-content: center;
+    }
+
+    /* --- About Stats Grid --- */
+    .about-stats-grid {
+        grid-template-columns: 1fr;
+        gap: 0.9rem;
+        padding: 0.5rem 0;
+    }
+
+    .about-stat-card {
+        flex-direction: row;
+        align-items: center;
+        padding: 1.6rem 1.8rem;
+        gap: 1.2rem;
+        border-radius: 1rem;
+    }
+
+    .about-stat-number {
+        font-size: 2.6rem;
+        letter-spacing: -1.5px;
+        white-space: nowrap;
+    }
+
+    .about-stat-label {
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+
+    /* --- Credentials --- */
+    .credentials-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    /* --- Philosophy cards --- */
+    .philosophy {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+    }
+
+    /* --- Services / Treatments --- */
+    .services-hero {
+        padding-top: calc(var(--nav-height) + var(--top-bar-height) + var(--space-xl));
+        padding-bottom: var(--space-xl);
+    }
+
+    .services-hero h1 {
+        font-size: 1.7rem;
+    }
+
+    .services-hero p {
+        font-size: 0.95rem;
+    }
+
+    .services-full-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+    }
+
+    .service-full-card {
+        padding: var(--space-xl) var(--space-lg);
+    }
+
+    .service-full-card h3 {
+        font-size: 1.1rem;
+    }
+
+    .service-full-card p {
+        font-size: 0.92rem;
+    }
+
+    .service-full-card ul {
+        font-size: 0.9rem;
+        padding-left: var(--space-lg);
+    }
+
+    /* button groups inside service cards */
+    .service-full-card > div[style] {
+        flex-wrap: wrap;
+    }
+
+    /* --- FAQ --- */
+    .faq-question {
+        font-size: 0.95rem;
+    }
+
+    /* --- Blog Hero --- */
+    .blog-hero {
+        padding: var(--space-3xl) 0 var(--space-2xl);
+    }
+
+    .blog-hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .blog-hero p {
+        font-size: 0.95rem;
+    }
+
+    /* --- Blog Listing --- */
+    .blog-listing {
+        padding: var(--space-2xl) 0 var(--space-3xl);
+    }
+
+    .blog-card-body {
+        padding: var(--space-md) var(--space-lg) var(--space-lg);
+    }
+
+    .blog-card-title {
+        font-size: 1.1rem;
+    }
+
+    /* --- Blog Post --- */
+    .blogpost-hero {
+        padding: var(--space-2xl) 0 var(--space-xl);
+    }
+
+    .blogpost-layout {
+        grid-template-columns: 1fr;
+        gap: var(--space-xl);
+    }
+
+    .blogpost-sidebar {
+        position: static;
+    }
+
+    .blogpost-body {
+        font-size: 0.97rem;
+    }
+
+    .blogpost-cta-inner {
+        padding: var(--space-xl) var(--space-lg);
+    }
+
+    .blogpost-cta-inner h3 {
+        font-size: 1.2rem;
+    }
+
+    .blogpost-cta-inner .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* --- Contact / Booking --- */
+    .booking-hero {
+        padding-top: calc(var(--nav-height) + var(--top-bar-height) + var(--space-xl));
+        padding-bottom: var(--space-lg);
+    }
+
+    .booking-hero h1 {
+        font-size: 1.7rem;
+    }
+
+    .booking-layout {
+        grid-template-columns: 1fr;
+        gap: var(--space-xl);
+    }
+
+    .form-card {
+        padding: var(--space-xl) var(--space-lg);
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .info-card {
+        padding: var(--space-lg);
+    }
+
+    .map-container {
+        height: 240px;
+    }
+
+    .map-container iframe {
+        width: 100%;
+        height: 100%;
+        border-radius: var(--radius-md);
+    }
+
+    /* --- Booking sidebar --- */
+    .booking-sidebar {
+        width: 100%;
+    }
+}
+
+/* ========================================
+   Small Mobile — ≤ 576px
+   ======================================== */
+@media (max-width: 576px) {
+
+    /* --- About Hero --- */
+    .about-image {
+        max-width: 240px;
+    }
+
+    .about-text h1 {
+        font-size: 1.5rem;
+    }
+
+    .about-text p {
+        font-size: 0.92rem;
+    }
+
+    .doctor-subheading-name {
+        font-size: 1rem;
+    }
+
+    /* --- About Stats --- */
+    .about-stats-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .about-stat-card {
+        padding: 1.4rem 1.6rem;
+        gap: 1rem;
+    }
+
+    .about-stat-number {
+        font-size: 2.4rem;
+    }
+
+    /* --- Specialties tags --- */
+    .specialties-grid {
+        gap: 6px;
+    }
+
+    .specialty-tag {
+        font-size: 0.8rem;
+        padding: 6px 11px;
+    }
+
+    /* --- Services --- */
+    .service-full-card {
+        padding: var(--space-lg) var(--space-md);
+    }
+
+    .service-full-card .card-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 1.3rem;
+    }
+
+    /* --- Blog Hero --- */
+    .blog-hero {
+        padding: var(--space-2xl) 0 var(--space-xl);
+    }
+
+    .blog-hero h1 {
+        font-size: 1.5rem;
+    }
+
+    .blog-hero p {
+        font-size: 0.88rem;
+    }
+
+    .blog-card-image {
+        height: 180px;
+    }
+
+    .blog-empty {
+        padding: var(--space-2xl) var(--space-md);
+    }
+
+    .blog-empty-icon {
+        font-size: 3rem;
+    }
+
+    .blog-empty h2 {
+        font-size: 1.4rem;
+    }
+
+    /* --- Blog Post --- */
+    .blogpost-title {
+        font-size: 1.4rem;
+    }
+
+    .blogpost-body h2 {
+        font-size: 1.3rem;
+    }
+
+    .blogpost-body h3 {
+        font-size: 1.1rem;
+    }
+
+    /* --- Contact --- */
+    .form-card h3 {
+        font-size: 1.1rem;
+    }
+
+    .info-card h4 {
+        font-size: 0.95rem;
+    }
+
+    .info-item p {
+        font-size: 0.88rem;
+    }
+
+    .map-container {
+        height: 200px;
+    }
+
+    /* --- CTA Banner --- */
+    .cta-banner h2 {
+        font-size: 1.3rem;
+    }
+
+    .cta-banner p {
+        font-size: 0.88rem;
+    }
+
+    .cta-banner .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ========================================
+   Extra Small — ≤ 400px (small phones)
+   ======================================== */
+@media (max-width: 400px) {
+
+    .about-text h1 {
+        font-size: 1.35rem;
+    }
+
+    .about-stats-grid {
+        grid-template-columns: 1fr;
+        gap: 0.65rem;
+    }
+
+    .about-stat-card {
+        padding: 1.2rem 1.4rem;
+        gap: 0.9rem;
+    }
+
+    .about-stat-number {
+        font-size: 2.2rem;
+        letter-spacing: -1px;
+    }
+
+    .about-stat-label {
+        font-size: 0.88rem;
+    }
+
+    .credentials-row {
+        grid-template-columns: 1fr;
+    }
+
+    .philosophy-card {
+        padding: var(--space-lg) var(--space-md);
+    }
+
+    .services-full-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .blog-hero h1 {
+        font-size: 1.35rem;
+    }
+
+    .blogpost-title {
+        font-size: 1.25rem;
+    }
+
+    .form-card {
+        padding: var(--space-lg) var(--space-sm);
+    }
+
+    .about-hero-actions {
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+
+    .about-hero-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .booking-hero h1 {
+        font-size: 1.4rem;
+    }
+}
+
