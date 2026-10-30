@@ -18,13 +18,10 @@
                 <img src="{{ url_for('static', filename='images/clinic-logo.jpg') }}" alt="Helium Mind Centre" class="nav-logo-img">
             </a>
             <div class="dashboard-nav-right">
-                <a href="{{ url_for('admin_dashboard') }}">📋 Appointments</a>
-                <span style="color: rgba(255,255,255,0.5);">|</span>
-                <a href="{{ url_for('admin_blog') }}" style="color: #fff; font-weight:600; font-size:0.9rem;">📝 Blog</a>
-                <span style="color: rgba(255,255,255,0.5);">|</span>
-                <a href="{{ url_for('admin_settings') }}" style="color: rgba(255,255,255,0.8); font-size:0.9rem;">⚙️ Settings</a>
-                <span style="color: rgba(255,255,255,0.5);">|</span>
-                <a href="{{ url_for('home') }}">🌐 Website</a>
+                <a href="{{ url_for('admin_dashboard') }}" class="dash-nav-link">&#128203; <span class="dash-nav-text">Dashboard</span></a>
+                <a href="{{ url_for('admin_blog') }}" class="dash-nav-link dash-nav-active">&#128221; <span class="dash-nav-text">Blog</span></a>
+                <a href="{{ url_for('admin_settings') }}" class="dash-nav-link">&#9881; <span class="dash-nav-text">Settings</span></a>
+                <a href="{{ url_for('home') }}" class="dash-nav-link">&#127760; <span class="dash-nav-text">Website</span></a>
                 <a href="{{ url_for('admin_logout') }}" class="btn btn-sm">Logout</a>
             </div>
         </nav>
