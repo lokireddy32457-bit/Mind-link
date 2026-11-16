@@ -1715,12 +1715,19 @@ p {
 
 .about-image {
     position: relative;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    aspect-ratio: 3 / 4;
+    box-shadow: var(--shadow-xl);
+    border: 3px solid var(--color-accent-light);
 }
 
 .about-image img {
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-xl);
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
 }
 
 .about-image::after {
