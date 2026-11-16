@@ -1716,16 +1716,19 @@ p {
 .about-image {
     position: relative;
     border-radius: var(--radius-xl);
-    overflow: hidden;
+    overflow: visible;
     box-shadow: var(--shadow-xl);
     border: 3px solid var(--color-accent-light);
     line-height: 0;
+    height: fit-content;
 }
 
 .about-image img {
     width: 100%;
     height: auto;
     display: block;
+    border-radius: calc(var(--radius-xl) - 3px);
+    object-fit: contain;
 }
 
 .about-image::after {
