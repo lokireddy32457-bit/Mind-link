@@ -516,12 +516,14 @@ def submit_booking():
         save_appointment(data)
         flash('Your appointment request has been submitted successfully! We will contact you shortly to confirm.', 'success')
 
-        # Notify doctor/admin about the new appointment request.
-        # Email failure must NOT affect the patient-facing success flow.
+        # Notify doctor/admin — email failure must NOT affect the patient-facing success flow.
         try:
             send_new_appointment_notification(data)
         except Exception:
-            pass  # logged inside email_utils
+            pass  # already logged inside email_utils
+
+        return redirect(url_for('booking'))
+
     except Exception as e:
         # Database connection or other error
         flash('An error occurred while processing your request. Please try again later.', 'error')
