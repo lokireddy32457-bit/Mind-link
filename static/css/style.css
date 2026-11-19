@@ -1606,6 +1606,22 @@ p {
 .why-icon {
     font-size: 2.2rem;
     margin-bottom: var(--space-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background: var(--color-bg-secondary, #f0f4ff);
+    border-radius: 14px;
+    padding: 8px;
+}
+.why-icon svg {
+    width: 40px;
+    height: 40px;
+    transition: transform 0.3s ease;
+}
+.why-card:hover .why-icon svg {
+    transform: scale(1.15);
 }
 
 /* Online Consultation */
