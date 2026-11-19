@@ -1537,6 +1537,22 @@ p {
 .condition-icon {
     font-size: 2.2rem;
     margin-bottom: var(--space-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.condition-icon svg {
+    width: 48px;
+    height: 48px;
+    color: var(--color-accent);
+    transition: transform 0.3s ease;
+}
+.condition-card:hover .condition-icon svg {
+    transform: scale(1.15);
 }
 .condition-card h4 {
     font-size: 1.05rem;
