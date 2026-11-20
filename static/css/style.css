@@ -83,7 +83,7 @@
     /* Layout */
     --container-max: 1200px;
     --container-narrow: 800px;
-    --top-bar-height: 40px;
+    --top-bar-height: 0px; /* top-bar removed */
     --nav-height: 72px;
 }
 
@@ -227,80 +227,66 @@ p {
 /* ========================================
    Top Info Bar
    ======================================== */
-.top-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: var(--top-bar-height);
-    background: var(--color-primary-dark);
-    z-index: 1001;
-    display: flex;
-    align-items: center;
-}
-
-.top-bar .container {
-    width: 100%;
-}
-
-.top-bar-inner {
+/* footer info strip (moved from top bar) */
+.footer-info-strip {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    padding: var(--space-md) 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: var(--space-md);
 }
 
-.top-bar-left {
+.footer-info-left {
     display: flex;
     align-items: center;
-    gap: var(--space-xl);
+    flex-wrap: wrap;
+    gap: var(--space-lg);
 }
 
-.top-bar-item {
+.footer-info-item {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: rgba(255, 255, 255, 0.88);
+    color: rgba(255, 255, 255, 0.75);
     font-size: 0.8rem;
-    font-weight: 400;
-    letter-spacing: 0.01em;
-}
-
-.top-bar-item--link {
     text-decoration: none;
     transition: color var(--transition-fast);
 }
 
-.top-bar-item--link:hover {
+.footer-info-item:hover {
     color: rgba(255, 255, 255, 1);
 }
 
-.top-bar-item svg {
+.footer-info-item svg {
     flex-shrink: 0;
-    opacity: 0.85;
+    opacity: 0.8;
 }
 
-.top-bar-right {
+.footer-info-right {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
 }
 
-.top-bar-social {
+.footer-info-social {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.12);
-    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.85);
     transition: all var(--transition-fast);
 }
 
-.top-bar-social:hover {
-    background: rgba(255, 255, 255, 0.25);
+.footer-info-social:hover {
+    background: rgba(255, 255, 255, 0.22);
     color: white;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
 }
 
 /* ========================================
@@ -340,7 +326,7 @@ p {
    ======================================== */
 .navbar {
     position: fixed;
-    top: var(--top-bar-height);
+    top: 0;
     left: 0;
     right: 0;
     height: var(--nav-height);
