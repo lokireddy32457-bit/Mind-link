@@ -764,8 +764,8 @@ p {
 }
 
 .card-icon {
-    width: 56px;
-    height: 56px;
+    width: 64px;
+    height: 64px;
     border-radius: var(--radius-md);
     display: flex;
     align-items: center;
@@ -774,6 +774,17 @@ p {
     margin-bottom: var(--space-lg);
     background: linear-gradient(135deg, var(--color-primary-ghost), var(--color-accent-light));
     color: var(--color-primary);
+    padding: 10px;
+}
+.card-icon svg {
+    width: 44px;
+    height: 44px;
+    color: var(--color-primary);
+    transition: transform 0.3s ease;
+}
+.service-full-card:hover .card-icon svg,
+.card:hover .card-icon svg {
+    transform: scale(1.12);
 }
 
 .card h3 {
