@@ -31,6 +31,7 @@ from auth import (
     login_required, authenticate_admin, create_default_admin
 )
 from email_utils import send_appointment_email, send_new_appointment_notification
+from google_reviews import get_google_reviews
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -100,7 +101,8 @@ with app.app_context():
 @app.route('/')
 def home():
     """Home page with hero, highlights, and CTA."""
-    return render_template('index.html')
+    google_data = get_google_reviews()
+    return render_template('index.html', google_data=google_data)
 
 
 @app.route('/about')
@@ -1026,6 +1028,21 @@ def admin_blog_delete(post_id):
         return jsonify({'success': False, 'message': 'Post not found.'}), 404
     delete_blog_post(post_id)
     return jsonify({'success': True, 'message': 'Blog post deleted.'})
+
+
+@app.route('/admin/refresh-reviews', methods=['POST'])
+@login_required
+def refresh_reviews():
+    """Force-refresh Google reviews cache from the Places API."""
+    from google_reviews import get_google_reviews
+    data = get_google_reviews(force_refresh=True)
+    return jsonify({
+        'success': True,
+        'rating': data['rating'],
+        'review_count': data['review_count'],
+        'reviews_fetched': len(data.get('reviews', [])),
+        'source': data.get('source', 'unknown'),
+    })
 
 
 # =====================
