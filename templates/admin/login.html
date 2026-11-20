@@ -9,6 +9,46 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* ── Beat Loader ─────────────────────────────────────────── */
+        .login-btn-wrap {
+            position: relative;
+            width: 100%;
+        }
+        #signInBtn {
+            width: 100%;
+            transition: opacity 0.2s;
+        }
+        #signInBtn.loading {
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+        }
+        .beat-loader {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 48px;
+            width: 100%;
+        }
+        .beat-loader.visible {
+            display: flex;
+        }
+        .beat-loader span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--color-primary, #4f46e5);
+            animation: beat 0.7s ease-in-out infinite;
+        }
+        .beat-loader span:nth-child(2) { animation-delay: 0.15s; }
+        .beat-loader span:nth-child(3) { animation-delay: 0.30s; }
+        @keyframes beat {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+            40%            { transform: scale(1.2); opacity: 1;   }
+        }
+    </style>
 </head>
 <body>
     <!-- Flash Messages -->
@@ -41,20 +81,38 @@
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
                 </div>
-                <button type="submit" class="btn btn-primary btn-lg">Sign In</button>
+
+                <!-- Button + Beat Loader wrapper -->
+                <div class="login-btn-wrap">
+                    <button type="submit" class="btn btn-primary btn-lg" id="signInBtn">Sign In</button>
+                    <div class="beat-loader" id="beatLoader" aria-label="Signing in…">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
             </form>
 
             <a href="{{ url_for('home') }}" class="login-back">← Back to website</a>
         </div>
     </div>
 
-    <!-- Auto-dismiss flash messages -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const flashes = document.querySelectorAll('.flash');
-            flashes.forEach(flash => {
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // ── Beat loader on submit ─────────────────────────────
+            const form   = document.getElementById('loginForm');
+            const btn    = document.getElementById('signInBtn');
+            const loader = document.getElementById('beatLoader');
+
+            form.addEventListener('submit', function () {
+                btn.classList.add('loading');
+                loader.classList.add('visible');
+                btn.disabled = true;          // prevent double-submit
+            });
+
+            // ── Auto-dismiss flash messages ───────────────────────
+            document.querySelectorAll('.flash').forEach(flash => {
                 setTimeout(() => {
-                    flash.style.opacity = '0';
+                    flash.style.opacity   = '0';
                     flash.style.transform = 'translateX(40px)';
                     setTimeout(() => flash.remove(), 300);
                 }, 5000);
